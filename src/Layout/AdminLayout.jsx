@@ -1,13 +1,39 @@
-import React from 'react'
-import Header from '../Components/Shared/Header'
-import Sidebar from '../Components/Shared/Sidebar'
+import React, { useState } from "react";
+import Header from "../Components/Shared/Header";
+import Sidebar from "../Components/Shared/Sidebar";
+import { Outlet } from "react-router-dom";
 
 export default function AdminLayout() {
+  const [isOpen, setIsOpen] = useState(false); 
+
   return (
-    <div>
-        <Header/>
-        <Sidebar  />
-      
+    <div className="flex h-screen bg-gray-100">
+
+      {/* Sidebar */}
+      <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+
+      {/* Main Content (moves based on sidebar width) */}
+      <div
+        className={`
+          flex-1 transition-all duration-300
+          ${isOpen ? "ml-64" : "ml-20"}
+        `}
+      >
+        {/* HEADER */}
+        <div
+          className={`
+            fixed top-0 right-0 h-16 bg-white shadow z-40 transition-all duration-300
+            ${isOpen ? "left-64" : "left-20"}
+          `}
+        >
+          <Header />
+        </div>
+
+        {/* PAGE CONTENT */}
+        <main className="mt-16 p-6 overflow-y-auto bg-gray-50">
+          <Outlet />
+        </main>
+      </div>
     </div>
-  )
+  );
 }
