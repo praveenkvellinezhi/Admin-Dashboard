@@ -1,6 +1,14 @@
 import React from "react";
 import { RefreshCcw } from "lucide-react";
 
+// Import your local profile image
+import profile from "../../../assets/Images/profile.jpg";
+
+// If you have more images, import them like:
+// import user2 from "../../../assets/Images/user2.jpg";
+// import user3 from "../../../assets/Images/user3.jpg";
+// For now, I will reuse the same profile picture.
+
 function OngoingProjects() {
   const projects = [
     {
@@ -9,6 +17,12 @@ function OngoingProjects() {
       status: "On-going",
       progress: 70,
       due: "December 10, 2025",
+      employees: [
+        profile,
+        profile,
+        profile,
+        profile,
+      ],
     },
     {
       title: "Client Management",
@@ -16,6 +30,11 @@ function OngoingProjects() {
       status: "Completed",
       progress: 100,
       due: "January 05, 2025",
+      employees: [
+        profile,
+        profile,
+        profile,
+      ],
     },
     {
       title: "Project Tracker",
@@ -23,6 +42,10 @@ function OngoingProjects() {
       status: "Pending",
       progress: 45,
       due: "November 28, 2025",
+      employees: [
+        profile,
+        profile,
+      ],
     },
     {
       title: "Inventory System",
@@ -30,11 +53,16 @@ function OngoingProjects() {
       status: "On-going",
       progress: 60,
       due: "December 20, 2025",
+      employees: [
+        profile,
+        profile,
+        profile,
+      ],
     },
   ];
 
   return (
-    <div className="bg-gray-200 rounded-3xl p-6 w-full ml-3">
+    <div className="bg-gray-200 rounded-3xl p-6 w-full">
       {/* Section Header */}
       <div className="flex items-center mb-5">
         <div className="bg-white rounded-4xl w-8 h-8 flex items-center justify-center shadow-sm">
@@ -49,12 +77,12 @@ function OngoingProjects() {
         {projects.map((p, index) => (
           <div
             key={index}
-            className="bg-white rounded-xl p-4 flex items-start justify-between shadow-sm"
+            className="bg-white rounded-xl p-3 flex items-start justify-between shadow-sm"
           >
             {/* LEFT SECTION */}
             <div className="flex items-start gap-3">
               {/* Icon with First Letter */}
-              <div className="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center text-lg font-semibold">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-lg font-semibold">
                 {p.title.charAt(0)}
               </div>
 
@@ -70,7 +98,7 @@ function OngoingProjects() {
                     <p className="text-gray-600">{p.status}</p>
                   </div>
                   <div>
-                    <p className="font-semibold">Presentation</p>
+                    <p className="font-semibold">Progress</p>
                     <p className="text-gray-600">{p.progress}%</p>
                   </div>
                   <div>
@@ -81,12 +109,16 @@ function OngoingProjects() {
               </div>
             </div>
 
-            {/* RIGHT — Grey Dots */}
-            <div className="flex space-x-1 mt-1">
-              <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
-              <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
-              <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
-              <span className="w-2 h-2 bg-gray-300 rounded-full"></span>
+            {/* RIGHT — Employee Avatars */}
+            <div className="flex -space-x-2 mt-1">
+              {p.employees?.slice(0, 4).map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  className="w-8 h-8 rounded-full border-2 border-white object-cover"
+                  alt="employee"
+                />
+              ))}
             </div>
           </div>
         ))}
