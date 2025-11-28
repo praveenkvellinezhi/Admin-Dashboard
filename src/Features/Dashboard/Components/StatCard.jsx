@@ -10,24 +10,34 @@ export default function StatsSection() {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 p-3 sm:p-4 w-full">
+
       {stats.map((item) => (
         <div
           key={item.title}
           className="
-            bg-white shadow-md rounded-2xl p-5 
+            bg-white shadow-md rounded-2xl 
+            p-4 sm:p-5 
             flex flex-col justify-center
-            min-w-[220px] w-full
+            transition hover:shadow-lg
           "
         >
-          <h3 className="text-sm font-semibold text-gray-600">{item.title}</h3>
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-600">
+            {item.title}
+          </h3>
 
-          <div className="flex items-center gap-4 mt-2">
-            <div className="text-gray-700 text-2xl">{item.icon}</div>
-            <p className="text-2xl font-bold">{item.value}</p>
+          <div className="flex items-center gap-3 sm:gap-4 mt-2">
+            <div className="text-gray-700 text-xl sm:text-2xl">
+              {item.icon}
+            </div>
+
+            <p className="text-xl sm:text-2xl font-bold">
+              {item.value}
+            </p>
           </div>
         </div>
       ))}
+
     </div>
   );
 }

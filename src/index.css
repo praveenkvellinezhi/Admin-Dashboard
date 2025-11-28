@@ -1,1 +1,28 @@
+/* -----------------------------------------------------------
+   1. Import Google Fonts  (MUST be at the very top)
+----------------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Urbanist:wght@300;400;500;600;700&display=swap");
+
+/* -----------------------------------------------------------
+   2. Tailwind (Load BEFORE theme/custom CSS)
+----------------------------------------------------------- */
 @import "tailwindcss";
+
+/* -----------------------------------------------------------
+   3. Tailwind v4 Theme Font Variables
+----------------------------------------------------------- */
+@theme {
+  --font-poppins: "Poppins", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-urbanist: "Urbanist", sans-serif;
+}
+
+/* -----------------------------------------------------------
+   4. Global Styles
+----------------------------------------------------------- */
+body {
+  font-family: var(--font-poppins);
+  background-color: #f8fafc;
+  margin: 0;
+  padding: 0;
+}

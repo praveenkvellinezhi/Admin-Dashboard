@@ -9,10 +9,8 @@ import {
 } from "recharts";
 import { ChevronDown, BarChart3 } from "lucide-react";
 
-// Dropdown options
 const months = ["Month", "Week", "Year"];
 
-// Month dataset
 const monthData = [
   { name: "Jan", value: 40 },
   { name: "Feb", value: 60 },
@@ -23,7 +21,6 @@ const monthData = [
   { name: "Jul", value: 65 },
 ];
 
-// Week dataset
 const weekData = [
   { name: "Mon", value: 20 },
   { name: "Tue", value: 45 },
@@ -34,7 +31,6 @@ const weekData = [
   { name: "Sun", value: 55 },
 ];
 
-// Year dataset
 const yearData = [
   { name: "2021", value: 300 },
   { name: "2022", value: 400 },
@@ -42,47 +38,42 @@ const yearData = [
   { name: "2024", value: 450 },
 ];
 
-export default function AttendenceGraph({ month = "Month" }) {
+export default function AttendanceGraph({ month = "Month" }) {
   const [open, setOpen] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(month);
 
-  // Select chart data based on dropdown
   const chartData =
     selectedMonth === "Month"
       ? monthData
       : selectedMonth === "Week"
       ? weekData
-      : yearData;  
+      : yearData;
 
   return (
-    <div className="w-full  bg-white rounded-3xl shadow-lg p-6 h-[380px]">
-      
+    <div className="w-full bg-white rounded-3xl shadow-lg p-4 sm:p-6 h-[320px] sm:h-[380px]">
+
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
-        
-        {/* Title & Icon */}
+
+        {/* Title */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600
-flex items-center justify-center">
-            <BarChart3 className="w-5 h-5 text-white" />
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+            <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </div>
 
-          <div>
-            <h3 className="font-semibold ml-2 text-xl text-gray-800">
-              Attendence Graph 
-            </h3>
-           
-          </div>
+          <h3 className="font-semibold text-lg sm:text-xl text-gray-800">
+            Attendance Graph
+          </h3>
         </div>
 
         {/* Dropdown */}
         <div className="relative">
           <button
-            className="flex items-center gap-2 border px-3 py-1 rounded-full bg-white shadow-sm"
+            className="flex items-center gap-2 border px-3 py-1 rounded-full bg-white shadow-sm text-sm sm:text-base"
             onClick={() => setOpen(!open)}
           >
-            <span className="text-sm text-gray-700">{selectedMonth}</span>
-            <ChevronDown className="w-4 h-4 text-gray-600" />
+            {selectedMonth}
+            <ChevronDown className="w-4 h-4" />
           </button>
 
           {open && (
@@ -105,7 +96,7 @@ flex items-center justify-center">
       </div>
 
       {/* Chart */}
-      <div className="w-full h-[230px]">
+      <div className="w-full h-[180px] sm:h-[230px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
@@ -113,10 +104,7 @@ flex items-center justify-center">
             margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e5e7eb" />
-
-            {/* Bars start at bottom */}
             <YAxis domain={[0, "dataMax"]} hide />
-
             <XAxis
               dataKey="name"
               axisLine={false}
@@ -124,7 +112,6 @@ flex items-center justify-center">
               tick={{ fill: "#6b7280", fontSize: 12 }}
             />
 
-            {/* Gradient colors */}
             <defs>
               <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#60a5fa" />
@@ -143,7 +130,7 @@ flex items-center justify-center">
       </div>
 
       {/* Footer */}
-      <div className="flex justify-between text-xs text-gray-400 mt-3">
+      <div className="flex justify-between text-[10px] sm:text-xs text-gray-400 mt-3">
         <span>
           {selectedMonth === "Month"
             ? "Jan — Jul"

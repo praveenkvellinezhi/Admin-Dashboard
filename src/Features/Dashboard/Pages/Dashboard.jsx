@@ -6,17 +6,19 @@ import ProjectStatus from "../Components/ProjectStatus";
 
 export default function Dashboard() {
   return (
-    <div className="space-y-6">
+    <div className="w-full p-3 sm:p-4 lg:p-6 space-y-6">
 
+      {/* Stats Section */}
       <StatCard />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
 
-        {/* Left Column */}
+        {/* LEFT COLUMN — Projects */}
         <OngoingProjects />
 
-        {/* Right Column */}
-        <div className="flex flex-col gap-4">
+        {/* RIGHT COLUMN — Graph + Status */}
+        <div className="flex flex-col gap-4 lg:gap-6 w-full">
           <AttendenceGraph month="Month" />
           <ProjectStatus completed={80} />
         </div>
