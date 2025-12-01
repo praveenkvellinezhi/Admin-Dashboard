@@ -50,7 +50,7 @@ export default function AttendanceGraph({ month = "Month" }) {
       : yearData;
 
   return (
-    <div className="w-full bg-white rounded-3xl shadow-lg p-4 sm:p-6 h-[320px] sm:h-[380px]">
+    <div className="w-full bg-[#FFFDEB] rounded-3xl shadow-lg p-4 sm:p-6 h-[320px] sm:h-[380px]">
 
       {/* Header */}
       <div className="flex justify-between items-center mb-4">

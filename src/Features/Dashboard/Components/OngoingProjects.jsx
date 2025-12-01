@@ -5,6 +5,7 @@ import profile from "../../../assets/Images/profile.jpg";
 function OngoingProjects() {
   const projects = [
     {
+      logo: profile,
       title: "Aspire Zones X",
       subtitle: "Redesign",
       status: "On-going",
@@ -13,6 +14,8 @@ function OngoingProjects() {
       employees: [profile, profile, profile, profile],
     },
     {
+      logo: profile,
+
       title: "Client Management",
       subtitle: "UI/UX",
       status: "Completed",
@@ -21,6 +24,8 @@ function OngoingProjects() {
       employees: [profile, profile, profile],
     },
     {
+      logo: profile,
+
       title: "Project Tracker",
       subtitle: "Full Stack",
       status: "Pending",
@@ -29,6 +34,8 @@ function OngoingProjects() {
       employees: [profile, profile],
     },
     {
+      logo: profile,
+
       title: "Inventory System",
       subtitle: "Backend",
       status: "On-going",
@@ -39,8 +46,7 @@ function OngoingProjects() {
   ];
 
   return (
-    <div className="bg-gray-200 rounded-3xl p-4 sm:p-6 w-full">
-      
+    <div className="bg-[#FFEBEB] rounded-3xl p-4 sm:p-6 w-full">
       {/* Section Header */}
       <div className="flex items-center mb-4 sm:mb-5">
         <div className="bg-white rounded-4xl w-8 h-8 flex items-center justify-center shadow-sm">
@@ -66,10 +72,13 @@ function OngoingProjects() {
           >
             {/* LEFT SECTION */}
             <div className="flex items-start gap-3 flex-1">
-              
               {/* Icon */}
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-lg font-semibold">
-                {p.title.charAt(0)}
+                <img
+                  src={p.logo}
+                  alt="project logo"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
               </div>
 
               {/* Text */}
@@ -110,7 +119,6 @@ function OngoingProjects() {
                 />
               ))}
             </div>
-
           </div>
         ))}
       </div>
