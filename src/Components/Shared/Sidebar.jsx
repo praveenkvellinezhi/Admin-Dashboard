@@ -8,10 +8,11 @@ import { ChartLine, Calendar, Users, UserPlus, Folder } from "lucide-react";
 export default function Sidebar({ isOpen, setIsOpen }) {
   const navbar = [
     { name: "Dashboard", path: "/", icon: <ChartLine size={22} /> },
+    { name: "Projects", path: "/Projects", icon: <Folder size={22} /> },
     { name: "Attendence", path: "/Attendence", icon: <Calendar size={22} /> },
+
     { name: "Employeee", path: "/Employee", icon: <Users size={22} /> },
     { name: "Interns", path: "/Interns", icon: <UserPlus size={22} /> },
-    { name: "Projects", path: "/Projects", icon: <Folder size={22} /> },
   ];
 
   return (
@@ -19,7 +20,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
       className="
-  h-full bg-white shadow fixed top-0 left-0 z-40
+  h-full bg-[#ECECEC] shadow fixed top-0 left-0 z-40
   group w-20 hover:w-64
   transition-[width] duration-300 overflow-hidden
 "
@@ -62,7 +63,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                 rounded-xl transition-all duration-300
                 ${
                   isActive
-                    ? "bg-gray-200 text-black "
+                    ? "bg-[#454B57] text-white rounded-l-full"
                     : "text-gray-700 hover:bg-gray-100"
                 }
               `

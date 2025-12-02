@@ -87,7 +87,7 @@ export default function AttendanceHeader({
             px-4 py-2 rounded transition-all duration-200
             ${
               activeTab === "employees"
-                ? "bg-gradient-to-r from-[#00AEEF] to-[#00223E] text-white shadow-md"
+                ? "bg-black text-white shadow-md"
                 : "text-gray-600"
             }
           `}
@@ -102,7 +102,7 @@ export default function AttendanceHeader({
             px-4 py-2 rounded transition-all duration-200
             ${
               activeTab === "interns"
-                ? "bg-gradient-to-r from-[#00AEEF] to-[#00223E] text-white shadow-md"
+                ? "bg-black text-white shadow-md"
                 : "text-gray-600"
             }
           `}
