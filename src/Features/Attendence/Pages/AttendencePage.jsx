@@ -6,7 +6,7 @@ import AttendanceList from "../Components/AttendenceList";
 export default function AttendancePage() {
   const [activeTab, setActiveTab] = useState("employees");
   const [search, setSearch] = useState("");
-  const [date, setDate] = useState("");
+  const [, setDate] = useState("");
 
   // Choose data based on active tab
   const rawData = activeTab === "employees" ? employeeData : internData;

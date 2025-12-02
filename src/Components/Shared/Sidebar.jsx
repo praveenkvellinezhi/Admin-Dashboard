@@ -72,10 +72,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             <div className="min-w-[22px] flex justify-center">{item.icon}</div>
 
             <span
-              className="
-                opacity-0 group-hover:opacity-100
-                transition-opacity duration-300 whitespace-nowrap font-semibold
-              "
+              className={`
+  transition-opacity duration-300 whitespace-nowrap font-semibold text-black
+  ${isOpen ? "opacity-100" : "opacity-0"}
+`}
             >
               {item.name}
             </span>
