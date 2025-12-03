@@ -24,9 +24,9 @@ export default function AttendanceHeader({
         {/* Heading */}
         <h1
           className="
-            text-[32px] sm:text-[45px] lg:text-[55px]
+            text-[32px] sm:text-[30px] lg:text-[40px]
             font-poppins font-bold leading-none
-            bg-gradient-to-r from-black via-gray-700 to-gray-600
+            bg-black
             bg-clip-text text-transparent
           "
         >

@@ -7,7 +7,7 @@ export default function AdminLayout() {
   const [isOpen, setIsOpen] = useState(false); 
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-[#F3F3F3] ">
 
       {/* Sidebar */}
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
@@ -30,7 +30,7 @@ export default function AdminLayout() {
         </div>
 
         {/* PAGE CONTENT */}
-        <main className="mt-16 p-6 overflow-y-auto bg-gray-50">
+        <main className="mt-16 p-6 overflow-y-auto bg-[#F3F3F3]">
           <Outlet />
         </main>
       </div>

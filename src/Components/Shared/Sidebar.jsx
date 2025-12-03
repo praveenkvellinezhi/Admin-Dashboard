@@ -52,36 +52,41 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       </div>
 
       {/* MENU */}
-      <div className="flex flex-col mt-6">
-        {navbar.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.path}
-            className={({ isActive }) =>
-              `
-                flex items-center gap-4 px-5 py-3 my-1
-                rounded-xl transition-all duration-300
-                ${
-                  isActive
-                    ? "bg-[#454B57] text-white rounded-l-full"
-                    : "text-gray-700 hover:bg-gray-100"
-                }
-              `
-            }
-          >
-            <div className="min-w-[22px] flex justify-center">{item.icon}</div>
-
-            <span
-              className={`
-  transition-opacity duration-300 whitespace-nowrap font-semibold text-black
-  ${isOpen ? "opacity-100" : "opacity-0"}
-`}
-            >
-              {item.name}
-            </span>
-          </NavLink>
-        ))}
+    <div className="flex flex-col mt-6">
+  {navbar.map((item) => (
+    <NavLink
+      key={item.name}
+      to={item.path}
+      className={({ isActive }) =>
+        `
+        flex items-center gap-4 px-5 py-3 my-1
+        rounded-xl transition-all duration-300
+        ${
+          isActive
+            ? "bg-[#454B57] text-white rounded-l-full"  // make icon + text white
+            : "text-black hover:bg-gray-100"
+        }
+      `
+      }
+    >
+      {/* ICON — will turn white automatically because parent has text-white */}
+      <div className="min-w-[22px] flex justify-center">
+        {item.icon}
       </div>
+
+      {/* TEXT */}
+      <span
+        className={`
+          transition-opacity duration-300 whitespace-nowrap font-semibold
+          ${isOpen ? "opacity-100" : "opacity-0"}
+        `}
+      >
+        {item.name}
+      </span>
+    </NavLink>
+  ))}
+</div>
+
     </div>
   );
 }
