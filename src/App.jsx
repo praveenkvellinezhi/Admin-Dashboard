@@ -13,10 +13,12 @@ function App() {
     <Routes>
       <Route element={<AdminLayout />}>
         <Route path="/" element={<Dashboard />} />
-        <Route path="/Attendence" element={<AttendencePage/>} />
-        <Route path="/Employee" element={<EmployeePage/>} />
-        <Route path="/Interns" element={<InternsPage/>} />
+       
+       
         <Route path="/Projects" element={<ProjectsPage/>} />
+         <Route path="/Attendence" element={<AttendencePage/>} />
+         <Route path="/Employee" element={<EmployeePage/>} />
+        <Route path="/Interns" element={<InternsPage/>} />
 
 
 
