@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import InternsHeader from '../Components/InternsHeader'
 import { interns } from '../InternsData';
 import EmployeeList from '../../Employees/Components/EmployeeList';
+import InternsList from '../Components/InternList';
 
 export default function InternsPage() {
 
@@ -11,20 +12,20 @@ export default function InternsPage() {
   
     // FILTER lOGIC///
 
-    const filteredInterns=interns.filter((int=>{
-      return(
-        (role === "All" || int.role === role )&& int.name.toLowerCase().includes(search.toLowerCase())
+const filteredInterns=interns.filter((emp)=>{
+  return(
+    (role === "All" || emp.role === role)&& emp.name.toLowerCase().includes(search.toLowerCase())
+  )
+})
 
-      )
-    }))
-  return (
+  return ( 
     <div>
       <InternsHeader  search={search}
       setSearch={setSearch}
       role={role}
       setRole={setRole}/>
 
-      <InternsPage interns={filteredInterns}/>
+      <InternsList interns={filteredInterns}/>
     </div>
   )
 }

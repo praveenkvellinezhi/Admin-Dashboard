@@ -1,17 +1,25 @@
 import React, { useState } from "react"
-import { Search, Filter } from "lucide-react";
+import { Search, Filter,UserRoundPlus } from "lucide-react";
+import { useNavigate } from "react-router";
 
 
 
-export default function InternsHeader({search,setSearch,role,SetRole}) {
-    const [open,setOpen]=useState(false)
-    const roles=[ "All",
-  "MERN Stack Intern",
-  "UIUX Intern",
+export default function InternsHeader({search,setSearch,role,setRole}) {
+    const [open,setOpen]=useState(false);
+    const navigate=useNavigate();
+ const roles = [
+  "All",
+  "React Intern",
+  "Backend Intern",
+  "UI/UX Intern",
   "Flutter Intern",
-  "Python Intern"]
+  "Data Entry Intern",
+  "Marketing Intern",
+  "Testing Intern"
+];
+
   return (
-    <div className="bg-white p-1 rounded-2xl">
+    <div className="bg-white p-1 rounded-2xl mt-3">
         <div className="flex justify-between items-center mx-5">
             <h1 className="text-[40px] font-bold font-poppins pt-1">Interns</h1>
 
@@ -43,17 +51,19 @@ export default function InternsHeader({search,setSearch,role,SetRole}) {
           <div className="relative
           ">
             <button onClick={()=>setOpen(!open)}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-100"><Filter size={18} />Filter</button>
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-100"><Filter size={18} />{role}</button>
 
                 {open && (
                     <div className="absolute right-0 mt-2 bg-white rounded-xl shadow-lg border border-gray-200 w-40 z-50">
                         {roles.map((r)=>(
                             <button key={r}
                             onClick={()=>{
-                                SetRole(r);
+                                setRole(r);
                                 setOpen(false);
                             }} className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${r===role ? 'font-semibold text-gray-800' :" "}`}>
                                 {r}
+                             
+                                
 
                             </button>
                         ))}
@@ -67,7 +77,10 @@ export default function InternsHeader({search,setSearch,role,SetRole}) {
 
           </div>
           {/* ADD EMPLOYEE */}
-           <button className="px-5 py-2 bg-green-200 text-green-900 font-semibold rounded-xl hover:bg-green-300">
+           <button onClick={()=>{
+            navigate("/Intern-Add")
+           }} className="px-5 py-2 bg-green-200 text-green-900 font-semibold rounded-xl hover:bg-green-300 flex items-center">
+            <UserRoundPlus className="me-2"/>
             Add Intern
           </button>
 

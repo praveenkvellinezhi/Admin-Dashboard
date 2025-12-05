@@ -1,8 +1,10 @@
-import { Search, Filter } from "lucide-react";
+import { Search, Filter,UserRoundPlus } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 
 export default function EmployeeHeader({ search, setSearch, role, setRole }) {
   const [open, setOpen] = useState(false);
+  const navigate=useNavigate();
  const roles = [
   "All",
   "MERN Stack Developer",
@@ -14,7 +16,7 @@ export default function EmployeeHeader({ search, setSearch, role, setRole }) {
 
 
   return (
-    <div className="bg-white p-1 rounded-2xl ">
+    <div className="bg-white p-1 rounded-2xl mt-3">
       <div className="flex justify-between items-center mx-5">
         <h1 className="text-[40px] font-bold font-poppins pt-1">Employees</h1>
       </div>
@@ -43,7 +45,7 @@ export default function EmployeeHeader({ search, setSearch, role, setRole }) {
               onClick={() => setOpen(!open)}
               className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-100"
             >
-              <Filter size={18} /> Filter
+              <Filter size={18} />{role}
             </button>
 
             {open && (
@@ -67,8 +69,11 @@ export default function EmployeeHeader({ search, setSearch, role, setRole }) {
           </div>
 
           {/* ADD EMPLOYEE */}
-          <button className="px-5 py-2 bg-green-200 text-green-900 font-semibold rounded-xl hover:bg-green-300">
-            Add Employee
+          <button 
+          onClick={()=>{
+            navigate('/Employee-add')
+          }} className=" w-full px-5 py-2 bg-green-200 text-green-900 font-semibold rounded-xl hover:bg-green-300  text- flex justify-center items-center">
+           <UserRoundPlus className=""/> Add Employee
           </button>
         </div>
       </div>

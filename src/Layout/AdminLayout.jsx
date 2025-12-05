@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Header from "../Components/Shared/Header";
 import Sidebar from "../Components/Shared/Sidebar";
 import { Outlet } from "react-router-dom";
 
@@ -20,17 +19,17 @@ export default function AdminLayout() {
         `}
       >
         {/* HEADER */}
-        <div
+        {/* <div
           className={`
             fixed top-0 right-0 h-16 bg-white shadow z-40 transition-all duration-300
             ${isOpen ? "left-64" : "left-20"}
           `}
         >
           <Header />
-        </div>
+        </div> */}
 
         {/* PAGE CONTENT */}
-        <main className="mt-16 p-6 overflow-y-auto bg-[#F3F3F3]">
+        <main className=" p-5 overflow-y-auto bg-[#F3F3F3]">
           <Outlet />
         </main>
       </div>

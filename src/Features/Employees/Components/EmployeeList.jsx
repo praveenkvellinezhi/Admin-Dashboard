@@ -1,11 +1,14 @@
 import { Mail, Phone } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function EmployeeList({ employees }) {
+  const navigate=useNavigate();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
       {employees.map((emp) => (
         <div
           key={emp.id}
+          onClick={()=>{navigate(`/Employees/${emp.id}`)}}
           className="bg-white rounded-2xl shadow-md p-4 w-full mx-auto"
         >
           {/* Profile image */}

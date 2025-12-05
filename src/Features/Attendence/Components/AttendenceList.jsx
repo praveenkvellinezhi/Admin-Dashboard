@@ -12,9 +12,9 @@ export default function AttendanceList({ rows }) {
           {/* HEADER */}
           <thead>
             <tr className="text-white bg-black text-sm shadow-md">
-              <th className="p-3 text-left font-semibold">Date</th>
-              <th className="p-3 text-left font-semibold">ID</th>
+              <th className="p-3 text-left font-semibold"> ID</th>
               <th className="p-3 text-left font-semibold">Name</th>
+              <th className="p-3 text-left font-semibold">Date</th>
               <th className="p-3 text-left font-semibold">Check In</th>
               <th className="p-3 text-left font-semibold">Check Out</th>
               <th className="p-3 text-left font-semibold">Add Overtime</th>
@@ -35,9 +35,9 @@ export default function AttendanceList({ rows }) {
                     ${isRed ? "bg-red-100 text-black" : "bg-white text-black"}
                     ${isRed ? "" : "hover:bg-gray-50 transition"}
                   `}
-                >
-                  <td className="p-3 font-medium">{item.date || "01/11/2020"}</td>
+                >  
                   <td className="p-3 font-medium">{item.id}</td>
+
 
                   {/* Name + Role */}
                   <td className="p-3">
@@ -46,9 +46,11 @@ export default function AttendanceList({ rows }) {
                       {item.role || item.internRole}
                     </div>
                   </td>
+                  <td className="p-3 font-medium"> {item.date || "01/11/2020"}</td>
 
-                  <td className="p-3">{item.checkIn || "Nill"}</td>
-                  <td className="p-3">{item.checkOut || "Nill"}</td>
+
+                  <td className="p-3 ">{item.checkIn || "Nill"}</td>
+                  <td className="p-3 ">{item.checkOut || "Nill"}</td>
                   <td className="p-3">{item.overtime || (item.checkIn ? "2 Hrs" : "Nill")}</td>
 
                   {/* 👁 ICON REMOVED – this cell is now empty */}
