@@ -12,7 +12,7 @@ export default function Dashboard() {
       <StatCard />
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
 
         {/* LEFT COLUMN — Projects */}
         <OngoingProjects />

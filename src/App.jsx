@@ -13,6 +13,7 @@ import EmployeePageDetails from "./Features/Employees/Pages/EmployeePageDetails"
 import InternsAddingForm from "./Features/Interns/Pages/InternsAddingForm";
 import EmployeeAddingForm from "./Features/Employees/Pages/EmployeeAddingForm";
 import ProjectsAddingForm from "./Features/Projects/Pages/ProjectsAddingForm";
+import { projects } from "./Features/Projects/Projectdata";
 
 function App() {
   return (
@@ -22,12 +23,14 @@ function App() {
        
        
         <Route path="/Projects" element={<ProjectsPage/>} />
-            <Route path="/Projects/:id" element={<ProjectDetails />} />
+            <Route path="/Projects/:id" element={<ProjectDetails projects={projects} />} />
             <Route path="/Project-Add" element={<ProjectsAddingForm/>} />
 
 
          <Route path="/Attendence" element={<AttendencePage/>} />
          <Route path="/Employee" element={<EmployeePage/>} />
+            <Route path="/Employees/:id" element={<ProjectDetails />} />
+
             <Route path="/Employee-add" element={<EmployeeAddingForm />} />
 
         <Route path="/Interns" element={<InternsPage/>} />

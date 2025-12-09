@@ -63,12 +63,9 @@ function OngoingProjects() {
         {projects.map((p, index) => (
           <div
             key={index}
-            className="
-              bg-white rounded-xl p-3 sm:p-4 
-              flex flex-col sm:flex-row 
-              sm:items-start justify-between 
-              shadow-sm gap-3 sm:gap-0
-            "
+            className=
+        "bg-white rounded-xl p-3 sm:p-4 flex flex-col gap-4 shadow-sm"
+            
           >
             {/* LEFT SECTION */}
             <div className="flex items-start gap-3 flex-1">
@@ -109,7 +106,7 @@ function OngoingProjects() {
             </div>
 
             {/* RIGHT — Employee Avatars */}
-            <div className="flex -space-x-2 mt-1 sm:mt-0 sm:self-center">
+            <div className="flex -space-x-2 self-start sm:self-center mt-2">
               {p.employees?.slice(0, 4).map((img, i) => (
                 <img
                   key={i}

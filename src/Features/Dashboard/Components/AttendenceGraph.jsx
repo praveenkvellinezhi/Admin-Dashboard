@@ -50,7 +50,7 @@ export default function AttendanceGraph({ month = "Month" }) {
       : yearData;
 
   return (
-    <div className="w-full bg-[#FFFDEB] rounded-3xl shadow-lg p-4 sm:p-6 h-[320px] sm:h-[380px]">
+    <div className="w-full bg-[#FFFDEB] rounded-3xl shadow-lg p-4 sm:p-6 h-[260px] sm:h-[380px]">
 
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
@@ -96,7 +96,7 @@ export default function AttendanceGraph({ month = "Month" }) {
       </div>
 
       {/* Chart */}
-      <div className="w-full h-[180px] sm:h-[230px]">
+      <div className="w-full h-[150px] sm:h-[230px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
@@ -130,7 +130,7 @@ export default function AttendanceGraph({ month = "Month" }) {
       </div>
 
       {/* Footer */}
-      <div className="flex justify-between text-[10px] sm:text-xs text-gray-400 mt-3">
+      <div className="flex justify-between text-[9px] sm:text-xs text-gray-400 mt-3">
         <span>
           {selectedMonth === "Month"
             ? "Jan — Jul"

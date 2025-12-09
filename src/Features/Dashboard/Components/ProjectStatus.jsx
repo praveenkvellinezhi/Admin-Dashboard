@@ -25,7 +25,7 @@ export default function ProjectStatus({ completed = 80 }) {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-0">
 
         {/* 🟢 Circular Progress Component */}
-        <div style={{ width: "110px" }}>
+        <div className="w-[90px] sm:w-[110px]">
           <CircularProgressbar
             value={percentage}
             text={`${percentage}%`}
@@ -40,7 +40,7 @@ export default function ProjectStatus({ completed = 80 }) {
         </div>
 
         {/* Legend */}
-        <div className="flex sm:flex-col justify-center gap-4">
+        <div className="flex flex-row sm:flex-col justify-center gap-3">
           <div className="flex items-center gap-3">
             <span className="w-4 h-4 bg-green-600 rounded"></span>
             <span className="text-sm font-medium">Completed</span>

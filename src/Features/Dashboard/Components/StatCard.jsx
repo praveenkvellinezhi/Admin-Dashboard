@@ -18,13 +18,13 @@ export default function StatsSection() {
           <div
             className={`
               ${item.color}
-              shadow-md rounded-2xl  h-35 mt-0
+              shadow-md rounded-2xl  min-h-[120px] mt-0
               p-4 sm:p-5
               flex flex-col justify-center
               transition hover:shadow-lg hover:scale-105 cursor-pointer
             `}
           >
-            <h3 className=" text-3xl sm:text-sm font-semibold text-white">
+            <h3 className=" text-sm sm:text-base lg:text-lg font-semibold text-white">
               {item.title}
             </h3>
 
@@ -33,7 +33,7 @@ export default function StatsSection() {
                 {item.icon}
               </div>
 
-              <p className="text-xl text-white sm:text-2xl font-bold">
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
                 {item.value}
               </p>
             </div>

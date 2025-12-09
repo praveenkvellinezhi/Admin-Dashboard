@@ -20,9 +20,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
       className="
-  h-full bg-[#ECECEC] shadow fixed top-0 left-0 z-40
-  group w-20 hover:w-64
-  transition-[width] duration-300 overflow-hidden
+    h-full bg-[#ECECEC] shadow fixed top-0 left-0 z-40
+  w-20 lg:hover:w-64
+  transition-[width] duration-300
+  overflow-hidden
 "
     >
       {/* LOGO SECTION (same fixed height ensures smooth transition) */}

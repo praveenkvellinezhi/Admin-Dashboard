@@ -8,7 +8,7 @@ export default function EmployeeList({ employees }) {
       {employees.map((emp) => (
         <div
           key={emp.id}
-          onClick={()=>{navigate(`/Employees/${emp.id}`)}}
+      onClick={()=>{navigate(`/Employees/${emp.id}`)}}
           className="bg-white rounded-2xl shadow-md p-4 w-full mx-auto"
         >
           {/* Profile image */}
