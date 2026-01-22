@@ -22,7 +22,7 @@ export default function AddTaskModal({ phaseId, onClose }) {
     status: "in_progress",
     start_date: "",
     end_date: "",
-    phase: phaseId,        // ✅ PHASE ID SET HERE
+    phase: phaseId,
     assigned_to: "",
   });
 
@@ -39,7 +39,7 @@ export default function AddTaskModal({ phaseId, onClose }) {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      phase: phaseId,      // ✅ GUARANTEED
+      phase: phaseId,
     }));
   }, [phaseId]);
 
@@ -48,7 +48,14 @@ export default function AddTaskModal({ phaseId, onClose }) {
   ========================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        name === "assigned_to" && value
+          ? Number(value)   // ✅ FIX
+          : value,
+    }));
   };
 
   /* =========================
@@ -61,7 +68,7 @@ export default function AddTaskModal({ phaseId, onClose }) {
       status: formData.status,
       start_date: formData.start_date,
       end_date: formData.end_date,
-      phase: formData.phase,          // ✅ THIS FIXES YOUR ERROR
+      phase: formData.phase,
       assigned_to: formData.assigned_to || null,
     };
 

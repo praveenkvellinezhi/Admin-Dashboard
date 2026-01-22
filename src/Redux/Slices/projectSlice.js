@@ -12,7 +12,9 @@ const initialState = {
 
   phases: [],
   phaseAddStatus: "idle",
+
   taskAddStatus: "idle",
+  taskFetchStatus: "idle",
 
   progress: 0,
 
@@ -32,7 +34,7 @@ export const fetchProjects = createAsyncThunk(
       const res = await axios.get(
         `${BASE_URL}/project/projects/list/`
       );
-      return res.data; // backend returns array
+      return res.data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -97,7 +99,26 @@ export const addPhase = createAsyncThunk(
 );
 
 /* =========================
-   ADD TASK (PHASE)
+   FETCH TASKS
+========================= */
+export const fetchTasks = createAsyncThunk(
+  "projects/fetchTasks",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/project/tasks/list/`
+      );
+      return res.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || error.message
+      );
+    }
+  }
+);
+
+/* =========================
+   ADD TASK
 ========================= */
 export const addTask = createAsyncThunk(
   "projects/addTask",
@@ -185,6 +206,36 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
+      /* ===== FETCH TASKS ===== */
+      .addCase(fetchTasks.pending, (state) => {
+        state.taskFetchStatus = "loading";
+      })
+      .addCase(fetchTasks.fulfilled, (state, action) => {
+        state.taskFetchStatus = "succeeded";
+
+        const tasks = action.payload;
+
+        // Reset tasks in phases
+        state.phases.forEach((phase) => {
+          phase.tasks = [];
+        });
+
+        // Assign tasks to correct phase
+        tasks.forEach((task) => {
+          const phase = state.phases.find(
+            (p) => p.id === task.phase
+          );
+
+          if (phase) {
+            phase.tasks.push(task);
+          }
+        });
+      })
+      .addCase(fetchTasks.rejected, (state, action) => {
+        state.taskFetchStatus = "failed";
+        state.error = action.payload;
+      })
+
       /* ===== ADD TASK ===== */
       .addCase(addTask.pending, (state) => {
         state.taskAddStatus = "loading";
@@ -198,7 +249,6 @@ const projectSlice = createSlice({
         );
 
         if (phase) {
-          phase.tasks = phase.tasks || [];
           phase.tasks.push(task);
         }
       })
@@ -219,6 +269,8 @@ export const selectAllprojects = (state) =>
 
 export const getProjectStatus = (state) =>
   state.projects.projectStatus;
+export const getProjectError =(state)=>
+  state.projects.error
 
 export const getAddProjectStatus = (state) =>
   state.projects.addStatus;
@@ -229,8 +281,8 @@ export const getPhaseAddStatus = (state) =>
 export const getTaskAddStatus = (state) =>
   state.projects.taskAddStatus;
 
-export const getProjecterror = (state) =>
-  state.projects.error;
+export const getTaskFetchStatus = (state) =>
+  state.projects.taskFetchStatus;
 
 export const getSingleprojectStatus = (state) =>
   state.projects.singleStatus;

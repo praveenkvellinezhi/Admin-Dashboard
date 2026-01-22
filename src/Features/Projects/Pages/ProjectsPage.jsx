@@ -7,7 +7,7 @@ import {
   fetchProjects,
   selectAllprojects,
   getProjectStatus,
-  getProjecterror,
+  getProjectError,
 } from "../../../Redux/Slices/projectSlice";
 
 export default function ProjectsPage() {
@@ -15,7 +15,7 @@ export default function ProjectsPage() {
 
   const projects = useSelector(selectAllprojects);
   const status = useSelector(getProjectStatus);
-  const error = useSelector(getProjecterror);
+  const error = useSelector(getProjectError);
 
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("All");
