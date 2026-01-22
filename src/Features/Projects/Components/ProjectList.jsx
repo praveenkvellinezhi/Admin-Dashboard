@@ -1,75 +1,170 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { LayoutGrid, List } from "lucide-react";
 
 export default function ProjectList({ projects }) {
+  const ITEMS_PER_PAGE = 8;
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [view, setView] = useState("grid"); // grid | list
+
+  const totalPages = Math.ceil(projects.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  const currentProjects = projects.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
   return (
-    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-8">
-      {projects.map((project) => (
-        <Link
-          key={project.id}
-          to={`/Projects/${project.id}`}   // ✅ MATCHES YOUR ROUTE
-          state={project}                  // ✅ SEND DATA TO DETAILS PAGE
-          className="bg-white rounded-2xl shadow-md p-4 w-full mx-auto hover:shadow-lg transition"
+    <>
+      {/* 🔄 View Toggle */}
+      <div className="flex justify-end gap-2 mb-4">
+        <button
+          onClick={() => setView("grid")}
+          className={`p-2 rounded border ${
+            view === "grid"
+              ? "bg-blue-600 text-white"
+              : "hover:bg-gray-100"
+          }`}
         >
-          {/* ✅ Logo */}
-          <div className="flex justify-center mb-4 mt-3">
+          <LayoutGrid size={16} />
+        </button>
+
+        <button
+          onClick={() => setView("list")}
+          className={`p-2 rounded border ${
+            view === "list"
+              ? "bg-blue-600 text-white"
+              : "hover:bg-gray-100"
+          }`}
+        >
+          <List size={16} />
+        </button>
+      </div>
+
+      {/* Projects */}
+      <div
+        className={
+          view === "grid"
+            ? "grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+            : "space-y-4"
+        }
+      >
+        {currentProjects.map((project) => (
+          <Link
+            key={project.id}
+            to={`/Projects/${project.project_id}`}
+            state={project}
+            className={`bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition ${
+              view === "list" ? "flex gap-6 items-center" : ""
+            }`}
+          >
+            {/* Logo */}
             <img
-              src={project.logo}
-              alt={project.title}
-              className="w-28 h-28 object-cover rounded-full border-4 border-white shadow-md"
+              src={project.project_logo_url}
+              alt={project.project_name}
+              className={`object-cover rounded-full border-4 border-white shadow-md ${
+                view === "list" ? "w-20 h-20" : "w-28 h-28 mx-auto"
+              }`}
             />
-          </div>
 
-          {/* ✅ Title */}
-          <h2 className="text-center text-xl font-semibold text-gray-800">
-            {project.title}
-          </h2>
+            {/* Content */}
+            <div className={view === "list" ? "flex-1" : "text-center"}>
+              <h2 className="text-lg font-semibold text-gray-800">
+                {project.project_name}
+              </h2>
 
-          {/* ✅ Subtitle */}
-          <p className="text-center text-gray-500 text-sm">
-            {project.subtitle}
-          </p>
-
-          {/* ✅ Tech Stack */}
-          <p className="text-center text-yellow-500 font-medium mt-1 text-sm">
-            {project.techStack}
-          </p>
-
-          {/* ✅ Info Section */}
-          <div className="bg-[#F8F8F8] p-5 rounded-2xl mt-3">
-            {/* ✅ Dates */}
-            <div className="flex justify-between mt-6 text-gray-600 text-sm">
-              <div>
-                <p className="font-semibold text-xs">Start date</p>
-                <p>{project.startDate}</p>
-              </div>
-              <div>
-                <p className="font-semibold text-xs">Due date</p>
-                <p>{project.dueDate}</p>
-              </div>
-            </div>
-
-            {/* ✅ Members (SAFE MAP — NO CRASH) */}
-            <div className="flex items-center gap-2 mt-4 pt-3">
-       <div className="flex  mt-2 -space-x-4">
-  {project.members.map((member, index) => (
-    <img
-      key={index}
-      src={member.image}
-      alt={member.name}
-      title={member.name}
-      className="w-10 h-10 rounded-full border object-cover "
-    />
-  ))}
-</div>
-
-              <p className="text-gray-600 text-sm">
-                + {project.extraMembers} members
+              <p className="text-gray-500 text-sm">
+                {project.description || ""}
               </p>
+
+              <p className="text-yellow-500 font-medium text-sm mt-1">
+                {project.techStack || ""}
+              </p>
+
+              {/* Meta */}
+              <div
+                className={`mt-3 text-sm text-gray-600 ${
+                  view === "grid"
+                    ? "bg-[#F8F8F8] p-4 rounded-xl"
+                    : ""
+                }`}
+              >
+                <div className="flex justify-between">
+                  <div>
+                    <p className="text-xs font-semibold">Start</p>
+                    <p>{project.start_date}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold">Due</p>
+                    <p>{project.end_date}</p>
+                  </div>
+                </div>
+
+                {/* Members */}
+                <div className="flex items-center gap-2 mt-3">
+                  <div className="flex -space-x-3">
+                    {project.team_members?.map((member) => (
+                      <img
+                        key={member.id}
+                        src={member.profile_image_url}
+                        alt={member.name}
+                        title={member.name}
+                        className="w-8 h-8 rounded-full border object-cover"
+                      />
+                    ))}
+                  </div>
+
+                  <span className="text-xs text-gray-500">
+                    + {project.extraMembers || 0} members
+                  </span>
+                </div>
+              </div>
             </div>
-          </div>
-        </Link>
-      ))}
-    </div>
+          </Link>
+        ))}
+      </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 text-sm border rounded disabled:opacity-40"
+          >
+            Prev
+          </button>
+
+          {[...Array(totalPages)].map((_, i) => {
+            const page = i + 1;
+            return (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-1 text-sm border rounded ${
+                  currentPage === page
+                    ? "bg-blue-600 text-white"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                {page}
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(p + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 text-sm border rounded disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </>
   );
 }

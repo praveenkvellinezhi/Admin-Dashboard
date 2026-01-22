@@ -1,18 +1,13 @@
-import { Eye } from "lucide-react";
-
 export default function AttendanceList({ rows }) {
-
-  
-
   return (
-    <div className="mt-6 bg-white rounded-xl shadow-md overflow-hidden">
+    <div className="mt-6 bg-white rounded-2xl shadow-md overflow-hidden">
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[1050px] border-collapse">
 
           {/* HEADER */}
           <thead>
-            <tr className="text-white bg-black text-sm shadow-md">
-              <th className="p-3 text-left font-semibold"> ID</th>
+            <tr className="bg-gray-100 text-gray-600 text-sm">
+              <th className="p-3 text-left font-semibold">ID</th>
               <th className="p-3 text-left font-semibold">Name</th>
               <th className="p-3 text-left font-semibold">Date</th>
               <th className="p-3 text-left font-semibold">Check In</th>
@@ -25,36 +20,62 @@ export default function AttendanceList({ rows }) {
           {/* BODY */}
           <tbody>
             {rows.map((item) => {
-              const isRed = !item.checkIn; // Leave if no check-in
+              const isLeave = !item.checkIn;
 
               return (
                 <tr
                   key={item.id}
                   className={`
-                    border-b text-sm sm:text-base
-                    ${isRed ? "bg-red-100 text-black" : "bg-white text-black"}
-                    ${isRed ? "" : "hover:bg-gray-50 transition"}
+                    border-b text-sm
+                    ${isLeave ? "bg-red-100" : "bg-white"}
+                    hover:bg-gray-50 transition
                   `}
-                >  
+                >
+                  {/* ID */}
                   <td className="p-3 font-medium">{item.id}</td>
 
-
-                  {/* Name + Role */}
+                  {/* NAME */}
                   <td className="p-3">
-                    <div className="font-semibold">{item.name}</div>
-                    <div className="text-black text-xs">
-                      {item.role || item.internRole}
+                    <div className="font-semibold text-gray-900">
+                      {item.name}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {item.role || item.internRole || "—"}
                     </div>
                   </td>
-                  <td className="p-3 font-medium"> {item.date || "01/11/2020"}</td>
 
+                  {/* DATE */}
+                  <td className="p-3">
+                    {item.date || "—"}
+                  </td>
 
-                  <td className="p-3 ">{item.checkIn || "Nill"}</td>
-                  <td className="p-3 ">{item.checkOut || "Nill"}</td>
-                  <td className="p-3">{item.overtime || (item.checkIn ? "2 Hrs" : "Nill")}</td>
+                  {/* CHECK IN */}
+                  <td className="p-3">
+                    {item.checkIn || "—"}
+                  </td>
 
-                  {/* 👁 ICON REMOVED – this cell is now empty */}
-                  <td className="p-3"></td>
+                  {/* CHECK OUT */}
+                  <td className="p-3">
+                    {item.checkOut || "—"}
+                  </td>
+
+                  {/* OVERTIME (API DATA ONLY) */}
+                  <td className="p-3 font-medium">
+                    {item.overtime || "0 hrs"}
+                  </td>
+
+                  {/* REASON */}
+                  <td className="p-3">
+                    {isLeave ? (
+                      <span className="px-3 py-1 text-xs font-medium rounded-full bg-red-500 text-white">
+                        On leave
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">
+                        {item.reason || "—"}
+                      </span>
+                    )}
+                  </td>
                 </tr>
               );
             })}
@@ -62,10 +83,6 @@ export default function AttendanceList({ rows }) {
 
         </table>
       </div>
-
-      {/* MODAL STILL EXISTS — but unreachable now because icon removed */}
-   
-
     </div>
   );
 }

@@ -11,7 +11,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
     { name: "Projects", path: "/Projects", icon: <Folder size={22} /> },
     { name: "Attendence", path: "/Attendence", icon: <Calendar size={22} /> },
 
-    { name: "Employeee", path: "/Employee", icon: <Users size={22} /> },
+    { name: "Employeee", path: "/employees", icon: <Users size={22} /> },
     { name: "Interns", path: "/Interns", icon: <UserPlus size={22} /> },
   ];
 

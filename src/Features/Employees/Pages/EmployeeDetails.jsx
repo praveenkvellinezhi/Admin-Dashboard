@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import BasicInformation from "../../Employees/Components/BasicInformation";
-import EmployeeDetailsHeader from "../../Employees/Components/DetailsHeader";
-import OngoingProjects from "../../Employees/Components/OngoingProjects";
-import DocumentsCard from "../../Employees/Components/DocumentsCard";
-import StatusNotes from "../../Employees/Components/StatusNotes";
+import BasicInformation from "../Components/BasicInformation";
+import SalaryEmploymentDetails from "../Components/SalaryEmploymentDetails";
+import EmployeeDetailsHeader from "../Components/DetailsHeader";
+import OngoingProjects from "../Components/OngoingProjects";
+import DocumentsCard from "../Components/DocumentsCard";
+import StatusNotes from "../Components/StatusNotes";
 
 import {
   fetchEmployeesById,
@@ -14,7 +15,7 @@ import {
   getSingleEmployeeStatus,
 } from "../../../Redux/Slices/employeeslice";
 
-export default function InternPageDetails() {
+export default function EmployeePageDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
@@ -48,13 +49,13 @@ export default function InternPageDetails() {
 
         {/* SECOND ROW */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+          <SalaryEmploymentDetails employee={employee} />
           <OngoingProjects employee={employee} />
-          <DocumentsCard employee={employee} />
-
         </div>
 
         {/* THIRD ROW */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+          <DocumentsCard employee={employee} />
           <StatusNotes employee={employee} />
         </div>
       </div>

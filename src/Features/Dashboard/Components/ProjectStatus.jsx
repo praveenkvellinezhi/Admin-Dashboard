@@ -5,16 +5,23 @@ import "react-circular-progressbar/dist/styles.css";
 export default function ProjectStatus({ completed = 80 }) {
   const [percentage, setPercentage] = useState(0);
 
-  // Animate number fill-up
+  /* =========================
+     ANIMATE PROGRESS SAFELY
+  ========================= */
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (percentage < completed) {
-        setPercentage(percentage + 1);
-      }
-    }, 30);
+    let current = 0;
 
-    return () => clearTimeout(timer);
-  }, [percentage, completed]);
+    const interval = setInterval(() => {
+      current += 1;
+      setPercentage(current);
+
+      if (current >= completed) {
+        clearInterval(interval);
+      }
+    }, 25);
+
+    return () => clearInterval(interval);
+  }, [completed]);
 
   return (
     <div className="bg-[#EFFFEB] rounded-3xl shadow-lg p-4 sm:p-6 w-full">
@@ -23,34 +30,33 @@ export default function ProjectStatus({ completed = 80 }) {
       </h3>
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-0">
-
-        {/* 🟢 Circular Progress Component */}
+        {/* 🟢 Circular Progress */}
         <div className="w-[90px] sm:w-[110px]">
           <CircularProgressbar
             value={percentage}
             text={`${percentage}%`}
             strokeWidth={12}
             styles={buildStyles({
-              pathColor: "#16a34a",    // green
-              trailColor: "#dc2626",   // red
+              pathColor: "#16a34a",  // green
+              trailColor: "#dc2626", // red
               textColor: "#000",
               textSize: "18px",
             })}
           />
         </div>
 
-        {/* Legend */}
+        {/* LEGEND */}
         <div className="flex flex-row sm:flex-col justify-center gap-3">
           <div className="flex items-center gap-3">
-            <span className="w-4 h-4 bg-green-600 rounded"></span>
+            <span className="w-4 h-4 bg-green-600 rounded" />
             <span className="text-sm font-medium">Completed</span>
           </div>
+
           <div className="flex items-center gap-3">
-            <span className="w-4 h-4 bg-red-600 rounded"></span>
+            <span className="w-4 h-4 bg-red-600 rounded" />
             <span className="text-sm font-medium">Non-Completed</span>
           </div>
         </div>
-
       </div>
     </div>
   );

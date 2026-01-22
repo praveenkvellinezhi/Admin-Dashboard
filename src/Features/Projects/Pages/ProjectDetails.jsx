@@ -1,28 +1,91 @@
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function ProjectDetails({ projects = [] }) {
+import ProjectDetailsHeader from "../Components/ProjectDetailheader";
+import ProjectOverview from "../Components/ProjectOverview";
+import ProjectMetrics from "../Components/ProjectMatrix";
+import ProjectPhases from "../Components/ProjectPhases";
+import AddPhaseModal from "../Components/AddPhasemodal";
+
+import {
+  fetchProjectById,
+  getSingleprojectStatus,
+  selectedProject,
+  selectProjectPhases,
+} from "../../../Redux/Slices/projectSlice";
+
+function ProjectDetails() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
 
-  const project = projects.find((item) => item.id === Number(id));
+  const project = useSelector(selectedProject);
+  const status = useSelector(getSingleprojectStatus);
+  const phases = useSelector(selectProjectPhases);
 
-  if (!project) {
-    return <h2 className="text-center mt-10 text-red-500">Project Not Found</h2>;
+  const [showPhaseModal, setShowPhaseModal] = useState(false);
+
+  /* =========================
+     FETCH PROJECT DETAILS
+  ========================= */
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchProjectById(id));
+    }
+  }, [dispatch, id]);
+
+  /* =========================
+     STATES
+  ========================= */
+  if (status === "loading") {
+    return (
+      <p className="text-center mt-10 text-gray-500">
+        Loading project details...
+      </p>
+    );
   }
 
-  return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow mt-10">
-      <h2 className="text-2xl font-bold text-center">{project.title}</h2>
-
-      <p className="text-gray-600 text-center mt-2">
-        {project.category}
+  if (!project) {
+    return (
+      <p className="text-center mt-10 text-gray-500">
+        No project data found
       </p>
+    );
+  }
 
-      <div className="mt-6 space-y-2">
-        <p><strong>Client:</strong> {project.client}</p>
-        <p><strong>Status:</strong> {project.status}</p>
-        <p><strong>Tech Stack:</strong> {project.tech}</p>
-        <p className="mt-4 text-gray-700">{project.description}</p>
+  /* =========================
+     UI
+  ========================= */
+  return (
+    <div className="bg-gray-50 min-h-screen p-6 space-y-6">
+      {/* HEADER */}
+      <ProjectDetailsHeader
+        onEdit={() => navigate(`/projects/edit/${id}`)}
+        onDelete={() => alert("Delete logic here")}
+        onAddPhase={() => setShowPhaseModal(true)}
+      />
+
+      {/* OVERVIEW + METRICS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-7xl mx-auto">
+        <ProjectOverview project={project} />
+        <ProjectMetrics project={project} />
       </div>
+
+      {/* PHASES */}
+      <div className="w-full max-w-7xl mx-auto">
+        <ProjectPhases project={project} phases={phases} />
+      </div>
+
+      {/* ADD PHASE MODAL */}
+      {showPhaseModal && (
+        <AddPhaseModal
+          projectId={project.project_id || project.id}
+          onClose={() => setShowPhaseModal(false)}
+        />
+      )}
     </div>
   );
 }
+
+export default ProjectDetails;
