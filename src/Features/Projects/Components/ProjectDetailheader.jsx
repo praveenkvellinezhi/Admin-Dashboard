@@ -11,9 +11,7 @@ export default function ProjectDetailsHeader({
   return (
     <div className="bg-[#F3F6FF] px-6 py-4 rounded-md">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-gray-900">
-          Project Details
-        </h1>
+        <h1 className="text-lg font-semibold text-gray-900">Project Details</h1>
 
         <div className="flex items-center gap-3">
           {/* Back */}
@@ -48,7 +46,7 @@ export default function ProjectDetailsHeader({
           <button
             onClick={onDelete}
             className="flex items-center gap-1 px-3 py-1.5 text-sm border border-red-200
-                       text-red-600 rounded-md bg-white hover:bg-red-50"
+             text-red-600 rounded-md bg-white hover:bg-red-50"
           >
             <Trash2 size={14} />
             Delete

@@ -8,7 +8,10 @@ import { BASE_URL } from "../Baseurl";
 const initialState = {
   projects: [],
   projectStatus: "idle",
+
   addStatus: "idle",
+  editStatus: "idle",
+  deleteStatus: "idle",
 
   phases: [],
   phaseAddStatus: "idle",
@@ -70,6 +73,45 @@ export const addProject = createAsyncThunk(
         formData
       );
       return res.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || error.message
+      );
+    }
+  }
+);
+
+/* =========================
+   EDIT PROJECT
+========================= */
+export const editProject = createAsyncThunk(
+  "projects/editProject",
+  async ({ projectId, formData }, { rejectWithValue }) => {
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}/project/projects/edit/${projectId}/`,
+        formData
+      );
+      return res.data.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data || error.message
+      );
+    }
+  }
+);
+
+/* =========================
+   DELETE PROJECT
+========================= */
+export const deleteProject = createAsyncThunk(
+  "projects/deleteProject",
+  async (projectId, { rejectWithValue }) => {
+    try {
+      await axios.delete(
+        `${BASE_URL}/project/projects/edit/${projectId}/`
+      );
+      return projectId;
     } catch (error) {
       return rejectWithValue(
         error.response?.data || error.message
@@ -173,6 +215,65 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
+      /* ===== EDIT PROJECT ===== */
+      .addCase(editProject.pending, (state) => {
+        state.editStatus = "loading";
+      })
+      .addCase(editProject.fulfilled, (state, action) => {
+        state.editStatus = "succeeded";
+
+        const updated = action.payload;
+
+        const index = state.projects.findIndex(
+          (p) =>
+            p.id === updated.id ||
+            p.project_id === updated.project_id
+        );
+
+        if (index !== -1) {
+          state.projects[index] = updated;
+        }
+
+        if (
+          state.selectedProject &&
+          (state.selectedProject.id === updated.id ||
+            state.selectedProject.project_id ===
+              updated.project_id)
+        ) {
+          state.selectedProject = updated;
+        }
+      })
+      .addCase(editProject.rejected, (state, action) => {
+        state.editStatus = "failed";
+        state.error = action.payload;
+      })
+
+      /* ===== DELETE PROJECT ===== */
+      .addCase(deleteProject.pending, (state) => {
+        state.deleteStatus = "loading";
+      })
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.deleteStatus = "succeeded";
+
+        state.projects = state.projects.filter(
+          (p) =>
+            p.id !== action.payload &&
+            p.project_id !== action.payload
+        );
+
+        if (
+          state.selectedProject &&
+          (state.selectedProject.id === action.payload ||
+            state.selectedProject.project_id === action.payload)
+        ) {
+          state.selectedProject = null;
+        }
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
+        state.deleteStatus = "failed";
+        state.error = action.payload;
+      })
+
       /* ===== FETCH SINGLE PROJECT ===== */
       .addCase(fetchProjectById.pending, (state) => {
         state.singleStatus = "loading";
@@ -183,7 +284,8 @@ const projectSlice = createSlice({
         state.singleStatus = "succeeded";
         state.selectedProject = action.payload.project;
         state.phases = action.payload.phases || [];
-        state.progress = action.payload.progress_percent || 0;
+        state.progress =
+          action.payload.progress_percent || 0;
       })
       .addCase(fetchProjectById.rejected, (state, action) => {
         state.singleStatus = "failed";
@@ -213,22 +315,13 @@ const projectSlice = createSlice({
       .addCase(fetchTasks.fulfilled, (state, action) => {
         state.taskFetchStatus = "succeeded";
 
-        const tasks = action.payload;
+        state.phases.forEach((p) => (p.tasks = []));
 
-        // Reset tasks in phases
-        state.phases.forEach((phase) => {
-          phase.tasks = [];
-        });
-
-        // Assign tasks to correct phase
-        tasks.forEach((task) => {
+        action.payload.forEach((task) => {
           const phase = state.phases.find(
             (p) => p.id === task.phase
           );
-
-          if (phase) {
-            phase.tasks.push(task);
-          }
+          if (phase) phase.tasks.push(task);
         });
       })
       .addCase(fetchTasks.rejected, (state, action) => {
@@ -248,9 +341,7 @@ const projectSlice = createSlice({
           (p) => p.id === task.phase
         );
 
-        if (phase) {
-          phase.tasks.push(task);
-        }
+        if (phase) phase.tasks.push(task);
       })
       .addCase(addTask.rejected, (state, action) => {
         state.taskAddStatus = "failed";
@@ -269,11 +360,18 @@ export const selectAllprojects = (state) =>
 
 export const getProjectStatus = (state) =>
   state.projects.projectStatus;
-export const getProjectError =(state)=>
-  state.projects.error
+
+export const getProjectError = (state) =>
+  state.projects.error;
 
 export const getAddProjectStatus = (state) =>
   state.projects.addStatus;
+
+export const getEditProjectStatus = (state) =>
+  state.projects.editStatus;
+
+export const getDeleteProjectStatus = (state) =>
+  state.projects.deleteStatus;
 
 export const getPhaseAddStatus = (state) =>
   state.projects.phaseAddStatus;

@@ -7,10 +7,13 @@ import ProjectOverview from "../Components/ProjectOverview";
 import ProjectMetrics from "../Components/ProjectMatrix";
 import ProjectPhases from "../Components/ProjectPhases";
 import AddPhaseModal from "../Components/AddPhasemodal";
+import DeleteProjectModal from "../Components/DeleteModal";
 
 import {
   fetchProjectById,
+  deleteProject,
   getSingleprojectStatus,
+  getDeleteProjectStatus,
   selectedProject,
   selectProjectPhases,
 } from "../../../Redux/Slices/projectSlice";
@@ -22,9 +25,11 @@ function ProjectDetails() {
 
   const project = useSelector(selectedProject);
   const status = useSelector(getSingleprojectStatus);
+  const deleteStatus = useSelector(getDeleteProjectStatus);
   const phases = useSelector(selectProjectPhases);
 
   const [showPhaseModal, setShowPhaseModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* =========================
      FETCH PROJECT DETAILS
@@ -34,6 +39,19 @@ function ProjectDetails() {
       dispatch(fetchProjectById(id));
     }
   }, [dispatch, id]);
+
+  /* =========================
+     DELETE HANDLER
+  ========================= */
+  const handleDelete = async () => {
+    const projectId = project.project_id || project.id;
+
+    const result = await dispatch(deleteProject(projectId));
+
+    if (deleteProject.fulfilled.match(result)) {
+      navigate("/projects");
+    }
+  };
 
   /* =========================
      STATES
@@ -61,8 +79,10 @@ function ProjectDetails() {
     <div className="bg-gray-50 min-h-screen p-6 space-y-6">
       {/* HEADER */}
       <ProjectDetailsHeader
-        onEdit={() => navigate(`/projects/edit/${id}`)}
-        onDelete={() => alert("Delete logic here")}
+        onEdit={() =>
+          navigate(`/projects/edit/${project.project_id || project.id}`)
+        }
+        onDelete={() => setShowDeleteModal(true)}
         onAddPhase={() => setShowPhaseModal(true)}
       />
 
@@ -84,6 +104,14 @@ function ProjectDetails() {
           onClose={() => setShowPhaseModal(false)}
         />
       )}
+
+      {/* DELETE CONFIRM MODAL */}
+      <DeleteProjectModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        loading={deleteStatus === "loading"}
+      />
     </div>
   );
 }
