@@ -33,7 +33,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-white flex items-center justify-center">
-      {/* ================= BACKGROUND DIAGONAL ================= */}
       <div className="absolute inset-0">
         <div
           className="
@@ -45,7 +44,6 @@ export default function Login() {
         />
       </div>
 
-      {/* ================= LOGIN CARD ================= */}
       <div
         className="
           relative z-10
@@ -56,15 +54,12 @@ export default function Login() {
           grid grid-cols-2
         "
       >
-        {/* ========== LEFT SIDE (WHITE) ========== */}
         <div className="flex flex-col items-center justify-center bg-transparent">
           <img src={logo} alt="logo" className=" h-36 mb-4" />
         
         </div>
 
-        {/* ========== RIGHT SIDE (DIAGONAL CUT) ========== */}
         <div className="relative flex items-center">
-          {/* DIAGONAL CUT (CARD EDGE) */}
           <div
             className="
               absolute inset-y-0 right-[-70px]
@@ -75,10 +70,8 @@ export default function Login() {
             "
           />
 
-          {/* DARK PANEL */}
           <div className="absolute inset-0" />
 
-          {/* FORM */}
           <form
             onSubmit={handleSubmit}
             className="relative z-20 w-full px-12 text-white space-y-5"

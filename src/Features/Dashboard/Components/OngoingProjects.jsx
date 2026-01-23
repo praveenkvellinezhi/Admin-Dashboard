@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { BASE_URL } from "../../../Redux/Baseurl";
 import {
   RefreshCcw,
   Calendar,
@@ -11,6 +12,12 @@ import {
   selectOngoingProjects,
   getOngoingProjectsStatus,
 } from "../../../Redux/Slices/ongoingProjectSlice";
+
+/* =========================
+   HELPERS
+========================= */
+const capitalizeFirst = (text = "") =>
+  text.charAt(0).toUpperCase() + text.slice(1);
 
 /* =========================
    STATUS STYLES
@@ -47,12 +54,12 @@ const OngoingProjects = () => {
             <RefreshCcw className="w-5 h-5" />
           </div>
           <h2 className="text-xl font-bold text-slate-800 tracking-tight">
-            Ongoing Projects
+            Ongoing projects
           </h2>
         </div>
 
         <button className="px-5 py-2 rounded-full border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition">
-          View All
+          View all
         </button>
       </div>
 
@@ -86,22 +93,22 @@ const OngoingProjects = () => {
                 <div className="flex items-center gap-4 min-w-[180px]">
                   {p.logo ? (
                     <img
-                      src={p.logo}
+                      src={`${BASE_URL}${p.logo}`}
                       alt="project"
                       className="w-12 h-12 rounded-xl object-cover ring-4 ring-gray-50"
                     />
                   ) : (
                     <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold ring-4 ring-gray-50">
-                      {p.name?.slice(0, 2).toUpperCase()}
+                      {capitalizeFirst(p.name)?.slice(0, 2)}
                     </div>
                   )}
 
                   <div>
                     <h3 className="font-extrabold text-slate-800 text-[15px]">
-                      {p.name}
+                      {capitalizeFirst(p.name)}
                     </h3>
                     <p className="text-[10px] font-black text-gray-400 uppercase truncate max-w-[140px]">
-                      {p.description}
+                      {capitalizeFirst(p.description)}
                     </p>
                   </div>
                 </div>
@@ -112,7 +119,7 @@ const OngoingProjects = () => {
                     <span
                       className={`text-[10px] font-black tracking-widest ${styles.text}`}
                     >
-                      ONGOING
+                      Ongoing
                     </span>
                     <span className="text-[11px] font-bold text-gray-400">
                       {p.progress}%
@@ -137,14 +144,18 @@ const OngoingProjects = () => {
                   </div>
 
                   <div className="flex -space-x-2">
-                    {p.members?.slice(0, 3).map((img, i) => (
-                      <img
-                        key={i}
-                        src={img}
-                        alt="member"
-                        className="w-7 h-7 rounded-full border-2 border-white object-cover"
-                      />
-                    ))}
+                    {Array.isArray(p.members) &&
+                      p.members
+                        .filter(Boolean)
+                        .slice(0, 3)
+                        .map((img, i) => (
+                          <img
+                            key={i}
+                            src={`${BASE_URL}${img}`}
+                            alt="member"
+                            className="w-7 h-7 rounded-full border-2 border-white object-cover"
+                          />
+                        ))}
                   </div>
                 </div>
               </div>
