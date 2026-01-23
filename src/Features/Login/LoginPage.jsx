@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { adminLogin } from "../../Redux/Slices/adminauthSlice";
 
+import logo from "../../assets/Logo/logo.png";
+
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,43 +25,70 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const resultAction = await dispatch(adminLogin(formData));
-    if (adminLogin.fulfilled.match(resultAction)) {
+    const result = await dispatch(adminLogin(formData));
+    if (adminLogin.fulfilled.match(result)) {
       navigate("/");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-200 px-4">
-      <div className="w-full max-w-5xl bg-white rounded-xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
+    <div className="min-h-screen relative overflow-hidden bg-white flex items-center justify-center">
+      {/* ================= BACKGROUND DIAGONAL ================= */}
+      <div className="absolute inset-0">
+        <div
+          className="
+            absolute top-0 right-[-20%]
+            h-full w-[70%]
+            bg-slate-700
+            transform -skew-x-12
+          "
+        />
+      </div>
 
-        {/* LEFT BRAND SECTION */}
-        <div className="hidden md:flex items-center justify-center bg-gray-100">
-          <div className="text-center">
-            <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-300 flex items-center justify-center">
-              <span className="text-2xl font-bold text-gray-700">NS</span>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-800">
-              NSOC DASHBOARD
-            </h2>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage • Monitor • Secure
-            </p>
-          </div>
+      {/* ================= LOGIN CARD ================= */}
+      <div
+        className="
+          relative z-10
+          shadow-[0_20px_40px_rgba(0,0,0,0.3)]
+          w-full max-w-5xl h-[460px]
+          bg-transparent rounded-2xl 
+          overflow-hidden
+          grid grid-cols-2
+        "
+      >
+        {/* ========== LEFT SIDE (WHITE) ========== */}
+        <div className="flex flex-col items-center justify-center bg-transparent">
+          <img src={logo} alt="logo" className=" h-36 mb-4" />
+        
         </div>
 
-        {/* RIGHT LOGIN SECTION */}
-        <div className="flex items-center justify-center bg-gray-700 p-8">
+        {/* ========== RIGHT SIDE (DIAGONAL CUT) ========== */}
+        <div className="relative flex items-center">
+          {/* DIAGONAL CUT (CARD EDGE) */}
+          <div
+            className="
+              absolute inset-y-0 right-[-70px]
+              
+             
+              transform -skew-x-12
+              z-10
+            "
+          />
+
+          {/* DARK PANEL */}
+          <div className="absolute inset-0" />
+
+          {/* FORM */}
           <form
             onSubmit={handleSubmit}
-            className="w-full max-w-sm space-y-4"
+            className="relative z-20 w-full px-12 text-white space-y-5"
           >
-            <h3 className="text-lg font-semibold text-white mb-6">
+            <h3 className="text-2xl font-semibold mb-6">
               Sign in to your account
             </h3>
 
             <div>
-              <label className="block text-xs text-gray-300 mb-1">
+              <label className="block text-xs text-white mb-1">
                 Your email
               </label>
               <input
@@ -67,14 +96,17 @@ export default function Login() {
                 name="email"
                 placeholder="Enter your email"
                 onChange={handleChange}
-                className="w-full px-3 py-2 rounded-md text-sm
-                           bg-gray-100 border border-gray-300
-                           focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="
+                  w-full px-4 py-2 rounded-md
+                  text-sm text-slate-800
+                  bg-white
+                  focus:outline-none focus:ring-2 focus:ring-slate-400
+                "
               />
             </div>
 
             <div>
-              <label className="block text-xs text-gray-300 mb-1">
+              <label className="block text-xs text-slate-300 mb-1">
                 Password
               </label>
               <input
@@ -82,35 +114,37 @@ export default function Login() {
                 name="password"
                 placeholder="Enter your password"
                 onChange={handleChange}
-                className="w-full px-3 py-2 rounded-md text-sm
-                           bg-gray-100 border border-gray-300
-                           focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="
+                  w-full px-4 py-2 rounded-md
+                  text-sm text-slate-800
+                  bg-white
+                  focus:outline-none focus:ring-2 focus:ring-slate-400
+                "
               />
             </div>
 
-            <div className="flex items-center justify-between text-xs text-gray-300">
+            <div className="flex items-center justify-between text-xs text-slate-300">
               <label className="flex items-center gap-2">
-                <input type="checkbox" className="rounded" />
+                <input type="checkbox" />
                 Remember me
               </label>
-              <span className="cursor-pointer hover:underline">
-                Recover password
-              </span>
+              
             </div>
 
             <button
               type="submit"
               disabled={status === "loading"}
-              className="w-full py-2 rounded-md text-sm font-medium
-                         bg-gray-900 text-white
-                         hover:bg-gray-800 transition
-                         disabled:opacity-60"
+              className="
+                w-full py-2 mt-3 rounded-md
+                bg-slate-900 hover:bg-slate-800
+                transition disabled:opacity-60
+              "
             >
               {status === "loading" ? "Signing in..." : "Sign In"}
             </button>
 
             {error && (
-              <p className="text-xs text-red-400 mt-2">
+              <p className="text-red-300 text-xs mt-2">
                 {error?.message || "Login failed"}
               </p>
             )}
