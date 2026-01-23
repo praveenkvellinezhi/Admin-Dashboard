@@ -1,18 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
-import {
-  fetchEmployees,
-  fetchManagers,
-  selectAllEmployees,
-  selectAllManagers,
-} from "../../../Redux/Slices/employeeslice";
-
-import {
-  addProject,
-  getAddProjectStatus,
-} from "../../../Redux/Slices/projectSlice";
+import {fetchEmployees,fetchManagers,selectAllEmployees,selectAllManagers,} from "../../../Redux/Slices/employeeslice";
+import {addProject,getAddProjectStatus,} from "../../../Redux/Slices/projectSlice";
 
 export default function ProjectAdd() {
   const dispatch = useDispatch();
@@ -22,22 +12,13 @@ export default function ProjectAdd() {
   const managers = useSelector(selectAllManagers);
   const addStatus = useSelector(getAddProjectStatus);
 
-  /* =========================
-     LOCAL UI STATE
-  ========================= */
   const [isTeamOpen, setIsTeamOpen] = useState(false);
 
-  /* =========================
-     FETCH DATA
-  ========================= */
   useEffect(() => {
     dispatch(fetchEmployees());
     dispatch(fetchManagers());
   }, [dispatch]);
 
-  /* =========================
-     FORM STATE
-  ========================= */
   const [formData, setFormData] = useState({
     project_name: "",
     description: "",
@@ -54,9 +35,6 @@ export default function ProjectAdd() {
     project_logo: null,
   });
 
-  /* =========================
-     HANDLERS
-  ========================= */
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prev) => ({
@@ -74,9 +52,6 @@ export default function ProjectAdd() {
     }));
   };
 
-  /* =========================
-     SUBMIT
-  ========================= */
   const handleSubmit = async () => {
     const data = new FormData();
 
@@ -94,158 +69,178 @@ export default function ProjectAdd() {
     }
   };
 
-  /* =========================
-     UI
-  ========================= */
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          Add New Project
-        </h1>
-
-        <button
-          onClick={handleSubmit}
-          disabled={addStatus === "loading"}
-          className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium
-                     hover:bg-blue-700 disabled:opacity-60"
-        >
-          {addStatus === "loading" ? "Saving..." : "Save Project"}
-        </button>
-      </div>
-
-      {/* FORM CARD */}
-      <div className="bg-white rounded-2xl border shadow-sm p-6 grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-        {/* LEFT COLUMN */}
-        <div className="space-y-4">
-          <Input label="Project Name" name="project_name" value={formData.project_name} onChange={handleChange} />
-          <Textarea label="Description" name="description" value={formData.description} onChange={handleChange} />
-          <Input label="Client Name" name="client_name" value={formData.client_name} onChange={handleChange} />
-          <Input label="Client Email" type="email" name="client_email" value={formData.client_email} onChange={handleChange} />
-          <Input label="Client Contact" name="client_contact" value={formData.client_contact} onChange={handleChange} />
-
-          <Select
-            label="Priority"
-            name="priority"
-            value={formData.priority}
-            onChange={handleChange}
-            options={[
-              { value: "low", label: "Low" },
-              { value: "medium", label: "Medium" },
-              { value: "high", label: "High" },
-            ]}
-          />
-
-          <Select
-            label="Project Type"
-            name="project_type"
-            value={formData.project_type}
-            onChange={handleChange}
-            options={[
-              { value: "web", label: "Web" },
-              { value: "app", label: "App" },
-              { value: "webapp", label: "Web App" },
-            ]}
-          />
-
-          <Input label="Total Budget" name="total_budget" value={formData.total_budget} onChange={handleChange} />
+    <div className="min-h-screen bg-gray-100 px-6 py-5">
+      {/* PAGE HEADER */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900">
+            Add New Project
+          </h1>
+          <p className="text-xs text-gray-500 mt-1">
+            Dashboard &gt; Project &gt; Add Project
+          </p>
         </div>
 
-        {/* RIGHT COLUMN */}
-        <div className="space-y-4">
-          <Input label="Start Date" type="date" name="start_date" value={formData.start_date} onChange={handleChange} />
-          <Input label="End Date" type="date" name="end_date" value={formData.end_date} onChange={handleChange} />
+        <div className="flex items-center gap-3">
+          <button className="px-4 py-2 text-sm rounded-lg border bg-white">
+            Cancel
+          </button>
+          <button className="px-4 py-2 text-sm rounded-lg border bg-white">
+            Save as Draft
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={addStatus === "loading"}
+            className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white
+                       hover:bg-blue-700 disabled:opacity-60"
+          >
+            {addStatus === "loading" ? "Saving..." : "Save Project"}
+          </button>
+        </div>
+      </div>
 
-          <Select
-            label="Project Manager"
-            name="project_manager"
-            value={formData.project_manager}
-            onChange={handleChange}
-            options={managers.map((m) => ({
-              value: m.id,
-              label: m.name,
-            }))}
-          />
+      {/* MAIN CARD */}
+      <div className="bg-white  shadow-sm p-6  mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          <div className="space-y-6">
+            <Section title="Project Details">
+              <Input
+                label="Project Name"
+                name="project_name"
+                value={formData.project_name}
+                onChange={handleChange}
+              />
+              <Select
+                label="Project Type"
+                name="project_type"
+                value={formData.project_type}
+                onChange={handleChange}
+                options={[
+                  { value: "web", label: "Web" },
+                  { value: "app", label: "App" },
+                  { value: "webapp", label: "Web App" },
+                ]}
+              />
+              <Input
+                label="Client Name"
+                name="client_name"
+                value={formData.client_name}
+                onChange={handleChange}
+              />
+              <Input
+                label="Client Email"
+                type="email"
+                name="client_email"
+                value={formData.client_email}
+                onChange={handleChange}
+              />
+              <Textarea
+                label="Project Description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </Section>
 
-          {/* TEAM MEMBERS DROPDOWN */}
-          <div className="relative">
-            <label className="block text-xs font-medium text-gray-600 mb-1">
-              Team Members
-            </label>
-
-            <button
-              type="button"
-              onClick={() => setIsTeamOpen((prev) => !prev)}
-              className="w-full flex justify-between items-center rounded-lg border border-gray-300
-                         bg-white px-3 py-2 text-sm text-gray-700
-                         focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <span className="truncate">
-                {formData.team_members.length === 0
-                  ? "Select team members"
-                  : employees
-                      .filter((e) =>
-                        formData.team_members.includes(e.id)
-                      )
-                      .map((e) => e.name)
-                      .join(", ")}
-              </span>
-
-              <svg
-                className="w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
+            <Section title="Timeline & Duration">
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Start Date"
+                  type="date"
+                  name="start_date"
+                  value={formData.start_date}
+                  onChange={handleChange}
                 />
-              </svg>
-            </button>
-
-            {isTeamOpen && (
-              <div className="absolute z-20 mt-1 w-full max-h-56 overflow-auto
-                              rounded-lg border border-gray-200 bg-white shadow-lg">
-                {employees.map((emp) => (
-                  <label
-                    key={emp.id}
-                    className="flex items-center gap-2 px-3 py-2 text-sm
-                               hover:bg-gray-50 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={formData.team_members.includes(emp.id)}
-                      onChange={() => toggleTeamMember(emp.id)}
-                      className="rounded border-gray-300"
-                    />
-                    <span>
-                      {emp.name}
-                      <span className="text-xs text-gray-400 ml-1">
-                        ({emp.department})
-                      </span>
-                    </span>
-                  </label>
-                ))}
+                <Input
+                  label="End Date"
+                  type="date"
+                  name="end_date"
+                  value={formData.end_date}
+                  onChange={handleChange}
+                />
               </div>
-            )}
+            </Section>
           </div>
 
-          {/* PROJECT LOGO */}
-          <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1">
-              Project Logo
-            </label>
-            <input
-              type="file"
-              name="project_logo"
-              onChange={handleChange}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white"
-            />
+          <div className="space-y-6">
+            <Section title="Team & Responsibility">
+              <Select
+                label="Project Manager"
+                name="project_manager"
+                value={formData.project_manager}
+                onChange={handleChange}
+                options={managers.map((m) => ({
+                  value: m.id,
+                  label: m.name,
+                }))}
+              />
+
+              <div className="relative">
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Team Members
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => setIsTeamOpen((p) => !p)}
+                  className="w-full flex justify-between items-center rounded-lg border
+                             px-3 py-2 text-sm bg-white"
+                >
+                  <span className="truncate">
+                    {formData.team_members.length === 0
+                      ? "Select team members"
+                      : employees
+                        .filter((e) => formData.team_members.includes(e.id))
+                        .map((e) => e.name)
+                        .join(", ")}
+                  </span>
+                  <span className="text-gray-400">▾</span>
+                </button>
+
+                {isTeamOpen && (
+                  <div
+                    className="absolute z-20 mt-1 w-full max-h-56 overflow-auto
+                                  border border-gray-300 rounded-lg  bg-white shadow"
+                  >
+                    {employees.map((emp) => (
+                      <label
+                        key={emp.id}
+                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={formData.team_members.includes(emp.id)}
+                          onChange={() => toggleTeamMember(emp.id)}
+                        />
+                        {emp.name}
+                        <span className="text-xs text-gray-400">
+                          ({emp.department})
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Section>
+
+            <Section title="Budget">
+              <Input
+                label="Total Budget"
+                name="total_budget"
+                value={formData.total_budget}
+                onChange={handleChange}
+              />
+            </Section>
+
+            <Section title="Project Logo">
+              <input
+                type="file"
+                name="project_logo"
+                onChange={handleChange}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+              />
+            </Section>
           </div>
         </div>
       </div>
@@ -253,9 +248,12 @@ export default function ProjectAdd() {
   );
 }
 
-/* =========================
-   REUSABLE INPUTS
-========================= */
+const Section = ({ title, children }) => (
+  <div>
+    <h3 className="text-sm font-semibold text-gray-800 mb-4">{title}</h3>
+    <div className="space-y-4">{children}</div>
+  </div>
+);
 
 const Input = ({ label, ...props }) => (
   <div>
@@ -264,8 +262,7 @@ const Input = ({ label, ...props }) => (
     </label>
     <input
       {...props}
-      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full  border border-gray-300 rounded-lg px-3 py-2 text-sm"
     />
   </div>
 );
@@ -278,8 +275,7 @@ const Textarea = ({ label, ...props }) => (
     <textarea
       {...props}
       rows={3}
-      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
     />
   </div>
 );
@@ -291,8 +287,7 @@ const Select = ({ label, options, ...props }) => (
     </label>
     <select
       {...props}
-      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm
-                 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full border border-gray-300 rounded-lg  px-3 py-2 text-sm bg-white"
     >
       <option value="">Select</option>
       {options.map((opt) => (
