@@ -49,9 +49,7 @@ export default function EmployeePage() {
     );
   }
 
-  /* =========================
-     FILTER LOGIC (SAFE)
-  ========================= */
+
   const filteredEmployees = employees.filter((emp) => {
     const searchText = search.toLowerCase();
 
@@ -64,9 +62,7 @@ export default function EmployeePage() {
     );
   });
 
-  /* =========================
-     RENDER
-  ========================= */
+  
   return (
     <div>
       <EmployeeHeader

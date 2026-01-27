@@ -17,10 +17,8 @@ export default function BasicInformation({ employee }) {
   return (
     <div className="space-y-4 mt-4">
 
-      {/* ===== PROFILE HEADER CARD ===== */}
       <div className="bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
-        {/* Left: Avatar + Name */}
         <div className="flex items-center gap-4">
           <img
             src={emp.profile_image_url || "https://via.placeholder.com/100"}
@@ -49,13 +47,11 @@ export default function BasicInformation({ employee }) {
           </div>
         </div>
 
-        {/* Right: Status */}
         <span className="px-4 py-2 rounded-full bg-green-100 text-green-700 text-sm font-medium">
           {capitalize(emp.status || "Active")}
         </span>
       </div>
 
-      {/* ===== STATS STRIP ===== */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
   <StatCard label="Employee ID" value={emp.employee_id} />
   <StatCard label="Department" value={capitalize(emp.department)} />
@@ -73,7 +69,6 @@ export default function BasicInformation({ employee }) {
   );
 }
 
-/* ===== SMALL REUSABLE CARD ===== */
 function StatCard({ label, value }) {
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">

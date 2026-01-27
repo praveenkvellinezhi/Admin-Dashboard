@@ -5,8 +5,7 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-50 rounded-t-lg">
+            <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-50 rounded-t-lg">
         <div className="flex items-center gap-2">
           <Wallet size={16} className="text-gray-600" />
           <h3 className="text-sm font-semibold text-gray-700">
@@ -16,10 +15,8 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
         <ChevronDown size={16} className="text-gray-500" />
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-4">
-        {/* Employee Type (ALWAYS VISIBLE) */}
-        <div>
+            <div className="p-4 space-y-4">
+                <div>
           <label className="text-xs text-gray-600 mb-1 block">
             Employee Type
           </label>
@@ -35,11 +32,9 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
           </select>
         </div>
 
-        {/* 👇 SHOW ONLY IF NOT INTERN */}
-        {!isIntern && (
+                {!isIntern && (
           <>
-            {/* Salary Type */}
-            <div>
+                        <div>
               <label className="text-xs text-gray-600 mb-1 block">
                 Salary Type
               </label>
@@ -56,8 +51,7 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
               </select>
             </div>
 
-            {/* Salary Amount */}
-            <div>
+                        <div>
               <label className="text-xs text-gray-600 mb-1 block">
                 Salary Amount
               </label>
@@ -71,8 +65,7 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
               />
             </div>
 
-            {/* Payment Method */}
-            <div>
+                        <div>
               <label className="text-xs text-gray-600 mb-1 block">
                 Payment Method
               </label>
@@ -90,8 +83,7 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
               </select>
             </div>
 
-            {/* Contract Start Date */}
-            <div>
+                        <div>
            
             </div>
           </>

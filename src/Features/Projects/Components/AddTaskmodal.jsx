@@ -2,7 +2,12 @@ import { X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
-import { addTask, getTaskAddStatus } from "../../../Redux/Slices/projectSlice";
+import {
+  addTask,
+  fetchTasksByPhase,
+  getTaskAddStatus,
+} from "../../../Redux/Slices/taskSlice";
+
 import {
   fetchEmployees,
   selectAllEmployees,
@@ -10,96 +15,68 @@ import {
 
 export default function AddTaskModal({ phaseId, onClose }) {
   const dispatch = useDispatch();
+
   const employees = useSelector(selectAllEmployees);
   const status = useSelector(getTaskAddStatus);
 
-  /* =========================
-     FORM STATE
-  ========================= */
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     status: "in_progress",
     start_date: "",
     end_date: "",
-    phase: phaseId,
     assigned_to: "",
   });
 
-  /* =========================
-     FETCH EMPLOYEES
-  ========================= */
+  /* FETCH EMPLOYEES */
   useEffect(() => {
     dispatch(fetchEmployees());
   }, [dispatch]);
 
-  /* =========================
-     KEEP PHASE IN SYNC
-  ========================= */
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      phase: phaseId,
-    }));
-  }, [phaseId]);
-
-  /* =========================
-     HANDLERS
-  ========================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
+    setFormData((p) => ({
+      ...p,
       [name]:
-        name === "assigned_to" && value
-          ? Number(value)   // ✅ FIX
-          : value,
+        name === "assigned_to" && value ? Number(value) : value,
     }));
   };
 
-  /* =========================
-     SUBMIT
-  ========================= */
   const handleSubmit = async () => {
     const payload = {
-      title: formData.title,
-      description: formData.description,
-      status: formData.status,
-      start_date: formData.start_date,
-      end_date: formData.end_date,
-      phase: formData.phase,
+      ...formData,
+      phase: phaseId, // ✅ important
       assigned_to: formData.assigned_to || null,
     };
 
-    console.log("TASK PAYLOAD 👉", payload); // 🔍 DEBUG
+   const result = await dispatch(addTask(payload));
 
-    const result = await dispatch(addTask(payload));
-    if (addTask.fulfilled.match(result)) {
-      onClose();
-    }
+if (addTask.fulfilled.match(result)) {
+  onClose(); // close modal only
+}
+
   };
 
-  /* =========================
-     UI
-  ========================= */
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
       <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
-        <div className="flex justify-between items-center mb-4">
+
+        {/* HEADER */}
+        <div className="flex justify-between mb-4">
           <h2 className="text-lg font-semibold">Add Task</h2>
-          <button onClick={onClose}>
+          <button type="button" onClick={onClose}>
             <X size={18} />
           </button>
         </div>
 
+        {/* FORM */}
         <div className="space-y-4">
           <input
             name="title"
             placeholder="Task title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded px-3 py-2"
           />
 
           <textarea
@@ -108,14 +85,14 @@ export default function AddTaskModal({ phaseId, onClose }) {
             value={formData.description}
             onChange={handleChange}
             rows={3}
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded px-3 py-2"
           />
 
           <select
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded px-3 py-2"
           >
             <option value="in_progress">In Progress</option>
             <option value="completed">Completed</option>
@@ -123,48 +100,40 @@ export default function AddTaskModal({ phaseId, onClose }) {
           </select>
 
           <div className="grid grid-cols-2 gap-3">
-            <input
-              type="date"
-              name="start_date"
-              value={formData.start_date}
-              onChange={handleChange}
-              className="border rounded-lg px-3 py-2 text-sm"
-            />
-            <input
-              type="date"
-              name="end_date"
-              value={formData.end_date}
-              onChange={handleChange}
-              className="border rounded-lg px-3 py-2 text-sm"
-            />
+            <input type="date" name="start_date" onChange={handleChange} />
+            <input type="date" name="end_date" onChange={handleChange} />
           </div>
 
           <select
             name="assigned_to"
             value={formData.assigned_to}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded px-3 py-2"
           >
             <option value="">Assign employee</option>
-            {employees.map((emp) => (
-              <option key={emp.id} value={emp.id}>
-                {emp.name} ({emp.department})
+            {employees.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.name}
               </option>
             ))}
           </select>
         </div>
 
+        {/* ACTIONS */}
         <div className="flex justify-end gap-3 mt-6">
           <button
+            type="button"
             onClick={onClose}
-            className="px-4 py-2 border rounded-md text-sm"
+            className="border px-4 py-2 rounded"
           >
             Cancel
           </button>
+
           <button
+            type="button"            
             onClick={handleSubmit}
             disabled={status === "loading"}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm"
+            className="bg-blue-600 text-white px-4 py-2 rounded"
           >
             {status === "loading" ? "Saving..." : "Add Task"}
           </button>

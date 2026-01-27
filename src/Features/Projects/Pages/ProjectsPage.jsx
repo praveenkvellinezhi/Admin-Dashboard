@@ -5,16 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 
 import {
   fetchProjects,
-  selectAllprojects,
-  getProjectStatus,
-  getProjectError,
+  selectAllProjects,
+  getProjectListStatus,
+  getProjectError
 } from "../../../Redux/Slices/projectSlice";
 
 export default function ProjectsPage() {
   const dispatch = useDispatch();
 
-  const projects = useSelector(selectAllprojects);
-  const status = useSelector(getProjectStatus);
+  const projects = useSelector(selectAllProjects);
+  const status = useSelector(getProjectListStatus);
   const error = useSelector(getProjectError);
 
   const [search, setSearch] = useState("");
@@ -27,9 +27,8 @@ export default function ProjectsPage() {
     dispatch(fetchProjects());
   }, [dispatch]);
 
-  /* =========================
-     FILTER LOGIC
-  ========================= */
+ console.log(projects);
+ 
   const filteredProjects = projects.filter((proj) => {
     const title = proj?.project_name?.toLowerCase() || "";
     const type = proj?.project_type?.toLowerCase() || "";

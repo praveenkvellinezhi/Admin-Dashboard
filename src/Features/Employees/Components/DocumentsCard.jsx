@@ -1,8 +1,8 @@
-import { FileText, Download } from "lucide-react";
+import { FileText } from "lucide-react";
 
 export default function DocumentsCard({ employee }) {
-    const emp =employee?.employee;
-  if (!employee) return null;
+  // ✅ SAFE FALLBACK
+  const emp = employee?.employee ?? {};
 
   return (
     <div className="bg-white shadow-lg rounded-lg">
@@ -13,7 +13,7 @@ export default function DocumentsCard({ employee }) {
       <div className="p-4 space-y-3">
         {!emp.id_proof_document_url &&
           !emp.offer_letter_url &&
-          !emp.resume && (
+          !emp.resume_url && (
             <p className="text-sm text-gray-400">
               No documents uploaded
             </p>
@@ -33,10 +33,10 @@ export default function DocumentsCard({ employee }) {
           />
         )}
 
-        {emp.resume && (
+        {emp.resume_url && (
           <DocumentRow
             label="Resume"
-            url={emp.resume}
+            url={emp.resume_url}
           />
         )}
       </div>
@@ -46,7 +46,7 @@ export default function DocumentsCard({ employee }) {
 
 function DocumentRow({ label, url }) {
   return (
-    <div className="flex justify-between items-center  rounded-md p-3">
+    <div className="flex justify-between items-center rounded-md p-3">
       <div className="flex items-center gap-2">
         <FileText size={16} className="text-gray-500" />
         <span className="text-sm font-medium">

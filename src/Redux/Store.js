@@ -5,6 +5,8 @@ import internReducer from "./Slices/internSlice"
 import projectReducer from "./Slices/projectSlice"
 import statusReducer from "./Slices/statsSlice"
 import ongoingReducer from "./Slices/ongoingProjectSlice" 
+import phaseReducer from "./Slices/phaseSlice"
+import taskReducer from "./Slices/taskSlice"
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     projects:projectReducer,
     stats:statusReducer,
     ongoingProjects:ongoingReducer,
+    phases:phaseReducer,
+    tasks:taskReducer,
 
   },
 });

@@ -12,8 +12,8 @@ import {
 import {
   fetchProjectById,
   editProject,
-  selectedProject,
-  getSingleprojectStatus,
+  selectSelectedProject,
+  getSingleProjectStatus,
   getEditProjectStatus,
 } from "../../../Redux/Slices/projectSlice";
 
@@ -25,8 +25,8 @@ export default function ProjectEdit() {
   const employees = useSelector(selectAllEmployees);
   const managers = useSelector(selectAllManagers);
 
-  const project = useSelector(selectedProject);
-  const singleStatus = useSelector(getSingleprojectStatus);
+  const project = useSelector(selectSelectedProject);
+  const singleStatus = useSelector(getSingleProjectStatus);
   const editStatus = useSelector(getEditProjectStatus);
 
 

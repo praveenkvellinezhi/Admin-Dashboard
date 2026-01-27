@@ -1,5 +1,5 @@
 import { Upload, Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function EmployeeBasicDetails({
   formData,
@@ -14,14 +14,26 @@ export default function EmployeeBasicDetails({
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
-  /* ================= VALIDATORS ================= */
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  useEffect(() => {
+    if (formData.profile_image) {
+      const url = URL.createObjectURL(formData.profile_image);
+      setPreviewUrl(url);
+
+      return () => URL.revokeObjectURL(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  }, [formData.profile_image]);
+
+
+  const validateEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 
   const validatePhone = (phone) => /^[6-9]\d{9}$/.test(phone);
 
-  // ✅ EXACTLY 6 DIGITS
   const validatePassword = (password) => /^\d{6}$/.test(password);
 
   const validateDOB = (dob) => {
@@ -29,7 +41,6 @@ export default function EmployeeBasicDetails({
     return new Date(dob) < new Date();
   };
 
-  /* ================= BLUR VALIDATION ================= */
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
@@ -40,21 +51,19 @@ export default function EmployeeBasicDetails({
         name === "email" && value && !validateEmail(value)
           ? "Enter a valid email address"
           : name === "phone" && value && !validatePhone(value)
-            ? "Enter a valid 10-digit phone number"
-            : name === "password" && value && !validatePassword(value)
-              ? "Password must be exactly 6 digits"
-              : name === "date_of_birth" && value && !validateDOB(value)
-                ? "DOB cannot be a future date"
-                : "",
+          ? "Enter a valid 10-digit phone number"
+          : name === "password" && value && !validatePassword(value)
+          ? "Password must be exactly 6 digits"
+          : name === "date_of_birth" && value && !validateDOB(value)
+          ? "DOB cannot be a future date"
+          : "",
     }));
   };
 
-  /* ================= CHANGE HANDLER ================= */
 
   const handleLocalChange = (e) => {
     const { name, value } = e.target;
 
-    // Clear error immediately when valid
     if (
       (name === "email" && validateEmail(value)) ||
       (name === "phone" && validatePhone(value)) ||
@@ -67,23 +76,23 @@ export default function EmployeeBasicDetails({
     onChange(e);
   };
 
+
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-lg">
-      {/* Header */}
-      <div className="px-6 py-3 border-b bg-gray-50 rounded-t-2xl">
+            <div className="px-6 py-3 border-b bg-gray-50 rounded-t-2xl">
         <h3 className="text-sm font-semibold text-gray-700">
           Employee Basic Details
         </h3>
       </div>
 
-      {/* Content */}
-      <div className="p-6">
+            <div className="p-6">
         <div className="flex gap-8">
-          {/* Profile Image */}
-          <div className="flex flex-col items-center gap-3">
+                    <div className="flex flex-col items-center gap-3">
             <img
               src={
-                formData.profile_image_url || "https://i.pravatar.cc/150?img=3"
+                previewUrl ||
+                formData.profile_image_url ||
+                "https://i.pravatar.cc/150?img=3"
               }
               alt="Employee"
               className="w-24 h-24 rounded-full object-cover border"
@@ -102,9 +111,7 @@ export default function EmployeeBasicDetails({
             </label>
           </div>
 
-          {/* Fields */}
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Full Name */}
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-5">
             <InputField
               label="Full Name"
               name="name"
@@ -112,7 +119,6 @@ export default function EmployeeBasicDetails({
               onChange={handleLocalChange}
             />
 
-            {/* Address */}
             <InputField
               label="Address"
               name="address"
@@ -120,7 +126,6 @@ export default function EmployeeBasicDetails({
               onChange={handleLocalChange}
             />
 
-            {/* Email */}
             <InputField
               label="Email Address"
               name="email"
@@ -131,7 +136,6 @@ export default function EmployeeBasicDetails({
               onBlur={handleBlur}
             />
 
-            {/* Phone */}
             <InputField
               label="Phone Number"
               name="phone"
@@ -141,7 +145,6 @@ export default function EmployeeBasicDetails({
               onBlur={handleBlur}
             />
 
-            {/* Date of Birth */}
             <InputField
               label="Date of Birth"
               name="date_of_birth"
@@ -152,8 +155,7 @@ export default function EmployeeBasicDetails({
               onBlur={handleBlur}
             />
 
-            {/* Password */}
-            <div>
+                        <div>
               <label className="text-xs text-gray-600 block">
                 Password (6 digits)
               </label>
@@ -166,8 +168,8 @@ export default function EmployeeBasicDetails({
                   onBlur={handleBlur}
                   maxLength={6}
                   inputMode="numeric"
-                  className={`w-full border  border-gray-300 rounded-lg px-3 py-2 pr-10 text-sm ${
-                    errors.password ? "border-red-500" : ""
+                  className={`w-full border rounded-lg px-3 py-2 pr-10 text-sm ${
+                    errors.password ? "border-red-500" : "border-gray-300"
                   }`}
                 />
                 <button
@@ -179,7 +181,9 @@ export default function EmployeeBasicDetails({
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.password}
+                </p>
               )}
             </div>
           </div>
@@ -189,7 +193,6 @@ export default function EmployeeBasicDetails({
   );
 }
 
-/* ================= REUSABLE INPUT ================= */
 
 function InputField({
   label,
@@ -209,8 +212,8 @@ function InputField({
         value={value}
         onChange={onChange}
         onBlur={onBlur}
-        className={`w-full border  border-gray-300 rounded-lg px-3 py-2 text-sm ${
-          error ? "border-red-500" : ""
+        className={`w-full border rounded-lg px-3 py-2 text-sm ${
+          error ? "border-red-500" : "border-gray-300"
         }`}
       />
       {error && <p className="text-xs text-red-500 mt-1">{error}</p>}

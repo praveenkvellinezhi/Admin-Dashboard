@@ -16,18 +16,14 @@ export default function JobRoleInformation({ formData, onChange }) {
 
   
 
-  /* =========================
-     FETCH MANAGERS
-  ========================= */
+
   useEffect(() => {
     if (managerStatus === "idle") {
       dispatch(fetchManagers());
     }
   }, [dispatch, managerStatus]);
 
-  /* =========================
-     IS MANAGER TOGGLE
-  ========================= */
+ 
   const handleManagerToggle = (e) => {
     const checked = e.target.checked;
 
@@ -39,7 +35,6 @@ export default function JobRoleInformation({ formData, onChange }) {
       },
     });
 
-    // clear reporting manager if checked
     if (checked) {
       onChange({
         target: {
@@ -54,18 +49,15 @@ export default function JobRoleInformation({ formData, onChange }) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-      {/* Header */}
-      <div className="flex items-center gap-2 px-4 py-2 border-b bg-gray-50 rounded-t-lg">
+            <div className="flex items-center gap-2 px-4 py-2 border-b bg-gray-50 rounded-t-lg">
         <Briefcase size={16} className="text-gray-600" />
         <h3 className="text-sm font-semibold text-gray-700">
           Job & Role Information
         </h3>
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-4">
-        {/* Department */}
-        <div>
+            <div className="p-4 space-y-4">
+                <div>
           <label className="text-xs text-gray-600 mb-1 block">
             Department
           </label>
@@ -84,8 +76,7 @@ export default function JobRoleInformation({ formData, onChange }) {
           </select>
         </div>
 
-        {/* Role */}
-        <div>
+                <div>
           <label className="text-xs text-gray-600 mb-1 block">
             Role
           </label>
@@ -99,8 +90,7 @@ export default function JobRoleInformation({ formData, onChange }) {
           />
         </div>
 
-        {/* Position */}
-        <div>
+                <div>
           <label className="text-xs text-gray-600 mb-1 block">
             Position
           </label>
@@ -117,8 +107,7 @@ export default function JobRoleInformation({ formData, onChange }) {
           </select>
         </div>
 
-        {/* Is Manager */}
-        <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
           <input
             type="checkbox"
             id="is_manager"
@@ -131,8 +120,7 @@ export default function JobRoleInformation({ formData, onChange }) {
           </label>
         </div>
 
-        {/* Reporting Manager (Dropdown) */}
-        {!formData.is_manager && (
+                {!formData.is_manager && (
           <div>
             <label className="text-xs text-gray-600 mb-1 block">
               Reporting Manager
@@ -159,8 +147,7 @@ export default function JobRoleInformation({ formData, onChange }) {
           </div>
         )}
 
-        {/* Date of Joining */}
-        <div>
+                <div>
           <label className="text-xs text-gray-600 mb-1 block">
             Date of Joining
           </label>

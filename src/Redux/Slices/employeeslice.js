@@ -2,14 +2,12 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BASE_URL } from "../Baseurl";
 
-
-
 /* =========================
    INITIAL STATE
 ========================= */
 const initialState = {
   employees: [],
-  managers: [],              // ✅ managers list
+  managers: [],
   selectedEmployee: null,
 
   employeeStatus: "idle",
@@ -55,7 +53,7 @@ export const fetchEmployeesById = createAsyncThunk(
 );
 
 /* =========================
-   FETCH MANAGERS ONLY
+   FETCH MANAGERS
 ========================= */
 export const fetchManagers = createAsyncThunk(
   "employees/fetchManagers",
@@ -64,8 +62,7 @@ export const fetchManagers = createAsyncThunk(
       const res = await axios.get(
         `${BASE_URL}/employee/employees/managers/`
       );
-      return res.data;
-
+      return res.data.managers ?? res.data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -83,15 +80,50 @@ export const addEmployee = createAsyncThunk(
         `${BASE_URL}/employee/emp/`,
         formData
       );
-
       return res.data;
     } catch (error) {
       if (error.response?.status === 400) {
         return rejectWithValue(error.response.data);
       }
-      return rejectWithValue({
-        non_field_error: error.message,
-      });
+      return rejectWithValue({ non_field_error: error.message });
+    }
+  }
+);
+
+/* =========================
+   EDIT EMPLOYEE
+========================= */
+export const editEmployee = createAsyncThunk(
+  "employees/editEmployee",
+  async ({ employeeId, formData }, { rejectWithValue }) => {
+    try {
+      const res = await axios.patch(
+        `${BASE_URL}//employee/emp-edit/${employeeId}/`,
+        formData
+      );
+      return res.data;
+    } catch (error) {
+      if (error.response?.status === 400) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({ non_field_error: error.message });
+    }
+  }
+);
+
+/* =========================
+   DELETE EMPLOYEE
+========================= */
+export const deleteEmployee = createAsyncThunk(
+  "employees/deleteEmployee",
+  async (employeeId, { rejectWithValue }) => {
+    try {
+      await axios.delete(
+        `${BASE_URL}/employee/emp-delete/${employeeId}/`
+      );
+      return employeeId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -109,6 +141,7 @@ const employeeSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
       /* ===== FETCH EMPLOYEES ===== */
       .addCase(fetchEmployees.pending, (state) => {
         state.employeeStatus = "loading";
@@ -128,7 +161,7 @@ const employeeSlice = createSlice({
       })
       .addCase(fetchManagers.fulfilled, (state, action) => {
         state.managerStatus = "succeeded";
-         state.managers = action.payload.managers ?? action.payload;
+        state.managers = action.payload;
       })
       .addCase(fetchManagers.rejected, (state, action) => {
         state.managerStatus = "failed";
@@ -141,12 +174,56 @@ const employeeSlice = createSlice({
       })
       .addCase(addEmployee.fulfilled, (state, action) => {
         state.employeeStatus = "succeeded";
-        state.employees.push(action.payload);
+        state.employees.unshift(action.payload);
       })
       .addCase(addEmployee.rejected, (state, action) => {
         state.employeeStatus = "failed";
         state.validationErrors = action.payload;
       })
+
+      /* ===== EDIT EMPLOYEE ===== */
+      .addCase(editEmployee.pending, (state) => {
+        state.employeeStatus = "loading";
+      })
+      .addCase(editEmployee.fulfilled, (state, action) => {
+        state.employeeStatus = "succeeded";
+
+        const index = state.employees.findIndex(
+          (e) =>
+            e.employee_id === action.payload.employee_id ||
+            e.id === action.payload.id
+        );
+
+        if (index !== -1) {
+          state.employees[index] = action.payload;
+        }
+
+        if (
+          state.selectedEmployee?.employee_id ===
+          action.payload.employee_id
+        ) {
+          state.selectedEmployee = action.payload;
+        }
+      })
+      .addCase(editEmployee.rejected, (state, action) => {
+        state.employeeStatus = "failed";
+        state.validationErrors = action.payload;
+      })
+
+      /* ===== DELETE EMPLOYEE ===== */
+.addCase(deleteEmployee.fulfilled, (state, action) => {
+  // Remove from list
+  state.employees = state.employees.filter(
+    (emp) => emp.employee_id !== action.payload
+  );
+
+  // Clear selected employee
+  state.selectedEmployee = null;
+
+  // 🔥 CRITICAL: reset status so list refetches
+  state.employeeStatus = "idle";
+})
+
 
       /* ===== FETCH SINGLE EMPLOYEE ===== */
       .addCase(fetchEmployeesById.pending, (state) => {
@@ -169,7 +246,11 @@ const employeeSlice = createSlice({
 ========================= */
 export default employeeSlice.reducer;
 
-/* ===== SELECTORS ===== */
+export const { clearValidationErrors } = employeeSlice.actions;
+
+/* =========================
+   SELECTORS
+========================= */
 export const selectAllEmployees = (state) =>
   state.employees.employees;
 
@@ -193,6 +274,3 @@ export const getEmployeeError = (state) =>
 
 export const getEmployeeValidationErrors = (state) =>
   state.employees.validationErrors;
-
-export const { clearValidationErrors } =
-  employeeSlice.actions;

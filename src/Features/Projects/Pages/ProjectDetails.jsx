@@ -12,27 +12,35 @@ import DeleteProjectModal from "../Components/DeleteModal";
 import {
   fetchProjectById,
   deleteProject,
-  getSingleprojectStatus,
+  selectSelectedProject,
+  getSingleProjectStatus,
   getDeleteProjectStatus,
-  selectedProject,
-  selectProjectPhases,
 } from "../../../Redux/Slices/projectSlice";
+
+import { selectAllPhases } from "../../../Redux/Slices/phaseSlice";
 
 function ProjectDetails() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const project = useSelector(selectedProject);
-  const status = useSelector(getSingleprojectStatus);
-  const deleteStatus = useSelector(getDeleteProjectStatus);
-  const phases = useSelector(selectProjectPhases);
+  /* =========================
+     REDUX STATE
+  ========================= */
+  const project = useSelector(selectSelectedProject);
+  const phases = useSelector(selectAllPhases);
 
+  const status = useSelector(getSingleProjectStatus);
+  const deleteStatus = useSelector(getDeleteProjectStatus);
+
+  /* =========================
+     LOCAL STATE
+  ========================= */
   const [showPhaseModal, setShowPhaseModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* =========================
-     FETCH PROJECT DETAILS
+     FETCH PROJECT (PHASES LOAD VIA phaseSlice)
   ========================= */
   useEffect(() => {
     if (id) {
@@ -41,20 +49,15 @@ function ProjectDetails() {
   }, [dispatch, id]);
 
   /* =========================
-     DELETE HANDLER
+     DELETE PROJECT
   ========================= */
   const handleDelete = async () => {
-    const projectId = project.project_id || project.id;
-
-    const result = await dispatch(deleteProject(projectId));
-
-    if (deleteProject.fulfilled.match(result)) {
-      navigate("/projects");
-    }
-  };
+  await dispatch(deleteProject(project.project_id));
+  navigate("/projects");
+};
 
   /* =========================
-     STATES
+     LOADING / EMPTY STATES
   ========================= */
   if (status === "loading") {
     return (
@@ -80,7 +83,7 @@ function ProjectDetails() {
       {/* HEADER */}
       <ProjectDetailsHeader
         onEdit={() =>
-          navigate(`/projects/edit/${project.project_id || project.id}`)
+          navigate(`/projects/edit/${project.id}`)
         }
         onDelete={() => setShowDeleteModal(true)}
         onAddPhase={() => setShowPhaseModal(true)}
@@ -94,24 +97,29 @@ function ProjectDetails() {
 
       {/* PHASES */}
       <div className="w-full max-w-7xl mx-auto">
-        <ProjectPhases project={project} phases={phases} />
+        <ProjectPhases
+          project={project}
+          phases={phases}
+        />
       </div>
 
       {/* ADD PHASE MODAL */}
       {showPhaseModal && (
         <AddPhaseModal
-          projectId={project.project_id || project.id}
+          projectId={project.id}
           onClose={() => setShowPhaseModal(false)}
         />
       )}
 
       {/* DELETE CONFIRM MODAL */}
-      <DeleteProjectModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={handleDelete}
-        loading={deleteStatus === "loading"}
-      />
+      {showDeleteModal && (
+        <DeleteProjectModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+          loading={deleteStatus === "loading"}
+        />
+      )}
     </div>
   );
 }

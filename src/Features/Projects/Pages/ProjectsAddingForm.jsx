@@ -1,24 +1,36 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {fetchEmployees,fetchManagers,selectAllEmployees,selectAllManagers,} from "../../../Redux/Slices/employeeslice";
-import {addProject,getAddProjectStatus,} from "../../../Redux/Slices/projectSlice";
+
+import {
+  fetchEmployees,
+  selectAllEmployees,
+} from "../../../Redux/Slices/employeeslice";
+
+import {
+  addProject,
+  getAddProjectStatus,
+} from "../../../Redux/Slices/projectSlice";
 
 export default function ProjectAdd() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const employees = useSelector(selectAllEmployees);
-  const managers = useSelector(selectAllManagers);
+  const employees = useSelector(selectAllEmployees) || [];
   const addStatus = useSelector(getAddProjectStatus);
 
   const [isTeamOpen, setIsTeamOpen] = useState(false);
 
+  /* =========================
+     FETCH EMPLOYEES
+  ========================= */
   useEffect(() => {
     dispatch(fetchEmployees());
-    dispatch(fetchManagers());
   }, [dispatch]);
 
+  /* =========================
+     FORM STATE
+  ========================= */
   const [formData, setFormData] = useState({
     project_name: "",
     description: "",
@@ -29,12 +41,15 @@ export default function ProjectAdd() {
     end_date: "",
     priority: "",
     project_type: "",
-    project_manager: "",
-    team_members: [],
+    project_manager_id: "",
+    team_members: [],           // employee_id[]
     total_budget: "",
     project_logo: null,
   });
 
+  /* =========================
+     INPUT HANDLER
+  ========================= */
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prev) => ({
@@ -43,35 +58,61 @@ export default function ProjectAdd() {
     }));
   };
 
-  const toggleTeamMember = (id) => {
+  /* =========================
+     TEAM MEMBER TOGGLE
+  ========================= */
+  const toggleTeamMember = (employee_id) => {
     setFormData((prev) => ({
       ...prev,
-      team_members: prev.team_members.includes(id)
-        ? prev.team_members.filter((x) => x !== id)
-        : [...prev.team_members, id],
+      team_members: prev.team_members.includes(employee_id)
+        ? prev.team_members.filter((id) => id !== employee_id)
+        : [...prev.team_members, employee_id],
     }));
   };
 
+  /* =========================
+     SUBMIT (✔ FIXED)
+  ========================= */
   const handleSubmit = async () => {
     const data = new FormData();
 
-    Object.entries(formData).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        data.append(key, JSON.stringify(value));
-      } else if (value !== "" && value !== null) {
-        data.append(key, value);
-      }
+    // basic fields
+    data.append("project_name", formData.project_name);
+    data.append("description", formData.description);
+    data.append("client_name", formData.client_name);
+    data.append("client_email", formData.client_email);
+    data.append("client_contact", formData.client_contact);
+    data.append("start_date", formData.start_date);
+    data.append("end_date", formData.end_date);
+    data.append("priority", formData.priority);
+    data.append("project_type", formData.project_type);
+    data.append("project_manager_id", formData.project_manager_id);
+    data.append("total_budget", formData.total_budget);
+
+    // file
+    if (formData.project_logo) {
+      data.append("project_logo", formData.project_logo);
+    }
+
+    // ✅ CRITICAL FIX — M2M field
+    // backend expects team_members_ids
+    formData.team_members.forEach((empId) => {
+      data.append("team_members_ids", empId);
     });
 
     const result = await dispatch(addProject(data));
+
     if (addProject.fulfilled.match(result)) {
       navigate("/projects");
     }
   };
 
+  /* =========================
+     UI
+  ========================= */
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-5">
-      {/* PAGE HEADER */}
+      {/* HEADER */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">
@@ -82,27 +123,20 @@ export default function ProjectAdd() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button className="px-4 py-2 text-sm rounded-lg border bg-white">
-            Cancel
-          </button>
-          <button className="px-4 py-2 text-sm rounded-lg border bg-white">
-            Save as Draft
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={addStatus === "loading"}
-            className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white
-                       hover:bg-blue-700 disabled:opacity-60"
-          >
-            {addStatus === "loading" ? "Saving..." : "Save Project"}
-          </button>
-        </div>
+        <button
+          onClick={handleSubmit}
+          disabled={addStatus === "loading"}
+          className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white
+                     hover:bg-blue-700 disabled:opacity-60"
+        >
+          {addStatus === "loading" ? "Saving..." : "Save Project"}
+        </button>
       </div>
 
-      {/* MAIN CARD */}
-      <div className="bg-white  shadow-sm p-6  mx-auto">
+      {/* FORM */}
+      <div className="bg-white shadow-sm p-6 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+          {/* LEFT */}
           <div className="space-y-6">
             <Section title="Project Details">
               <Input
@@ -111,6 +145,7 @@ export default function ProjectAdd() {
                 value={formData.project_name}
                 onChange={handleChange}
               />
+
               <Select
                 label="Project Type"
                 name="project_type"
@@ -122,12 +157,26 @@ export default function ProjectAdd() {
                   { value: "webapp", label: "Web App" },
                 ]}
               />
+
+              <Select
+                label="Priority"
+                name="priority"
+                value={formData.priority}
+                onChange={handleChange}
+                options={[
+                  { value: "low", label: "Low" },
+                  { value: "medium", label: "Medium" },
+                  { value: "high", label: "High" },
+                ]}
+              />
+
               <Input
                 label="Client Name"
                 name="client_name"
                 value={formData.client_name}
                 onChange={handleChange}
               />
+
               <Input
                 label="Client Email"
                 type="email"
@@ -135,6 +184,15 @@ export default function ProjectAdd() {
                 value={formData.client_email}
                 onChange={handleChange}
               />
+
+              <Input
+                label="Client Contact Number"
+                type="tel"
+                name="client_contact"
+                value={formData.client_contact}
+                onChange={handleChange}
+              />
+
               <Textarea
                 label="Project Description"
                 name="description"
@@ -143,18 +201,18 @@ export default function ProjectAdd() {
               />
             </Section>
 
-            <Section title="Timeline & Duration">
+            <Section title="Timeline">
               <div className="grid grid-cols-2 gap-4">
                 <Input
-                  label="Start Date"
                   type="date"
+                  label="Start Date"
                   name="start_date"
                   value={formData.start_date}
                   onChange={handleChange}
                 />
                 <Input
-                  label="End Date"
                   type="date"
+                  label="End Date"
                   name="end_date"
                   value={formData.end_date}
                   onChange={handleChange}
@@ -163,19 +221,21 @@ export default function ProjectAdd() {
             </Section>
           </div>
 
+          {/* RIGHT */}
           <div className="space-y-6">
             <Section title="Team & Responsibility">
               <Select
                 label="Project Manager"
-                name="project_manager"
-                value={formData.project_manager}
+                name="project_manager_id"
+                value={formData.project_manager_id}
                 onChange={handleChange}
-                options={managers.map((m) => ({
-                  value: m.id,
-                  label: m.name,
+                options={employees.map((emp) => ({
+                  value: emp.employee_id,
+                  label: emp.name,
                 }))}
               />
 
+              {/* TEAM MEMBERS */}
               <div className="relative">
                 <label className="block text-xs font-medium text-gray-600 mb-1">
                   Team Members
@@ -184,34 +244,34 @@ export default function ProjectAdd() {
                 <button
                   type="button"
                   onClick={() => setIsTeamOpen((p) => !p)}
-                  className="w-full flex justify-between items-center rounded-lg border
-                             px-3 py-2 text-sm bg-white"
+                  className="w-full flex justify-between items-center
+                             rounded-lg border px-3 py-2 text-sm bg-white"
                 >
                   <span className="truncate">
                     {formData.team_members.length === 0
                       ? "Select team members"
                       : employees
-                        .filter((e) => formData.team_members.includes(e.id))
-                        .map((e) => e.name)
-                        .join(", ")}
+                          .filter((emp) =>
+                            formData.team_members.includes(emp.employee_id)
+                          )
+                          .map((emp) => emp.name)
+                          .join(", ")}
                   </span>
                   <span className="text-gray-400">▾</span>
                 </button>
 
                 {isTeamOpen && (
-                  <div
-                    className="absolute z-20 mt-1 w-full max-h-56 overflow-auto
-                                  border border-gray-300 rounded-lg  bg-white shadow"
-                  >
+                  <div className="absolute z-20 mt-1 w-full max-h-56
+                                  overflow-auto border rounded-lg bg-white shadow">
                     {employees.map((emp) => (
                       <label
-                        key={emp.id}
+                        key={emp.employee_id}
                         className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50"
                       >
                         <input
                           type="checkbox"
-                          checked={formData.team_members.includes(emp.id)}
-                          onChange={() => toggleTeamMember(emp.id)}
+                          checked={formData.team_members.includes(emp.employee_id)}
+                          onChange={() => toggleTeamMember(emp.employee_id)}
                         />
                         {emp.name}
                         <span className="text-xs text-gray-400">
@@ -224,21 +284,19 @@ export default function ProjectAdd() {
               </div>
             </Section>
 
-            <Section title="Budget">
+            <Section title="Budget & Logo">
               <Input
                 label="Total Budget"
                 name="total_budget"
                 value={formData.total_budget}
                 onChange={handleChange}
               />
-            </Section>
 
-            <Section title="Project Logo">
               <input
                 type="file"
                 name="project_logo"
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                className="w-full border rounded-lg px-3 py-2 text-sm"
               />
             </Section>
           </div>
@@ -248,9 +306,15 @@ export default function ProjectAdd() {
   );
 }
 
+/* =========================
+   REUSABLE COMPONENTS
+========================= */
+
 const Section = ({ title, children }) => (
   <div>
-    <h3 className="text-sm font-semibold text-gray-800 mb-4">{title}</h3>
+    <h3 className="text-sm font-semibold text-gray-800 mb-4">
+      {title}
+    </h3>
     <div className="space-y-4">{children}</div>
   </div>
 );
@@ -260,10 +324,7 @@ const Input = ({ label, ...props }) => (
     <label className="block text-xs font-medium text-gray-600 mb-1">
       {label}
     </label>
-    <input
-      {...props}
-      className="w-full  border border-gray-300 rounded-lg px-3 py-2 text-sm"
-    />
+    <input {...props} className="w-full border rounded-lg px-3 py-2 text-sm" />
   </div>
 );
 
@@ -275,20 +336,17 @@ const Textarea = ({ label, ...props }) => (
     <textarea
       {...props}
       rows={3}
-      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+      className="w-full border rounded-lg px-3 py-2 text-sm"
     />
   </div>
 );
 
-const Select = ({ label, options, ...props }) => (
+const Select = ({ label, options = [], ...props }) => (
   <div>
     <label className="block text-xs font-medium text-gray-600 mb-1">
       {label}
     </label>
-    <select
-      {...props}
-      className="w-full border border-gray-300 rounded-lg  px-3 py-2 text-sm bg-white"
-    >
+    <select {...props} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
       <option value="">Select</option>
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>

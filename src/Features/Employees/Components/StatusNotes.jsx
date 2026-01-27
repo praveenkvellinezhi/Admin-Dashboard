@@ -9,8 +9,7 @@ export default function StatusNotes({ employee }) {
       </h3>
 
       <div className="p-4 space-y-4 text-sm">
-        {/* STATUS */}
-        <div>
+                <div>
           <label className="text-gray-500 block mb-1">
             Employee Status
           </label>
@@ -18,8 +17,7 @@ export default function StatusNotes({ employee }) {
           <StatusBadge status={emp.status} />
         </div>
 
-        {/* NOTES */}
-        <div>
+                <div>
           <label className="text-gray-500 block mb-1">
             Notes & Remarks
           </label>

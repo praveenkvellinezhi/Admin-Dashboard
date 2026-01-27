@@ -19,14 +19,12 @@ export default function EmployeeList({ employees }) {
 
   return (
     <div className="mt-6">
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-gray-900">
           Employee Management
         </h2>
 
-        {/* VIEW TOGGLE */}
-        <div className="flex gap-2 bg-white border rounded-lg p-1">
+                <div className="flex gap-2 bg-white border rounded-lg p-1">
           <button
             onClick={() => setView("grid")}
             className={`p-2 rounded-md transition ${
@@ -51,16 +49,14 @@ export default function EmployeeList({ employees }) {
         </div>
       </div>
 
-      {/* ================= LIST VIEW ================= */}
-      {view === "list" && (
+            {view === "list" && (
         <div className="space-y-4">
           {currentEmployees.map((emp) => (
             <div
               key={emp.id}
               className="bg-white rounded-2xl shadow-sm hover:shadow-md transition px-6 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
             >
-              {/* EMPLOYEE */}
-              <div className="flex items-center gap-4 min-w-[240px]">
+                            <div className="flex items-center gap-4 min-w-[240px]">
                 <img
                   src={emp.profile_image_url || "https://i.pravatar.cc/150"}
                   alt={emp.name}
@@ -74,23 +70,20 @@ export default function EmployeeList({ employees }) {
                 </div>
               </div>
 
-              {/* ROLE */}
-              <div className="min-w-[120px] text-left">
+                            <div className="min-w-[120px] text-left">
                 <span className="px-4 py-1 text-sm rounded-full bg-purple-100 text-purple-600 capitalize">
                   {emp.department}
                 </span>
               </div>
 
-              {/* JOIN DATE */}
-              <div className="min-w-[150px]">
+                            <div className="min-w-[150px]">
                 <p className="text-xs text-gray-400 mb-1">Joined Date</p>
                 <p className="text-sm font-medium text-gray-700">
                   {emp.joining_date}
                 </p>
               </div>
 
-              {/* CONTACT */}
-              <div className="min-w-[240px] flex flex-col gap-2 text-sm text-gray-600">
+                            <div className="min-w-[240px] flex flex-col gap-2 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <Phone size={16} className="text-gray-400" />
                   <span>{emp.phone}</span>
@@ -101,8 +94,7 @@ export default function EmployeeList({ employees }) {
                 </div>
               </div>
 
-              {/* ACTION */}
-              <div className="text-right">
+                            <div className="text-right">
                 <button
                   onClick={() => navigate(`/Employees/${emp.employee_id}`)}
                   className="inline-flex items-center gap-2 px-5 py-2 text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition"
@@ -125,13 +117,11 @@ export default function EmployeeList({ employees }) {
         className="bg-white rounded-2xl shadow-md p-6 text-center relative 
                    cursor-pointer hover:shadow-lg transition"
       >
-        {/* Top right icon */}
-        <div className="absolute top-4 right-4 text-gray-400">
+                <div className="absolute top-4 right-4 text-gray-400">
           <Eye size={18} />
         </div>
 
-        {/* Avatar with ring */}
-        <div className="flex justify-center">
+                <div className="flex justify-center">
           <div className="w-24 h-24 rounded-full border-4 border-gray-300 flex items-center justify-center">
             <img
               src={emp.profile_image_url  || "https://i.pravatar.cc/150"}
@@ -141,18 +131,15 @@ export default function EmployeeList({ employees }) {
           </div>
         </div>
 
-        {/* Name */}
-        <h3 className="mt-4 text-lg font-semibold text-gray-900 capitalize">
+                <h3 className="mt-4 text-lg font-semibold text-gray-900 capitalize">
           {emp.name}
         </h3>
 
-        {/* Department */}
-        <p className="mt-2 mb-2 text-xs font-semibold tracking-widest text-gray-500 uppercase">
+                <p className="mt-2 mb-2 text-xs font-semibold tracking-widest text-gray-500 uppercase">
           {emp.department} Developer
         </p>
 
-        {/* Contact + Joining Date */}
-        <div className="mt-4 space-y-2 text-xs text-gray-500 text-left">
+                <div className="mt-4 space-y-2 text-xs text-gray-500 text-left">
           <div className="flex items-center gap-2">
             <Phone size={14} className="text-gray-400" />
             <span>{emp.phone}</span>
@@ -179,8 +166,7 @@ export default function EmployeeList({ employees }) {
 
 
 
-      {/* PAGINATION */}
-      {totalPages > 1 && (
+            {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-8">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}

@@ -1,8 +1,5 @@
 import { UploadCloud, FileText } from "lucide-react";
 
-/* =========================
-   REUSABLE UPLOAD BOX
-========================= */
 function UploadBox({ label, name, file, onChange, disabled = false }) {
   const isImage = file && file.type?.startsWith("image/");
   const previewUrl = file ? URL.createObjectURL(file) : null;
@@ -20,7 +17,6 @@ function UploadBox({ label, name, file, onChange, disabled = false }) {
           }
         `}
       >
-        {/* EMPTY STATE */}
         {!file && (
           <>
             <UploadCloud size={22} className="text-gray-400 mb-2" />
@@ -31,7 +27,6 @@ function UploadBox({ label, name, file, onChange, disabled = false }) {
           </>
         )}
 
-        {/* PREVIEW */}
         {file && (
           <div className="flex items-center gap-3 px-3">
             {isImage ? (
@@ -65,23 +60,18 @@ function UploadBox({ label, name, file, onChange, disabled = false }) {
       </label>
 
       {disabled && (
-        <p className="text-xs text-red-500 mt-1">
-          Not required for interns
-        </p>
+        <p className="text-xs text-red-500 mt-1">Not required for interns</p>
       )}
     </div>
   );
 }
 
-/* =========================
-   DOCUMENTS UPLOAD
-========================= */
+
 export default function DocumentsUpload({ onChange, formData }) {
   const isIntern = formData.employment_type === "intern";
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-      {/* HEADER */}
       <div className="flex items-center gap-2 px-4 py-2 border-b bg-gray-50 rounded-t-lg">
         <FileText size={16} className="text-gray-600" />
         <h3 className="text-sm font-semibold text-gray-700">
@@ -89,9 +79,7 @@ export default function DocumentsUpload({ onChange, formData }) {
         </h3>
       </div>
 
-      {/* CONTENT */}
       <div className="p-4 space-y-4">
-        {/* Resume (DISABLED FOR INTERN) */}
         <UploadBox
           label="Resume"
           name="resume"
@@ -101,7 +89,6 @@ export default function DocumentsUpload({ onChange, formData }) {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* ID Proof (ALWAYS ENABLED) */}
           <UploadBox
             label="ID Proof"
             name="id_proof_document"
@@ -109,7 +96,6 @@ export default function DocumentsUpload({ onChange, formData }) {
             onChange={onChange}
           />
 
-          {/* Offer Letter (DISABLED FOR INTERN) */}
           <UploadBox
             label="Offer Letter"
             name="offer_letter"

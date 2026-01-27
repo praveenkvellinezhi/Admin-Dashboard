@@ -1,0 +1,153 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+
+import EmployeeBasicDetails from "../Components/BasicDetail";
+import JobRoleInformation from "../Components/Jobdetails";
+import SalaryEmploymentDetails from "../Components/SalaryDetails";
+import DocumentsUpload from "../Components/DocumentUpload";
+import StatusNotes from "../Components/StatusNotes";
+
+import {
+  fetchEmployeesById,
+  editEmployee,
+  selectSelectedEmployee,
+  getSingleEmployeeStatus,
+} from "../../../Redux/Slices/employeeslice";
+
+export default function EditForm() {
+  const { id } = useParams(); 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const employeeData = useSelector(selectSelectedEmployee);
+  const status = useSelector(getSingleEmployeeStatus);
+
+  const [formData, setFormData] = useState(null);
+
+
+  useEffect(() => {
+    dispatch(fetchEmployeesById(id));
+  }, [dispatch, id]);
+
+
+  useEffect(() => {
+    if (employeeData) {
+      const emp = employeeData.employee ?? employeeData;
+
+      setFormData({
+        ...emp,
+
+        
+        profile_image: null,
+        resume: null,
+        id_proof_document: null,
+        offer_letter: null,
+
+        
+        is_manager: emp.is_manager ?? false,
+        reporting_manager: emp.reporting_manager ?? "",
+        notes: emp.notes ?? "",
+      });
+    }
+  }, [employeeData]);
+
+ 
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files[0],
+    }));
+  };
+
+
+  const handleSubmit = async () => {
+    const data = new FormData();
+
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== null && value !== "" && value !== undefined) {
+        data.append(key, value);
+      }
+    });
+
+    const result = await dispatch(
+      editEmployee({
+        employeeId: id,
+        formData: data,
+      })
+    );
+
+    if (editEmployee.fulfilled.match(result)) {
+      navigate(`/employees/${id}`);
+    }
+  };
+
+
+  if (status === "loading" || !formData) {
+    return <p className="text-center mt-10">Loading...</p>;
+  }
+
+ 
+  return (
+    <div className="min-h-screen bg-gray-100 px-6 py-6 space-y-6">
+            <div className="flex justify-between items-center">
+        <h1 className="text-xl font-semibold text-gray-900">
+          Edit Employee
+        </h1>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="px-4 py-2 border rounded-md text-sm bg-white"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
+
+            <EmployeeBasicDetails
+        formData={formData}
+        onChange={handleChange}
+        onImageChange={handleFileChange}
+      />
+
+            <JobRoleInformation
+        formData={formData}
+        onChange={handleChange}
+      />
+
+            <SalaryEmploymentDetails
+        formData={formData}
+        onChange={handleChange}
+      />
+
+            <DocumentsUpload
+        formData={formData}
+        onChange={handleFileChange}
+      />
+
+            <StatusNotes
+        formData={formData}
+        onChange={handleChange}
+      />
+    </div>
+  );
+}

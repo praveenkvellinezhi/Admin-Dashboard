@@ -21,9 +21,7 @@ export default function AddForm() {
   const navigate = useNavigate();
   const status = useSelector(getEmployeeStatus);
 
-  /* =========================
-     FORM STATE
-  ========================= */
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -34,9 +32,9 @@ export default function AddForm() {
     position: "",
     joining_date: "",
 
-    employment_type: "", // ✅ REQUIRED
+    employment_type: "", 
     salary_type: "",
-    salary: "",          // ✅ REQUIRED FOR STAFF
+    salary: "",          
     payment_method: "",
     notes: "", 
 
@@ -49,9 +47,7 @@ export default function AddForm() {
     offer_letter: null,
   });
 
-  /* =========================
-     INPUT HANDLERS
-  ========================= */
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -63,8 +59,8 @@ export default function AddForm() {
 
   setFormData((prev) => ({
     ...prev,
-    profile_image: file, // for backend
-    profile_image_url: URL.createObjectURL(file), // ✅ for preview
+    profile_image: file, 
+    profile_image_url: URL.createObjectURL(file), 
   }));
 };
 
@@ -77,9 +73,7 @@ export default function AddForm() {
     }));
   };
 
-  /* =========================
-     BUILD FORMDATA
-  ========================= */
+
   const buildFormData = () => {
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
@@ -90,9 +84,7 @@ export default function AddForm() {
     return data;
   };
 
-  /* =========================
-     SUBMIT HANDLERS
-  ========================= */
+ 
   const validateBeforeSubmit = () => {
     if (
       formData.employment_type === "staff" &&
@@ -113,12 +105,11 @@ const handleSave = async () => {
     if (formData.employment_type === "intern") {
       alert("Intern added successfully");
       dispatch(fetchInterns());
-      navigate("/interns"); // ✅ intern list route
+      navigate("/interns"); 
     } else {
       alert("Employee added successfully");
       dispatch(fetchEmployees());
-      navigate("/employees"); // ✅ employee list route
-    }
+      navigate("/employees"); 
   }
 };
 
@@ -137,7 +128,7 @@ const handleSaveAndAddAnother = async () => {
       dispatch(fetchEmployees());
     }
 
-    // RESET FORM
+  
     setFormData({
       name: "",
       email: "",
@@ -163,9 +154,6 @@ const handleSaveAndAddAnother = async () => {
 
 
 
-  /* =========================
-     RENDER
-  ========================= */
   return (
     <div className="space-y-6">
       <EmployeeBasicDetails
@@ -196,8 +184,7 @@ const handleSaveAndAddAnother = async () => {
         onChange={handleChange}
       />
 
-      {/* ACTION BUTTONS */}
-      <div className="flex justify-end gap-3 pt-4">
+            <div className="flex justify-end gap-3 pt-4">
         <button
           className="px-4 py-2 border rounded"
           onClick={() => navigate(-1)}
@@ -223,4 +210,5 @@ const handleSaveAndAddAnother = async () => {
       </div>
     </div>
   );
+}
 }

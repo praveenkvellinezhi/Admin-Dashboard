@@ -1,8 +1,8 @@
 import { Mail, Phone, LayoutGrid, List, Eye } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-export default function InternsList({ interns }) {
+export default function InternsList({ interns = [] }) {
   const [view, setView] = useState("list");
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -17,6 +17,10 @@ export default function InternsList({ interns }) {
     startIndex + ITEMS_PER_PAGE
   );
 
+  const goToDetails = (employeeId) => {
+    navigate(`/interns/${employeeId}`); // ✅ correct route
+  };
+
   return (
     <div className="mt-6">
       {/* HEADER */}
@@ -29,7 +33,7 @@ export default function InternsList({ interns }) {
         <div className="flex gap-2 bg-white border rounded-lg p-1">
           <button
             onClick={() => setView("grid")}
-            className={`p-2 rounded-md transition ${
+            className={`p-2 rounded-md ${
               view === "grid"
                 ? "bg-blue-500 text-white"
                 : "text-gray-500 hover:bg-gray-100"
@@ -40,7 +44,7 @@ export default function InternsList({ interns }) {
 
           <button
             onClick={() => setView("list")}
-            className={`p-2 rounded-md transition ${
+            className={`p-2 rounded-md ${
               view === "list"
                 ? "bg-blue-500 text-white"
                 : "text-gray-500 hover:bg-gray-100"
@@ -56,8 +60,10 @@ export default function InternsList({ interns }) {
         <div className="space-y-4">
           {currentInterns.map((int) => (
             <div
-              key={int.id}
-              className="bg-white rounded-2xl shadow-sm hover:shadow-md transition px-6 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6"
+              key={int.employee_id}
+              className="bg-white rounded-2xl shadow-sm hover:shadow-md transition
+                         px-6 py-4 flex flex-col lg:flex-row lg:items-center
+                         lg:justify-between gap-6"
             >
               {/* INTERN */}
               <div className="flex items-center gap-4 min-w-[240px]">
@@ -71,15 +77,16 @@ export default function InternsList({ interns }) {
                     {int.name}
                   </p>
                   <p className="text-sm text-gray-500">
-                    ID: {int.intern_id || int.id}
+                    ID: {int.employee_id}
                   </p>
                 </div>
               </div>
 
               {/* ROLE */}
-              <div className="min-w-[120px] text-left">
-                <span className="px-4 py-1 text-sm rounded-full bg-blue-100 text-blue-600 capitalize">
-                  {int.role || "Intern"}
+              <div className="min-w-[120px]">
+                <span className="px-4 py-1 text-sm rounded-full
+                                 bg-blue-100 text-blue-600 capitalize">
+                  Intern
                 </span>
               </div>
 
@@ -87,7 +94,7 @@ export default function InternsList({ interns }) {
               <div className="min-w-[150px]">
                 <p className="text-xs text-gray-400 mb-1">Joined Date</p>
                 <p className="text-sm font-medium text-gray-700">
-                  {int.joiningDate || int.joining_date || "—"}
+                  {int.joining_date || "—"}
                 </p>
               </div>
 
@@ -108,8 +115,10 @@ export default function InternsList({ interns }) {
               {/* ACTION */}
               <div className="text-right">
                 <button
-                  onClick={() => navigate(`/Interns/${int.employee_id}`)}
-                  className="inline-flex items-center gap-2 px-5 py-2 text-blue-600 bg-blue-50 rounded-xl hover:bg-blue-100 transition"
+                  onClick={() => goToDetails(int.employee_id)}
+                  className="inline-flex items-center gap-2 px-5 py-2
+                             text-blue-600 bg-blue-50 rounded-xl
+                             hover:bg-blue-100 transition"
                 >
                   <Eye size={16} />
                   View
@@ -125,56 +134,30 @@ export default function InternsList({ interns }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {currentInterns.map((int) => (
             <div
-              key={int.id}
-              onClick={() => navigate(`/Interns/${int.employee_id}`)}
-              className="bg-white rounded-2xl shadow-md p-6 text-center relative 
+              key={int.employee_id}
+              onClick={() => goToDetails(int.employee_id)}
+              className="bg-white rounded-2xl shadow-md p-6 text-center
                          cursor-pointer hover:shadow-lg transition"
             >
-              {/* Top right icon */}
               <div className="absolute top-4 right-4 text-gray-400">
                 <Eye size={18} />
               </div>
 
-              {/* Avatar with ring */}
               <div className="flex justify-center">
-                <div className="w-24 h-24 rounded-full border-4 border-gray-300 flex items-center justify-center">
-                  <img
-                    src={int.profile_image_url || "https://i.pravatar.cc/150"}
-                    alt={int.name}
-                    className="w-20 h-20 rounded-full object-cover"
-                  />
-                </div>
+                <img
+                  src={int.profile_image_url || "https://i.pravatar.cc/150"}
+                  alt={int.name}
+                  className="w-20 h-20 rounded-full object-cover"
+                />
               </div>
 
-              {/* Name */}
-              <h3 className="mt-4 text-lg font-semibold text-gray-900 capitalize">
+              <h3 className="mt-4 text-lg font-semibold capitalize">
                 {int.name}
               </h3>
 
-              {/* Role */}
-              <p className="mt-2 mb-2 text-xs font-semibold tracking-widest text-gray-500 uppercase">
-                {int.department || "Intern"} Intern
+              <p className="mt-2 text-xs text-gray-500 uppercase">
+                Intern
               </p>
-
-              {/* Contact + Joining Date */}
-              <div className="mt-4 space-y-2 text-xs text-gray-500 text-left">
-                <div className="flex items-center gap-2">
-                  <Phone size={14} className="text-gray-400" />
-                  <span>{int.phone || "—"}</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Mail size={14} className="text-gray-400" />
-                  <span className="truncate">{int.email || "—"}</span>
-                </div>
-
-                <div className="flex justify-between pt-2 border-t text-gray-400">
-                  <span>Joined</span>
-                  <span className="font-medium text-gray-600">
-                    {int.joiningDate || int.joining_date || "—"}
-                  </span>
-                </div>
-              </div>
             </div>
           ))}
         </div>
@@ -182,36 +165,35 @@ export default function InternsList({ interns }) {
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2 mt-8">
+        <div className="flex justify-center gap-2 mt-8">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
-            className="px-3 py-1 text-sm border rounded disabled:opacity-40"
+            className="px-3 py-1 border rounded"
           >
             Prev
           </button>
 
-          {[...Array(totalPages)].map((_, index) => {
-            const page = index + 1;
-            return (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`px-3 py-1 text-sm border rounded ${
-                  currentPage === page
-                    ? "bg-blue-600 text-white"
-                    : "hover:bg-gray-100"
-                }`}
-              >
-                {page}
-              </button>
-            );
-          })}
+          {[...Array(totalPages)].map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`px-3 py-1 border rounded ${
+                currentPage === i + 1
+                  ? "bg-blue-600 text-white"
+                  : ""
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
 
           <button
-            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((p) => Math.min(p + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
-            className="px-3 py-1 text-sm border rounded disabled:opacity-40"
+            className="px-3 py-1 border rounded"
           >
             Next
           </button>

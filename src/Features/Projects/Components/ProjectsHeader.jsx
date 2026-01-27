@@ -26,7 +26,7 @@ const Projects = [
       setFilterValue={setRole}
       filterOptions={Projects}
       buttonText="Add Projects"
-      navigatePath="/Project-Add" />
+      navigatePath="/projects/add" />
 
 
     </div>

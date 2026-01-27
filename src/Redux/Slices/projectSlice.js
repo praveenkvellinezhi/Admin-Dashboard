@@ -7,176 +7,84 @@ import { BASE_URL } from "../Baseurl";
 ========================= */
 const initialState = {
   projects: [],
-  projectStatus: "idle",
+  selectedProject: null,
 
+  listStatus: "idle",
+  singleStatus: "idle",
   addStatus: "idle",
   editStatus: "idle",
   deleteStatus: "idle",
-
-  phases: [],
-  phaseAddStatus: "idle",
-
-  taskAddStatus: "idle",
-  taskFetchStatus: "idle",
-
-  progress: 0,
-
-  selectedProject: null,
-  singleStatus: "idle",
 
   error: null,
 };
 
 /* =========================
-   FETCH PROJECT LIST
+   THUNKS
 ========================= */
 export const fetchProjects = createAsyncThunk(
-  "projects/fetchProjects",
+  "projects/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/project/projects/list/`
-      );
-      return res.data;
-    } catch (error) {
-      return rejectWithValue(error.message);
+      const res = await axios.get(`${BASE_URL}/project/projects/list/`);
+      return res.data.data;
+    } catch (err) {
+      return rejectWithValue(err.message);
     }
-  }
+  },
 );
 
-/* =========================
-   FETCH SINGLE PROJECT
-========================= */
 export const fetchProjectById = createAsyncThunk(
-  "projects/fetchProjectById",
+  "projects/fetchById",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.get(
-        `${BASE_URL}/project/projects/full/${id}/`
-      );
+      const res = await axios.get(`${BASE_URL}/project/projects/full/${id}/`);
       return res.data.data;
-    } catch (error) {
-      return rejectWithValue(error.message);
+    } catch (err) {
+      return rejectWithValue(err.message);
     }
-  }
+  },
 );
 
-/* =========================
-   ADD PROJECT
-========================= */
 export const addProject = createAsyncThunk(
-  "projects/addProject",
+  "projects/add",
   async (formData, { rejectWithValue }) => {
     try {
       const res = await axios.post(
         `${BASE_URL}/project/projects/create/`,
-        formData
+        formData,
       );
       return res.data.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
-  }
+  },
 );
 
-/* =========================
-   EDIT PROJECT
-========================= */
 export const editProject = createAsyncThunk(
-  "projects/editProject",
+  "projects/edit",
   async ({ projectId, formData }, { rejectWithValue }) => {
     try {
       const res = await axios.patch(
         `${BASE_URL}/project/projects/edit/${projectId}/`,
-        formData
+        formData,
       );
       return res.data.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
-  }
+  },
 );
 
-/* =========================
-   DELETE PROJECT
-========================= */
 export const deleteProject = createAsyncThunk(
-  "projects/deleteProject",
+  "projects/delete",
   async (projectId, { rejectWithValue }) => {
     try {
-      await axios.delete(
-        `${BASE_URL}/project/projects/edit/${projectId}/`
-      );
+      await axios.delete(`${BASE_URL}/project/projects/delete/${projectId}/`);
       return projectId;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
-  }
-);
-
-/* =========================
-   ADD PHASE
-========================= */
-export const addPhase = createAsyncThunk(
-  "projects/addPhase",
-  async (payload, { rejectWithValue }) => {
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/project/phases/create/`,
-        payload
-      );
-      return res.data.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
-    }
-  }
-);
-
-/* =========================
-   FETCH TASKS
-========================= */
-export const fetchTasks = createAsyncThunk(
-  "projects/fetchTasks",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/project/tasks/list/`
-      );
-      return res.data.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
-    }
-  }
-);
-
-/* =========================
-   ADD TASK
-========================= */
-export const addTask = createAsyncThunk(
-  "projects/addTask",
-  async (payload, { rejectWithValue }) => {
-    try {
-      const res = await axios.post(
-        `${BASE_URL}/project/tasks/create/`,
-        payload
-      );
-      return res.data.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
-    }
-  }
+  },
 );
 
 /* =========================
@@ -188,208 +96,64 @@ const projectSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-
-      /* ===== FETCH PROJECTS ===== */
-      .addCase(fetchProjects.pending, (state) => {
-        state.projectStatus = "loading";
+      .addCase(fetchProjects.pending, (s) => {
+        s.listStatus = "loading";
       })
-      .addCase(fetchProjects.fulfilled, (state, action) => {
-        state.projectStatus = "succeeded";
-        state.projects = action.payload;
-      })
-      .addCase(fetchProjects.rejected, (state, action) => {
-        state.projectStatus = "failed";
-        state.error = action.payload;
-      })
-
-      /* ===== ADD PROJECT ===== */
-      .addCase(addProject.pending, (state) => {
-        state.addStatus = "loading";
-      })
-      .addCase(addProject.fulfilled, (state, action) => {
-        state.addStatus = "succeeded";
-        state.projects.unshift(action.payload);
-      })
-      .addCase(addProject.rejected, (state, action) => {
-        state.addStatus = "failed";
-        state.error = action.payload;
-      })
-
-      /* ===== EDIT PROJECT ===== */
-      .addCase(editProject.pending, (state) => {
-        state.editStatus = "loading";
-      })
-      .addCase(editProject.fulfilled, (state, action) => {
-        state.editStatus = "succeeded";
-
-        const updated = action.payload;
-
-        const index = state.projects.findIndex(
-          (p) =>
-            p.id === updated.id ||
-            p.project_id === updated.project_id
-        );
-
-        if (index !== -1) {
-          state.projects[index] = updated;
-        }
-
-        if (
-          state.selectedProject &&
-          (state.selectedProject.id === updated.id ||
-            state.selectedProject.project_id ===
-              updated.project_id)
-        ) {
-          state.selectedProject = updated;
-        }
-      })
-      .addCase(editProject.rejected, (state, action) => {
-        state.editStatus = "failed";
-        state.error = action.payload;
-      })
-
-      /* ===== DELETE PROJECT ===== */
-      .addCase(deleteProject.pending, (state) => {
-        state.deleteStatus = "loading";
-      })
-      .addCase(deleteProject.fulfilled, (state, action) => {
-        state.deleteStatus = "succeeded";
-
-        state.projects = state.projects.filter(
-          (p) =>
-            p.id !== action.payload &&
-            p.project_id !== action.payload
-        );
-
-        if (
-          state.selectedProject &&
-          (state.selectedProject.id === action.payload ||
-            state.selectedProject.project_id === action.payload)
-        ) {
-          state.selectedProject = null;
-        }
-      })
-      .addCase(deleteProject.rejected, (state, action) => {
-        state.deleteStatus = "failed";
-        state.error = action.payload;
-      })
-
-      /* ===== FETCH SINGLE PROJECT ===== */
-      .addCase(fetchProjectById.pending, (state) => {
-        state.singleStatus = "loading";
-        state.selectedProject = null;
-        state.phases = [];
+      .addCase(fetchProjects.fulfilled, (s, a) => {
+        s.listStatus = "succeeded";
+        s.projects = a.payload;
       })
       .addCase(fetchProjectById.fulfilled, (state, action) => {
         state.singleStatus = "succeeded";
         state.selectedProject = action.payload.project;
-        state.phases = action.payload.phases || [];
-        state.progress =
-          action.payload.progress_percent || 0;
-      })
-      .addCase(fetchProjectById.rejected, (state, action) => {
-        state.singleStatus = "failed";
-        state.error = action.payload;
       })
 
-      /* ===== ADD PHASE ===== */
-      .addCase(addPhase.pending, (state) => {
-        state.phaseAddStatus = "loading";
+      .addCase(addProject.fulfilled, (s, a) => {
+        s.projects.unshift(a.payload);
       })
-      .addCase(addPhase.fulfilled, (state, action) => {
-        state.phaseAddStatus = "succeeded";
-        state.phases.push({
-          ...action.payload,
-          tasks: action.payload.tasks || [],
-        });
+      .addCase(editProject.fulfilled, (s, a) => {
+        const i = s.projects.findIndex((p) => p.id === a.payload.id);
+        if (i !== -1) s.projects[i] = a.payload;
+        if (s.selectedProject?.id === a.payload.id) {
+          s.selectedProject = a.payload;
+        }
       })
-      .addCase(addPhase.rejected, (state, action) => {
-        state.phaseAddStatus = "failed";
-        state.error = action.payload;
-      })
-
-      /* ===== FETCH TASKS ===== */
-      .addCase(fetchTasks.pending, (state) => {
-        state.taskFetchStatus = "loading";
-      })
-      .addCase(fetchTasks.fulfilled, (state, action) => {
-        state.taskFetchStatus = "succeeded";
-
-        state.phases.forEach((p) => (p.tasks = []));
-
-        action.payload.forEach((task) => {
-          const phase = state.phases.find(
-            (p) => p.id === task.phase
-          );
-          if (phase) phase.tasks.push(task);
-        });
-      })
-      .addCase(fetchTasks.rejected, (state, action) => {
-        state.taskFetchStatus = "failed";
-        state.error = action.payload;
-      })
-
-      /* ===== ADD TASK ===== */
-      .addCase(addTask.pending, (state) => {
-        state.taskAddStatus = "loading";
-      })
-      .addCase(addTask.fulfilled, (state, action) => {
-        state.taskAddStatus = "succeeded";
-
-        const task = action.payload;
-        const phase = state.phases.find(
-          (p) => p.id === task.phase
+      .addCase(deleteProject.fulfilled, (state, action) => {
+        state.projects = state.projects.filter(
+          (p) => p.project_id !== action.payload,
         );
 
-        if (phase) phase.tasks.push(task);
-      })
-      .addCase(addTask.rejected, (state, action) => {
-        state.taskAddStatus = "failed";
-        state.error = action.payload;
+        if (state.selectedProject?.project_id === action.payload) {
+          state.selectedProject = null;
+        }
       });
   },
 });
 
 export default projectSlice.reducer;
-
 /* =========================
    SELECTORS
 ========================= */
-export const selectAllprojects = (state) =>
-  state.projects.projects;
 
-export const getProjectStatus = (state) =>
-  state.projects.projectStatus;
+// All projects list
+export const selectAllProjects = (state) => state.projects.projects;
 
-export const getProjectError = (state) =>
-  state.projects.error;
+// Selected single project (details page)
+export const selectSelectedProject = (state) => state.projects.selectedProject;
 
-export const getAddProjectStatus = (state) =>
-  state.projects.addStatus;
+// Project list status
+export const getProjectListStatus = (state) => state.projects.listStatus;
 
-export const getEditProjectStatus = (state) =>
-  state.projects.editStatus;
+// Single project fetch status
+export const getSingleProjectStatus = (state) => state.projects.singleStatus;
 
-export const getDeleteProjectStatus = (state) =>
-  state.projects.deleteStatus;
+// Add project status
+export const getAddProjectStatus = (state) => state.projects.addStatus;
 
-export const getPhaseAddStatus = (state) =>
-  state.projects.phaseAddStatus;
+// Edit project status
+export const getEditProjectStatus = (state) => state.projects.editStatus;
 
-export const getTaskAddStatus = (state) =>
-  state.projects.taskAddStatus;
+// Delete project status
+export const getDeleteProjectStatus = (state) => state.projects.deleteStatus;
 
-export const getTaskFetchStatus = (state) =>
-  state.projects.taskFetchStatus;
-
-export const getSingleprojectStatus = (state) =>
-  state.projects.singleStatus;
-
-export const selectedProject = (state) =>
-  state.projects.selectedProject;
-
-export const selectProjectPhases = (state) =>
-  state.projects.phases;
-
-export const selectProjectProgress = (state) =>
-  state.projects.progress;
+export const getProjectError = (state) => state.projects.error;
