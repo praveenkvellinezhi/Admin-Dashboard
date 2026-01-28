@@ -1,7 +1,9 @@
+import React from "react";
 import { X, ChevronDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import {
   addPhase,
@@ -115,7 +117,8 @@ export default function AddPhaseModal({ onClose }) {
     const result = await dispatch(addPhase(formData));
 
     if (addPhase.fulfilled.match(result)) {
-      dispatch(fetchProjectById(id));    // 🔥 REQUIRED for team_members
+      dispatch(fetchProjectById(id));
+      toast.success("Phase added successfully");
       // refresh phases
       onClose();
     }

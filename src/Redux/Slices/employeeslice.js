@@ -62,7 +62,7 @@ export const fetchManagers = createAsyncThunk(
       const res = await axios.get(
         `${BASE_URL}/employee/employees/managers/`
       );
-      return res.data.managers ?? res.data;
+      return res.data.data;
     } catch (error) {
       return rejectWithValue(error.message);
     }

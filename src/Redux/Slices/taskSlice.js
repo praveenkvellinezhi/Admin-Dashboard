@@ -26,7 +26,7 @@ export const fetchTasksByPhase = createAsyncThunk(
   async (phaseId, { rejectWithValue }) => {
     try {
       const res = await axios.get(
-        `${BASE_URL}/project/tasks/list/?phase=${phaseId}`
+        `${BASE_URL}/project/projects/phases/${phaseId}/tasks/`
       );
       return res.data.data || [];
     } catch (error) {

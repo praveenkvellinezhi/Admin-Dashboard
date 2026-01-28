@@ -1,17 +1,12 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import {
-  selectAllPhases,
-  editPhase,
-  deletePhase,
-} from "../../../Redux/Slices/phaseSlice";
 
 import {
   addTask,
   editTask,
   deleteTask,
   fetchTasksByPhase,
+  selectAllTasks,
 } from "../../../Redux/Slices/taskSlice";
 
 import {
@@ -22,41 +17,16 @@ import {
 export default function PhaseDetailsModal({ phase, onClose }) {
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATE
-  ========================= */
-  const phases = useSelector(selectAllPhases);
   const employees = useSelector(selectAllEmployees);
+  const tasks = useSelector(selectAllTasks);
 
-  const currentPhase = phases.find(
-    (p) => Number(p.id) === Number(phase.id)
-  );
-
-  if (!currentPhase) return null;
-
-  const tasks = currentPhase.tasks || [];
-
-  /* =========================
-     LOCAL STATE
-  ========================= */
-  const [editingPhase, setEditingPhase] = useState(false);
-  const [editPhaseData, setEditPhaseData] = useState({
-    phase_type: "",
-    description: "",
-  });
-
-  const [editingTaskId, setEditingTaskId] = useState(null);
-  const [editTaskData, setEditTaskData] = useState({
-    title: "",
-    description: "",
-    status: "in_progress",
-    start_date: "",
-    end_date: "",
-    assigned_to: "",
-  });
+  
+  const phaseId = phase?.phase_id;
 
   const [showAddTask, setShowAddTask] = useState(false);
-  const [newTask, setNewTask] = useState({
+  const [editingTaskId, setEditingTaskId] = useState(null);
+
+  const [taskForm, setTaskForm] = useState({
     title: "",
     description: "",
     status: "in_progress",
@@ -65,131 +35,58 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     assigned_to: "",
   });
 
-  /* =========================
-     FETCH DATA
-  ========================= */
+
   useEffect(() => {
+    if (!phaseId) return;
     dispatch(fetchEmployees());
-    dispatch(fetchTasksByPhase(phase.id));
-  }, [dispatch, phase.id]);
+    dispatch(fetchTasksByPhase(phaseId));
+  }, [dispatch, phaseId]);
 
   /* =========================
-     PROGRESS
+     ADD / EDIT TASK
   ========================= */
-  const completedTasks = tasks.filter(
-    (t) => t.status === "completed"
-  ).length;
+  const handleSaveTask = async () => {
+    if (!taskForm.title.trim()) return;
 
-  const progress =
-    tasks.length === 0
-      ? 0
-      : Math.round((completedTasks / tasks.length) * 100);
+    const payload = {
+      title: taskForm.title,
+      description: taskForm.description,
+      status: taskForm.status,
+      start_date: taskForm.start_date,
+      end_date: taskForm.end_date,
+      phase_id: phaseId,
+      employee_ids: taskForm.assigned_to
+        ? [taskForm.assigned_to]
+        : [],
+    };
 
-  /* =========================
-     PHASE HANDLERS
-  ========================= */
-  const startPhaseEdit = () => {
-    setEditingPhase(true);
-    setEditPhaseData({
-      phase_type: currentPhase.phase_type,
-      description: currentPhase.description || "",
+    if (editingTaskId) {
+      await dispatch(editTask({ taskId: editingTaskId, payload }));
+    } else {
+      await dispatch(addTask(payload));
+    }
+
+     dispatch(fetchTasksByPhase(phaseId));
+
+    setTaskForm({
+      title: "",
+      description: "",
+      status: "in_progress",
+      start_date: "",
+      end_date: "",
+      assigned_to: "",
     });
-  };
-
-  const savePhaseEdit = async () => {
-    const result = await dispatch(
-      editPhase({
-        phaseId: currentPhase.id,
-        payload: editPhaseData,
-      })
-    );
-
-    if (editPhase.fulfilled.match(result)) {
-      setEditingPhase(false);
-    }
-  };
-
-  const handleDeletePhase = () => {
-    if (window.confirm("Delete this phase?")) {
-      dispatch(deletePhase(currentPhase.id));
-      onClose();
-    }
+    setEditingTaskId(null);
+    setShowAddTask(false);
   };
 
   /* =========================
-     TASK HANDLERS
+     DELETE TASK
   ========================= */
-  const startTaskEdit = (task) => {
-    setEditingTaskId(task.id);
-    setEditTaskData({
-      title: task.title,
-      description: task.description || "",
-      status: task.status,
-      start_date: task.start_date || "",
-      end_date: task.end_date || "",
-      assigned_to: task.assigned_to || "",
-    });
-  };
-
-  const saveTaskEdit = async () => {
-    const result = await dispatch(
-      editTask({
-        taskId: editingTaskId,
-        payload: {
-          ...editTaskData,
-          assigned_to: editTaskData.assigned_to || null,
-        },
-      })
-    );
-
-    if (editTask.fulfilled.match(result)) {
-      setEditingTaskId(null);
-    }
-  };
-
-  const handleDeleteTask = (taskId) => {
-    if (window.confirm("Delete this task?")) {
-      dispatch(deleteTask(taskId));
-    }
-  };
-
-  /* =========================
-     ADD TASK HANDLERS
-  ========================= */
-  const handleNewTaskChange = (e) => {
-    const { name, value } = e.target;
-    setNewTask((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAddTask = async () => {
-    if (
-      newTask.start_date &&
-      newTask.end_date &&
-      newTask.start_date > newTask.end_date
-    ) {
-      alert("End date must be after start date");
-      return;
-    }
-
-    const result = await dispatch(
-      addTask({
-        ...newTask,
-        phase: currentPhase.id,
-        assigned_to: newTask.assigned_to || null,
-      })
-    );
-
-    if (addTask.fulfilled.match(result)) {
-      setNewTask({
-        title: "",
-        description: "",
-        status: "in_progress",
-        start_date: "",
-        end_date: "",
-        assigned_to: "",
-      });
-      setShowAddTask(false);
-    }
+  const handleDeleteTask = async (taskId) => {
+    if (!window.confirm("Delete this task?")) return;
+    await dispatch(deleteTask(taskId));
+    dispatch(fetchTasksByPhase(phaseId));
   };
 
   /* =========================
@@ -198,236 +95,112 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   return (
     <>
       {/* BACKDROP */}
-      <div
-        className="fixed inset-0 bg-black/40 z-40"
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
 
       {/* MODAL */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="bg-white w-full max-w-2xl rounded-xl shadow-lg p-6 max-h-[90vh] overflow-y-auto">
+        <div className="bg-white w-full max-w-4xl rounded-xl shadow-lg p-5 max-h-[90vh] overflow-y-auto">
 
           {/* HEADER */}
-          <div className="flex justify-between items-center mb-4">
-            {editingPhase ? (
-              <input
-                className="border px-2 py-1 rounded w-1/2"
-                value={editPhaseData.phase_type}
-                onChange={(e) =>
-                  setEditPhaseData({
-                    ...editPhaseData,
-                    phase_type: e.target.value,
-                  })
-                }
-              />
-            ) : (
-              <h3 className="text-lg font-semibold">
-                {capitalize(currentPhase.phase_type)}
-              </h3>
-            )}
-
-            <div className="flex gap-2">
-              {editingPhase ? (
-                <button
-                  onClick={savePhaseEdit}
-                  className="text-xs bg-blue-600 text-white px-3 py-1 rounded"
-                >
-                  Save
-                </button>
-              ) : (
-                <button
-                  onClick={startPhaseEdit}
-                  className="text-xs border px-3 py-1 rounded"
-                >
-                  Edit Phase
-                </button>
-              )}
-
-              <button
-                onClick={handleDeletePhase}
-                className="text-xs border px-3 py-1 text-red-600 rounded"
-              >
-                Delete Phase
-              </button>
-
-              <button
-                onClick={onClose}
-                className="text-xs border px-3 py-1 rounded"
-              >
-                Back
-              </button>
-            </div>
+          <div className="flex justify-between mb-4">
+            <h3 className="text-lg font-semibold capitalize">
+              {phase.phase_type} Tasks
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-xs border px-3 py-1 rounded"
+            >
+              Back
+            </button>
           </div>
 
-          {/* DESCRIPTION */}
-          {editingPhase ? (
-            <textarea
-              className="border rounded w-full px-2 py-1 mb-4"
-              rows={2}
-              value={editPhaseData.description}
-              onChange={(e) =>
-                setEditPhaseData({
-                  ...editPhaseData,
-                  description: e.target.value,
-                })
-              }
-            />
-          ) : (
-            <p className="text-sm text-gray-500 mb-4">
-              {currentPhase.description || "No description"}
-            </p>
-          )}
-
-          {/* PROGRESS */}
-          <div className="mb-6">
-            <div className="flex justify-between text-sm mb-1">
-              <span>Progress</span>
-              <span>{progress}%</span>
-            </div>
-            <div className="h-2 bg-gray-200 rounded">
-              <div
-                className="h-2 bg-blue-600 rounded"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+          {/* TABLE HEADER */}
+          <div className="grid grid-cols-12 text-xs font-semibold text-gray-500 border-b pb-2">
+            <div className="col-span-3">Designer</div>
+            <div className="col-span-3">Task</div>
+            <div className="col-span-2">Status</div>
+            <div className="col-span-2">Dates</div>
+            <div className="col-span-2 text-right">Actions</div>
           </div>
 
-          {/* TASK LIST */}
-          <div className="space-y-4">
-            {tasks.map((task) => (
-              <div key={task.id} className="border rounded-lg p-4">
-                {editingTaskId === task.id ? (
+          {/* TASK ROWS */}
+          {tasks.map((task) => (
+            <div
+              key={task.id}
+              className="grid grid-cols-12 items-center py-3 text-sm border-b hover:bg-gray-50"
+            >
+              {/* DESIGNER */}
+              <div className="col-span-3 flex items-center gap-2">
+                {task.assigned_to?.[0] ? (
                   <>
-                    <input
-                      className="border rounded px-2 py-1 w-full mb-2"
-                      value={editTaskData.title}
-                      onChange={(e) =>
-                        setEditTaskData({
-                          ...editTaskData,
-                          title: e.target.value,
-                        })
-                      }
+                    <img
+                      src={task.assigned_to[0].profile_image_url}
+                      className="w-7 h-7 rounded-full object-cover"
                     />
-
-                    <textarea
-                      className="border rounded px-2 py-1 w-full mb-2"
-                      rows={2}
-                      value={editTaskData.description}
-                      onChange={(e) =>
-                        setEditTaskData({
-                          ...editTaskData,
-                          description: e.target.value,
-                        })
-                      }
-                    />
-
-                    <select
-                      className="border rounded px-2 py-1 mb-2"
-                      value={editTaskData.status}
-                      onChange={(e) =>
-                        setEditTaskData({
-                          ...editTaskData,
-                          status: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="in_progress">In Progress</option>
-                      <option value="completed">Completed</option>
-                      <option value="pending">Pending</option>
-                    </select>
-
-                    <div className="grid grid-cols-2 gap-2 mb-2">
-                      <input
-                        type="date"
-                        value={editTaskData.start_date}
-                        onChange={(e) =>
-                          setEditTaskData({
-                            ...editTaskData,
-                            start_date: e.target.value,
-                          })
-                        }
-                        className="border rounded px-2 py-1"
-                      />
-                      <input
-                        type="date"
-                        value={editTaskData.end_date}
-                        onChange={(e) =>
-                          setEditTaskData({
-                            ...editTaskData,
-                            end_date: e.target.value,
-                          })
-                        }
-                        className="border rounded px-2 py-1"
-                      />
-                    </div>
-
-                    <select
-                      className="border rounded px-2 py-1 mb-2 w-full"
-                      value={editTaskData.assigned_to}
-                      onChange={(e) =>
-                        setEditTaskData({
-                          ...editTaskData,
-                          assigned_to: e.target.value
-                            ? Number(e.target.value)
-                            : "",
-                        })
-                      }
-                    >
-                      <option value="">Assign employee</option>
-                      {employees.map((emp) => (
-                        <option key={emp.id} value={emp.id}>
-                          {emp.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    <div className="flex gap-2">
-                      <button
-                        onClick={saveTaskEdit}
-                        className="text-xs bg-blue-600 text-white px-3 py-1 rounded"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={() => setEditingTaskId(null)}
-                        className="text-xs border px-3 py-1 rounded"
-                      >
-                        Cancel
-                      </button>
-                    </div>
+                    <span>{task.assigned_to[0].name}</span>
                   </>
                 ) : (
-                  <>
-                    <h4 className="font-semibold">{task.title}</h4>
-                    <p className="text-sm text-gray-600">{task.description}</p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {task.start_date || "-"} → {task.end_date || "-"}
-                    </p>
-                    <div className="flex justify-between items-center mt-3">
-                      <span className="text-xs">{task.status}</span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => startTaskEdit(task)}
-                          className="text-xs border px-2 py-1 rounded"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTask(task.id)}
-                          className="text-xs border px-2 py-1 text-red-600 rounded"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </>
+                  <span className="text-gray-400">Unassigned</span>
                 )}
               </div>
-            ))}
-          </div>
 
-          {/* ADD TASK INLINE */}
-          <div className="mt-6">
+              {/* TASK */}
+              <div className="col-span-3 truncate">
+                {task.title}
+              </div>
+
+              {/* STATUS */}
+              <div className="col-span-2">
+                <span
+                  className={`text-xs px-2 py-1 rounded-full ${
+                    task.status === "completed"
+                      ? "bg-green-100 text-green-700"
+                      : task.status === "pending"
+                      ? "bg-yellow-100 text-yellow-700"
+                      : "bg-blue-100 text-blue-700"
+                  }`}
+                >
+                  {task.status.replace("_", " ")}
+                </span>
+              </div>
+
+              {/* DATES */}
+              <div className="col-span-2 text-xs text-gray-500">
+                {task.start_date} → {task.end_date}
+              </div>
+
+              {/* ACTIONS */}
+              <div className="col-span-2 flex justify-end gap-2">
+                <button
+                  onClick={() => {
+                    setEditingTaskId(task.id);
+                    setShowAddTask(true);
+                    setTaskForm({
+                      title: task.title,
+                      description: task.description || "",
+                      status: task.status,
+                      start_date: task.start_date,
+                      end_date: task.end_date,
+                      assigned_to:
+                        task.assigned_to?.[0]?.employee_id || "",
+                    });
+                  }}
+                  className="text-xs border px-2 py-1 rounded"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteTask(task.id)}
+                  className="text-xs border px-2 py-1 rounded text-red-600"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* ADD / EDIT FORM */}
+          <div className="mt-5">
             {!showAddTask ? (
               <button
                 onClick={() => setShowAddTask(true)}
@@ -436,28 +209,35 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                 Add Task
               </button>
             ) : (
-              <div className="border rounded-lg p-4 mt-4 bg-gray-50 space-y-3">
+              <div className="border rounded-lg p-4 mt-3 bg-gray-50 space-y-3">
+                <h4 className="text-sm font-semibold">
+                  {editingTaskId ? "Edit Task" : "Add Task"}
+                </h4>
+
                 <input
-                  name="title"
-                  placeholder="Task title"
-                  value={newTask.title}
-                  onChange={handleNewTaskChange}
+                  placeholder="Title"
+                  value={taskForm.title}
+                  onChange={(e) =>
+                    setTaskForm((p) => ({ ...p, title: e.target.value }))
+                  }
                   className="w-full border rounded px-3 py-2"
                 />
 
                 <textarea
-                  name="description"
-                  placeholder="Task description"
-                  value={newTask.description}
-                  onChange={handleNewTaskChange}
-                  rows={2}
+                  placeholder="Description"
+                  value={taskForm.description}
+                  onChange={(e) =>
+                    setTaskForm((p) => ({ ...p, description: e.target.value }))
+                  }
                   className="w-full border rounded px-3 py-2"
                 />
 
+                {/* STATUS INPUT */}
                 <select
-                  name="status"
-                  value={newTask.status}
-                  onChange={handleNewTaskChange}
+                  value={taskForm.status}
+                  onChange={(e) =>
+                    setTaskForm((p) => ({ ...p, status: e.target.value }))
+                  }
                   className="w-full border rounded px-3 py-2"
                 >
                   <option value="in_progress">In Progress</option>
@@ -468,36 +248,41 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                 <div className="grid grid-cols-2 gap-2">
                   <input
                     type="date"
-                    name="start_date"
-                    value={newTask.start_date}
-                    onChange={handleNewTaskChange}
+                    value={taskForm.start_date}
+                    onChange={(e) =>
+                      setTaskForm((p) => ({
+                        ...p,
+                        start_date: e.target.value,
+                      }))
+                    }
                     className="border rounded px-3 py-2"
                   />
                   <input
                     type="date"
-                    name="end_date"
-                    value={newTask.end_date}
-                    onChange={handleNewTaskChange}
+                    value={taskForm.end_date}
+                    onChange={(e) =>
+                      setTaskForm((p) => ({
+                        ...p,
+                        end_date: e.target.value,
+                      }))
+                    }
                     className="border rounded px-3 py-2"
                   />
                 </div>
 
                 <select
-                  name="assigned_to"
-                  value={newTask.assigned_to}
+                  value={taskForm.assigned_to}
                   onChange={(e) =>
-                    setNewTask((p) => ({
+                    setTaskForm((p) => ({
                       ...p,
-                      assigned_to: e.target.value
-                        ? Number(e.target.value)
-                        : "",
+                      assigned_to: e.target.value,
                     }))
                   }
                   className="w-full border rounded px-3 py-2"
                 >
                   <option value="">Assign employee</option>
                   {employees.map((emp) => (
-                    <option key={emp.id} value={emp.id}>
+                    <option key={emp.employee_id} value={emp.employee_id}>
                       {emp.name}
                     </option>
                   ))}
@@ -505,30 +290,27 @@ export default function PhaseDetailsModal({ phase, onClose }) {
 
                 <div className="flex justify-end gap-2">
                   <button
-                    onClick={() => setShowAddTask(false)}
+                    onClick={() => {
+                      setShowAddTask(false);
+                      setEditingTaskId(null);
+                    }}
                     className="text-xs border px-3 py-1 rounded"
                   >
                     Cancel
                   </button>
                   <button
-                    onClick={handleAddTask}
+                    onClick={handleSaveTask}
                     className="text-xs bg-blue-600 text-white px-3 py-1 rounded"
                   >
-                    Save Task
+                    {editingTaskId ? "Update Task" : "Save Task"}
                   </button>
                 </div>
               </div>
             )}
           </div>
+
         </div>
       </div>
     </>
   );
-}
-
-/* =========================
-   HELPER
-========================= */
-function capitalize(text = "") {
-  return text.charAt(0).toUpperCase() + text.slice(1);
 }

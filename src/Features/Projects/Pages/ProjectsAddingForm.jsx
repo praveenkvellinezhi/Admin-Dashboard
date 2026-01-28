@@ -1,20 +1,25 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 import {
+  fetchManagers,
   fetchEmployees,
   selectAllEmployees,
-} from "../../../Redux/Slices/employeeslice";
+  selectAllManagers,
+} from '../../../Redux/Slices/employeeslice';
 
 import {
   addProject,
   getAddProjectStatus,
-} from "../../../Redux/Slices/projectSlice";
+} from '../../../Redux/Slices/projectSlice';
 
 export default function ProjectAdd() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const managers = useSelector(selectAllManagers);
 
   const employees = useSelector(selectAllEmployees) || [];
   const addStatus = useSelector(getAddProjectStatus);
@@ -26,24 +31,27 @@ export default function ProjectAdd() {
   ========================= */
   useEffect(() => {
     dispatch(fetchEmployees());
+    dispatch(fetchManagers());
   }, [dispatch]);
+
+  console.log(managers);
 
   /* =========================
      FORM STATE
   ========================= */
   const [formData, setFormData] = useState({
-    project_name: "",
-    description: "",
-    client_name: "",
-    client_email: "",
-    client_contact: "",
-    start_date: "",
-    end_date: "",
-    priority: "",
-    project_type: "",
-    project_manager_id: "",
-    team_members: [],           // employee_id[]
-    total_budget: "",
+    project_name: '',
+    description: '',
+    client_name: '',
+    client_email: '',
+    client_contact: '',
+    start_date: '',
+    end_date: '',
+    priority: '',
+    project_type: '',
+    project_manager_id: '',
+    team_members: [], // employee_id[]
+    total_budget: '',
     project_logo: null,
   });
 
@@ -76,34 +84,33 @@ export default function ProjectAdd() {
   const handleSubmit = async () => {
     const data = new FormData();
 
-    // basic fields
-    data.append("project_name", formData.project_name);
-    data.append("description", formData.description);
-    data.append("client_name", formData.client_name);
-    data.append("client_email", formData.client_email);
-    data.append("client_contact", formData.client_contact);
-    data.append("start_date", formData.start_date);
-    data.append("end_date", formData.end_date);
-    data.append("priority", formData.priority);
-    data.append("project_type", formData.project_type);
-    data.append("project_manager_id", formData.project_manager_id);
-    data.append("total_budget", formData.total_budget);
+    data.append('project_name', formData.project_name);
+    data.append('description', formData.description);
+    data.append('client_name', formData.client_name);
+    data.append('client_email', formData.client_email);
+    data.append('client_contact', formData.client_contact);
+    data.append('start_date', formData.start_date);
+    data.append('end_date', formData.end_date);
+    data.append('priority', formData.priority);
+    data.append('project_type', formData.project_type);
+    data.append('project_manager_id', formData.project_manager_id);
 
-    // file
+    data.append('total_budget', formData.total_budget);
+
     if (formData.project_logo) {
-      data.append("project_logo", formData.project_logo);
+      data.append('project_logo', formData.project_logo);
     }
 
-    // ✅ CRITICAL FIX — M2M field
-    // backend expects team_members_ids
+    // ✅ THIS IS THE CRITICAL FIX
     formData.team_members.forEach((empId) => {
-      data.append("team_members_ids", empId);
+      data.append('team_member_ids', empId);
     });
 
     const result = await dispatch(addProject(data));
 
     if (addProject.fulfilled.match(result)) {
-      navigate("/projects");
+      toast.success('Project added successfully');
+      navigate('/projects');
     }
   };
 
@@ -125,11 +132,11 @@ export default function ProjectAdd() {
 
         <button
           onClick={handleSubmit}
-          disabled={addStatus === "loading"}
+          disabled={addStatus === 'loading'}
           className="px-4 py-2 text-sm rounded-lg bg-blue-600 text-white
                      hover:bg-blue-700 disabled:opacity-60"
         >
-          {addStatus === "loading" ? "Saving..." : "Save Project"}
+          {addStatus === 'loading' ? 'Saving...' : 'Save Project'}
         </button>
       </div>
 
@@ -152,9 +159,9 @@ export default function ProjectAdd() {
                 value={formData.project_type}
                 onChange={handleChange}
                 options={[
-                  { value: "web", label: "Web" },
-                  { value: "app", label: "App" },
-                  { value: "webapp", label: "Web App" },
+                  { value: 'web', label: 'Web' },
+                  { value: 'app', label: 'App' },
+                  { value: 'webapp', label: 'Web App' },
                 ]}
               />
 
@@ -164,9 +171,9 @@ export default function ProjectAdd() {
                 value={formData.priority}
                 onChange={handleChange}
                 options={[
-                  { value: "low", label: "Low" },
-                  { value: "medium", label: "Medium" },
-                  { value: "high", label: "High" },
+                  { value: 'low', label: 'Low' },
+                  { value: 'medium', label: 'Medium' },
+                  { value: 'high', label: 'High' },
                 ]}
               />
 
@@ -229,9 +236,9 @@ export default function ProjectAdd() {
                 name="project_manager_id"
                 value={formData.project_manager_id}
                 onChange={handleChange}
-                options={employees.map((emp) => ({
-                  value: emp.employee_id,
-                  label: emp.name,
+                options={employees.map((m) => ({
+                  value: m.employee_id, // ✅ backend expects EMP001
+                  label: m.name,
                 }))}
               />
 
@@ -249,20 +256,22 @@ export default function ProjectAdd() {
                 >
                   <span className="truncate">
                     {formData.team_members.length === 0
-                      ? "Select team members"
+                      ? 'Select team members'
                       : employees
                           .filter((emp) =>
                             formData.team_members.includes(emp.employee_id)
                           )
                           .map((emp) => emp.name)
-                          .join(", ")}
+                          .join(', ')}
                   </span>
                   <span className="text-gray-400">▾</span>
                 </button>
 
                 {isTeamOpen && (
-                  <div className="absolute z-20 mt-1 w-full max-h-56
-                                  overflow-auto border rounded-lg bg-white shadow">
+                  <div
+                    className="absolute z-20 mt-1 w-full max-h-56
+                                  overflow-auto border rounded-lg bg-white shadow"
+                  >
                     {employees.map((emp) => (
                       <label
                         key={emp.employee_id}
@@ -270,7 +279,9 @@ export default function ProjectAdd() {
                       >
                         <input
                           type="checkbox"
-                          checked={formData.team_members.includes(emp.employee_id)}
+                          checked={formData.team_members.includes(
+                            emp.employee_id
+                          )}
                           onChange={() => toggleTeamMember(emp.employee_id)}
                         />
                         {emp.name}
@@ -312,9 +323,7 @@ export default function ProjectAdd() {
 
 const Section = ({ title, children }) => (
   <div>
-    <h3 className="text-sm font-semibold text-gray-800 mb-4">
-      {title}
-    </h3>
+    <h3 className="text-sm font-semibold text-gray-800 mb-4">{title}</h3>
     <div className="space-y-4">{children}</div>
   </div>
 );
@@ -346,7 +355,10 @@ const Select = ({ label, options = [], ...props }) => (
     <label className="block text-xs font-medium text-gray-600 mb-1">
       {label}
     </label>
-    <select {...props} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
+    <select
+      {...props}
+      className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
+    >
       <option value="">Select</option>
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>

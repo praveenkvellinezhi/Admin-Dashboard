@@ -1,10 +1,6 @@
+import React from "react";
 import { Mail, Phone } from "lucide-react";
-import {
-  IdCard,
-  Building2,
-  UserCheck,
-  CalendarDays,
-} from "lucide-react";
+
 
 
 export default function BasicInformation({ employee }) {
@@ -31,7 +27,7 @@ export default function BasicInformation({ employee }) {
               {capitalize(emp.name)}
             </h2>
             <p className="text-sm text-gray-500">
-              {capitalize(emp.position|| emp.department) }
+              {capitalize(emp.role || emp.department) }
             </p>
 
             <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-600">

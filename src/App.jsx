@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import AdminLayout from "./Layout/AdminLayout";
 import ProtectedRoute from "./Components/ProtectedRoute";
@@ -33,7 +34,9 @@ import EditForm from "./Features/Form/Pages/EditForm";
 
 function App() {
   return (
-    <Routes>
+    <>
+    <Toaster position="top-center" reverseOrder={false} />
+      <Routes>
       {/* PUBLIC */}
       <Route path="/login" element={<Login />} />
 
@@ -69,6 +72,8 @@ function App() {
         </Route>
       </Route>
     </Routes>
+    </>
+  
   );
 }
 

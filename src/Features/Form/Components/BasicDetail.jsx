@@ -1,10 +1,11 @@
+import React, { useEffect, useState } from "react";
 import { Upload, Eye, EyeOff } from "lucide-react";
-import { useEffect, useState } from "react";
 
 export default function EmployeeBasicDetails({
   formData,
   onChange,
   onImageChange,
+  backendErrors = {},
 }) {
   const [errors, setErrors] = useState({
     email: "",
@@ -16,19 +17,22 @@ export default function EmployeeBasicDetails({
   const [showPassword, setShowPassword] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-
+  /* =========================
+     IMAGE PREVIEW
+  ========================= */
   useEffect(() => {
     if (formData.profile_image) {
       const url = URL.createObjectURL(formData.profile_image);
       setPreviewUrl(url);
-
       return () => URL.revokeObjectURL(url);
     } else {
       setPreviewUrl(null);
     }
   }, [formData.profile_image]);
 
-
+  /* =========================
+     VALIDATORS
+  ========================= */
   const validateEmail = (email) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 
@@ -41,7 +45,9 @@ export default function EmployeeBasicDetails({
     return new Date(dob) < new Date();
   };
 
-
+  /* =========================
+     BLUR VALIDATION
+  ========================= */
   const handleBlur = (e) => {
     const { name, value } = e.target;
 
@@ -60,10 +66,13 @@ export default function EmployeeBasicDetails({
     }));
   };
 
-
+  /* =========================
+     CHANGE HANDLER
+  ========================= */
   const handleLocalChange = (e) => {
     const { name, value } = e.target;
 
+    // clear local error if valid
     if (
       (name === "email" && validateEmail(value)) ||
       (name === "phone" && validatePhone(value)) ||
@@ -76,18 +85,21 @@ export default function EmployeeBasicDetails({
     onChange(e);
   };
 
-
+  /* =========================
+     UI
+  ========================= */
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-lg">
-            <div className="px-6 py-3 border-b bg-gray-50 rounded-t-2xl">
+      <div className="px-6 py-3 border-b bg-gray-50 rounded-t-2xl">
         <h3 className="text-sm font-semibold text-gray-700">
           Employee Basic Details
         </h3>
       </div>
 
-            <div className="p-6">
+      <div className="p-6">
         <div className="flex gap-8">
-                    <div className="flex flex-col items-center gap-3">
+          {/* IMAGE */}
+          <div className="flex flex-col items-center gap-3">
             <img
               src={
                 previewUrl ||
@@ -109,13 +121,21 @@ export default function EmployeeBasicDetails({
                 hidden
               />
             </label>
+
+            {backendErrors?.profile_image && (
+              <p className="text-xs text-red-500">
+                {backendErrors.profile_image[0]}
+              </p>
+            )}
           </div>
 
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* FORM */}
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-5">
             <InputField
               label="Full Name"
               name="name"
               value={formData.name || ""}
+              error={backendErrors?.name?.[0]}
               onChange={handleLocalChange}
             />
 
@@ -123,6 +143,7 @@ export default function EmployeeBasicDetails({
               label="Address"
               name="address"
               value={formData.address || ""}
+              error={backendErrors?.address?.[0]}
               onChange={handleLocalChange}
             />
 
@@ -131,7 +152,7 @@ export default function EmployeeBasicDetails({
               name="email"
               type="email"
               value={formData.email || ""}
-              error={errors.email}
+              error={errors.email || backendErrors?.email?.[0]}
               onChange={handleLocalChange}
               onBlur={handleBlur}
             />
@@ -140,7 +161,7 @@ export default function EmployeeBasicDetails({
               label="Phone Number"
               name="phone"
               value={formData.phone || ""}
-              error={errors.phone}
+              error={errors.phone || backendErrors?.phone?.[0]}
               onChange={handleLocalChange}
               onBlur={handleBlur}
             />
@@ -150,15 +171,20 @@ export default function EmployeeBasicDetails({
               name="date_of_birth"
               type="date"
               value={formData.date_of_birth || ""}
-              error={errors.date_of_birth}
+              error={
+                errors.date_of_birth ||
+                backendErrors?.date_of_birth?.[0]
+              }
               onChange={handleLocalChange}
               onBlur={handleBlur}
             />
 
-                        <div>
+            {/* PASSWORD */}
+            <div>
               <label className="text-xs text-gray-600 block">
                 Password (6 digits)
               </label>
+
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -169,9 +195,12 @@ export default function EmployeeBasicDetails({
                   maxLength={6}
                   inputMode="numeric"
                   className={`w-full border rounded-lg px-3 py-2 pr-10 text-sm ${
-                    errors.password ? "border-red-500" : "border-gray-300"
+                    errors.password || backendErrors?.password
+                      ? "border-red-500"
+                      : "border-gray-300"
                   }`}
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -180,9 +209,10 @@ export default function EmployeeBasicDetails({
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              {errors.password && (
+
+              {(errors.password || backendErrors?.password) && (
                 <p className="text-xs text-red-500 mt-1">
-                  {errors.password}
+                  {errors.password || backendErrors.password[0]}
                 </p>
               )}
             </div>
@@ -193,7 +223,9 @@ export default function EmployeeBasicDetails({
   );
 }
 
-
+/* =========================
+   INPUT FIELD
+========================= */
 function InputField({
   label,
   name,

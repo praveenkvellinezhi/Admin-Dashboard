@@ -1,3 +1,4 @@
+import React from "react";
 import { UploadCloud, FileText } from "lucide-react";
 
 function UploadBox({ label, name, file, onChange, disabled = false }) {

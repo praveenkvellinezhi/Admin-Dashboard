@@ -2,12 +2,14 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import { fetchInterns } from "../../../Redux/Slices/internSlice";
 import {
   fetchEmployees,
   addEmployee,
   getEmployeeStatus,
+  getEmployeeValidationErrors
 } from "../../../Redux/Slices/employeeslice";
 
 import EmployeeBasicDetails from "../Components/BasicDetail";
@@ -20,6 +22,7 @@ export default function AddForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const status = useSelector(getEmployeeStatus);
+  const backendErrors = useSelector(getEmployeeValidationErrors);
 
   /* =========================
      FORM STATE
@@ -122,11 +125,11 @@ export default function AddForm() {
 
     if (addEmployee.fulfilled.match(result)) {
       if (formData.employment_type === "intern") {
-        alert("Intern added successfully");
+        toast.success("Intern added successfully");
         dispatch(fetchInterns());
         navigate("/interns");
       } else {
-        alert("Employee added successfully");
+        toast.success("Employee added successfully");
         dispatch(fetchEmployees());
         navigate("/employees");
       }
@@ -181,28 +184,33 @@ export default function AddForm() {
         formData={formData}
         onChange={handleChange}
         onImageChange={handleImageChange}
+        backendErrors={backendErrors}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <JobRoleInformation
           formData={formData}
           onChange={handleChange}
+          backendErrors={backendErrors}
         />
 
         <SalaryEmploymentDetails
           formData={formData}
           onChange={handleChange}
+          backendErrors={backendErrors}
         />
       </div>
 
       <DocumentsUpload
         formData={formData}
         onChange={handleFileChange}
+        backendErrors={backendErrors}
       />
 
       <StatusNotes
         formData={formData}
         onChange={handleChange}
+        backendErrors={backendErrors}
       />
 
       <div className="flex justify-end gap-3 pt-4">

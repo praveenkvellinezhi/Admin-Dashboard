@@ -1,3 +1,4 @@
+import React from "react";
 import { Briefcase } from "lucide-react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +12,7 @@ import {
 export default function JobRoleInformation({ formData, onChange }) {
   const dispatch = useDispatch();
 
-  const managers = useSelector(selectAllManagers);
+  const managers = useSelector(selectAllManagers) || [];
   const managerStatus = useSelector(getManagerStatus);
 
   
@@ -45,6 +46,7 @@ export default function JobRoleInformation({ formData, onChange }) {
     }
   };
   
+
   
 
   return (
@@ -139,8 +141,8 @@ export default function JobRoleInformation({ formData, onChange }) {
               </option>
 
               {managers.map((manager) => (
-                <option key={manager.id} value={manager.id}>
-                  {manager.name}
+                <option key={manager.employee_id} value={manager.employee_id}>
+                  {manager.name} 
                 </option>
               ))}
             </select>

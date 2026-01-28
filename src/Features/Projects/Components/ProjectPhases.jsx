@@ -1,9 +1,11 @@
+import React from "react";
 import PhaseCard from "./PhaseCard";
 import PhaseDetailsModal from "./PhaseModal";
 import { useState } from "react";
 
 export default function ProjectPhases({ phases = [] }) {
   const [selectedPhase, setSelectedPhase] = useState(null);
+console.log("phases:", phases);
 
   if (!phases.length) {
     return (
