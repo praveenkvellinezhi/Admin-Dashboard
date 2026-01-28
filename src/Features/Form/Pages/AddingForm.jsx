@@ -1,11 +1,11 @@
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { fetchInterns } from "../../../Redux/Slices/internSlice";
 
+import { fetchInterns } from "../../../Redux/Slices/internSlice";
 import {
   fetchEmployees,
-  
   addEmployee,
   getEmployeeStatus,
 } from "../../../Redux/Slices/employeeslice";
@@ -21,7 +21,9 @@ export default function AddForm() {
   const navigate = useNavigate();
   const status = useSelector(getEmployeeStatus);
 
-  
+  /* =========================
+     FORM STATE
+  ========================= */
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -29,15 +31,18 @@ export default function AddForm() {
     password: "",
     date_of_birth: "",
     department: "",
+    role: "",
     position: "",
     joining_date: "",
 
-    employment_type: "", 
+    employment_type: "",
     salary_type: "",
-    salary: "",          
+    salary: "",
     payment_method: "",
-    notes: "", 
 
+    is_manager: false,
+    reporting_manager: "",
+    notes: "",
     status: "active",
     address: "",
 
@@ -47,44 +52,55 @@ export default function AddForm() {
     offer_letter: null,
   });
 
-
+  /* =========================
+     HANDLERS
+  ========================= */
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleImageChange = (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  setFormData((prev) => ({
-    ...prev,
-    profile_image: file, 
-    profile_image_url: URL.createObjectURL(file), 
-  }));
-};
-
+    setFormData((prev) => ({
+      ...prev,
+      profile_image: file,
+      profile_image_url: URL.createObjectURL(file),
+    }));
+  };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: files[0] || null,
+      [name]: files?.[0] || null,
     }));
   };
 
-
+  /* =========================
+     FORM DATA BUILDER
+  ========================= */
   const buildFormData = () => {
     const data = new FormData();
+
     Object.entries(formData).forEach(([key, value]) => {
-      if (value !== "" && value !== null) {
+      if (value !== "" && value !== null && value !== undefined) {
         data.append(key, value);
       }
     });
+
     return data;
   };
 
- 
+  /* =========================
+     VALIDATION
+  ========================= */
   const validateBeforeSubmit = () => {
     if (
       formData.employment_type === "staff" &&
@@ -96,65 +112,70 @@ export default function AddForm() {
     return true;
   };
 
-const handleSave = async () => {
-  if (!validateBeforeSubmit()) return;
+  /* =========================
+     SUBMIT HANDLERS
+  ========================= */
+  const handleSave = async () => {
+    if (!validateBeforeSubmit()) return;
 
-  const result = await dispatch(addEmployee(buildFormData()));
+    const result = await dispatch(addEmployee(buildFormData()));
 
-  if (addEmployee.fulfilled.match(result)) {
-    if (formData.employment_type === "intern") {
-      alert("Intern added successfully");
-      dispatch(fetchInterns());
-      navigate("/interns"); 
-    } else {
-      alert("Employee added successfully");
-      dispatch(fetchEmployees());
-      navigate("/employees"); 
-  }
-};
-
-
-const handleSaveAndAddAnother = async () => {
-  if (!validateBeforeSubmit()) return;
-
-  const result = await dispatch(addEmployee(buildFormData()));
-
-  if (addEmployee.fulfilled.match(result)) {
-    if (formData.employment_type === "intern") {
-      alert("Intern added successfully");
-      dispatch(fetchInterns());
-    } else {
-      alert("Employee added successfully");
-      dispatch(fetchEmployees());
+    if (addEmployee.fulfilled.match(result)) {
+      if (formData.employment_type === "intern") {
+        alert("Intern added successfully");
+        dispatch(fetchInterns());
+        navigate("/interns");
+      } else {
+        alert("Employee added successfully");
+        dispatch(fetchEmployees());
+        navigate("/employees");
+      }
     }
+  };
 
-  
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      password: "",
-      date_of_birth: "",
-      department: "",
-      position: "",
-      joining_date: "",
-      employment_type: "",
-      salary_type: "",
-      salary: "",
-      payment_method: "",
-      status: "active",
-      address: "",
-      profile_image: null,
-      resume: null,
-      id_proof_document: null,
-      offer_letter: null,
-    });
-  }
-};
+  const handleSaveAndAddAnother = async () => {
+    if (!validateBeforeSubmit()) return;
+
+    const result = await dispatch(addEmployee(buildFormData()));
+
+    if (addEmployee.fulfilled.match(result)) {
+      if (formData.employment_type === "intern") {
+        alert("Intern added successfully");
+        dispatch(fetchInterns());
+      } else {
+        alert("Employee added successfully");
+        dispatch(fetchEmployees());
+      }
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        password: "",
+        date_of_birth: "",
+        department: "",
+        role: "",
+        position: "",
+        joining_date: "",
+        employment_type: "",
+        salary_type: "",
+        salary: "",
+        payment_method: "",
+        is_manager: false,
+        reporting_manager: "",
+        notes: "",
+        status: "active",
+        address: "",
+        profile_image: null,
+        resume: null,
+        id_proof_document: null,
+        offer_letter: null,
+      });
+    }
+  };
 
 
-
-  return (
+  return (<>
     <div className="space-y-6">
       <EmployeeBasicDetails
         formData={formData}
@@ -184,10 +205,10 @@ const handleSaveAndAddAnother = async () => {
         onChange={handleChange}
       />
 
-            <div className="flex justify-end gap-3 pt-4">
+      <div className="flex justify-end gap-3 pt-4">
         <button
-          className="px-4 py-2 border rounded"
           onClick={() => navigate(-1)}
+          className="px-4 py-2 border rounded"
         >
           Cancel
         </button>
@@ -209,6 +230,6 @@ const handleSaveAndAddAnother = async () => {
         </button>
       </div>
     </div>
+    </>
   );
-}
 }
