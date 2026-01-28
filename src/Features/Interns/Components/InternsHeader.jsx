@@ -1,4 +1,4 @@
-import { Search, Filter,UserRoundPlus } from "lucide-react";
+import React from "react";
 import CommonHeader from "../../../Components/Shared/CommonHeader";
 
 
@@ -25,7 +25,7 @@ export default function InternsHeader({search,setSearch,role,setRole}) {
       setFilterValue={setRole}
       filterOptions={roles}
       buttonText="Add Intern"
-      navigatePath="/AddingForm"/>
+      navigatePath="/addingform"/>
 
     </div>
 

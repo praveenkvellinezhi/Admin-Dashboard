@@ -23,7 +23,7 @@ export default function EmployeeHeader({ search, setSearch, role, setRole}) {
       setFilterValue={setRole}
       filterOptions={roles}
       buttonText="Add Employees"
-      navigatePath="/AddingForm" />
+      navigatePath="/addingform" />
     </div>
 
 
