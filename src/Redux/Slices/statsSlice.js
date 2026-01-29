@@ -19,7 +19,7 @@ export const fetchStats = createAsyncThunk(
     try {
       const res = await axios.get(`${BASE_URL}/dashboard/summary/`
       );
-      return res.data;
+      return res.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
