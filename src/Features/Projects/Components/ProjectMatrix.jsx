@@ -1,3 +1,4 @@
+import React from "react";
 export default function ProjectMetrics({ project }) {
   const totalTasks = project?.total_tasks || 48;
   const completedTasks = project?.completed_tasks || 32;

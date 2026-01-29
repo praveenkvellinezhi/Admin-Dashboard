@@ -1,13 +1,13 @@
-import React from "react";
-import { Briefcase } from "lucide-react";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from 'react';
+import { Briefcase } from 'lucide-react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   fetchManagers,
   selectAllManagers,
   getManagerStatus,
-} from "../../../Redux/Slices/employeeslice";
+} from '../../../Redux/Slices/employeeslice';
 
 export default function JobRoleInformation({ formData, onChange }) {
   const dispatch = useDispatch();
@@ -15,57 +15,51 @@ export default function JobRoleInformation({ formData, onChange }) {
   const managers = useSelector(selectAllManagers) || [];
   const managerStatus = useSelector(getManagerStatus);
 
-  
-
-
   useEffect(() => {
-    if (managerStatus === "idle") {
+    if (managerStatus === 'idle') {
       dispatch(fetchManagers());
     }
   }, [dispatch, managerStatus]);
 
- 
   const handleManagerToggle = (e) => {
     const checked = e.target.checked;
 
+    // update is_manager
     onChange({
       target: {
-        name: "is_manager",
+        name: 'is_manager',
         value: checked,
-        type: "checkbox",
+        type: 'checkbox',
+        checked,
       },
     });
 
+    // clear reporting manager ONLY when becoming manager
     if (checked) {
       onChange({
         target: {
-          name: "reporting_manager",
-          value: "",
+          name: 'reporting_manager',
+          value: '',
         },
       });
     }
   };
-  
-
-  
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-            <div className="flex items-center gap-2 px-4 py-2 border-b bg-gray-50 rounded-t-lg">
+      <div className="flex items-center gap-2 px-4 py-2 border-b bg-gray-50 rounded-t-lg">
         <Briefcase size={16} className="text-gray-600" />
         <h3 className="text-sm font-semibold text-gray-700">
           Job & Role Information
         </h3>
       </div>
 
-            <div className="p-4 space-y-4">
-                <div>
-          <label className="text-xs text-gray-600 mb-1 block">
-            Department
-          </label>
+      <div className="p-4 space-y-4">
+        <div>
+          <label className="text-xs text-gray-600 mb-1 block">Department</label>
           <select
             name="department"
-            value={formData.department || ""}
+            value={formData.department || ''}
             onChange={onChange}
             className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
           >
@@ -75,30 +69,31 @@ export default function JobRoleInformation({ formData, onChange }) {
             <option value="uiux">UI/UX</option>
             <option value="hr">HR</option>
             <option value="flutter">Flutter</option>
+            <option value="software">Software Development</option>
+            <option value="tester">Software Testing</option>
+            <option value="data_analytics">Data Analytics</option>
+            <option value="devops">DevOps</option>
+            <option value="cybersecurity">Cyber Security</option>
           </select>
         </div>
 
-                <div>
-          <label className="text-xs text-gray-600 mb-1 block">
-            Role
-          </label>
+        <div>
+          <label className="text-xs text-gray-600 mb-1 block">Role</label>
           <input
             type="text"
             name="role"
-            value={formData.role || ""}
+            value={formData.role || ''}
             onChange={onChange}
             placeholder="UI/UX Designer"
             className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
           />
         </div>
 
-                <div>
-          <label className="text-xs text-gray-600 mb-1 block">
-            Position
-          </label>
+        <div>
+          <label className="text-xs text-gray-600 mb-1 block">Position</label>
           <select
             name="position"
-            value={formData.position || ""}
+            value={formData.position || ''}
             onChange={onChange}
             className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
           >
@@ -109,7 +104,7 @@ export default function JobRoleInformation({ formData, onChange }) {
           </select>
         </div>
 
-                <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <input
             type="checkbox"
             id="is_manager"
@@ -122,42 +117,43 @@ export default function JobRoleInformation({ formData, onChange }) {
           </label>
         </div>
 
-                {!formData.is_manager && (
+        {!formData.is_manager && (
           <div>
             <label className="text-xs text-gray-600 mb-1 block">
               Reporting Manager
             </label>
             <select
               name="reporting_manager"
-              value={formData.reporting_manager || ""}
+              value={formData.reporting_manager || ''}
               onChange={onChange}
-              disabled={managerStatus === "loading"}
+              disabled={managerStatus === 'loading'}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
             >
               <option value="">
-                {managerStatus === "loading"
-                  ? "Loading managers..."
-                  : "Select Manager"}
+                {managerStatus === 'loading'
+                  ? 'Loading managers...'
+                  : 'Select Manager'}
               </option>
 
               {managers.map((manager) => (
                 <option key={manager.employee_id} value={manager.employee_id}>
-                  {manager.name} 
+                  {manager.name}
                 </option>
               ))}
             </select>
           </div>
         )}
 
-                <div>
+        <div>
           <label className="text-xs text-gray-600 mb-1 block">
             Date of Joining
           </label>
           <input
             type="date"
             name="joining_date"
-            value={formData.joining_date || ""}
+            value={formData.joining_date || ''}
             onChange={onChange}
+            max={new Date().toISOString().split('T')[0]} 
             className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
           />
         </div>

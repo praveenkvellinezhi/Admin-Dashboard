@@ -18,7 +18,6 @@ import {
 } from "../../../Redux/Slices/projectSlice";
 
 import { selectAllPhases } from "../../../Redux/Slices/phaseSlice";
-import { fetchPhase } from "../../../Redux/Slices/phaseSlice";
 
 function ProjectDetails() {
   const dispatch = useDispatch();
@@ -46,7 +45,6 @@ function ProjectDetails() {
   useEffect(() => {
     if (id) {
       dispatch(fetchProjectById(id));
-      dispatch(fetchPhase(id));
     }
   }, [dispatch, id]);
 

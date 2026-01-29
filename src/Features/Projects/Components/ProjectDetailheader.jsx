@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function ProjectDetailsHeader({
   onEdit,
   onDelete,
-  onAddPhase, // ✅ NEW
+  onAddPhase, 
 }) {
   const navigate = useNavigate();
 

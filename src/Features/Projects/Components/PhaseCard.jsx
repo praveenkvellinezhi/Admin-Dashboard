@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function PhaseCard({ phase, onClick }) {
   /* =========================
@@ -15,53 +15,47 @@ export default function PhaseCard({ phase, onClick }) {
       .filter(
         (emp, index, self) =>
           emp &&
-          index ===
-            self.findIndex(
-              (e) => e.employee_id === emp.employee_id
-            )
+          index === self.findIndex((e) => e.employee_id === emp.employee_id)
       ) || [];
 
-
   const completedCount = tasks.filter(
-    (task) => task.status === "completed"
+    (task) => task.status === 'completed'
   ).length;
 
   const progress =
-    tasks.length > 0
-      ? Math.round((completedCount / tasks.length) * 100)
-      : 0;
+    tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
 
-  
   return (
     <div
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       className="w-64 bg-white border border-gray-200 rounded-xl shadow-sm p-4 flex flex-col justify-between cursor-pointer hover:shadow-md transition"
     >
       {/* HEADER */}
       <div>
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-sm font-semibold text-gray-800 capitalize">
-            {phase?.phase_type || "Phase"}
+            {phase?.phase_type || 'Phase'}
           </h3>
         </div>
 
         {/* DESCRIPTION */}
         <p className="text-xs text-gray-600 mb-3 line-clamp-2">
-          {phase?.description || "No description"}
+          {phase?.description || 'No description'}
         </p>
 
         {/* DATES */}
         <div className="flex justify-between text-xs text-gray-500 mb-3">
-          <span>{phase?.start_date || "--"}</span>
-          <span>{phase?.end_date || "--"}</span>
+          <span>{phase?.start_date || '--'}</span>
+          <span>{phase?.end_date || '--'}</span>
         </div>
 
         {/* TASKS */}
         <div className="space-y-2 mb-4">
           {tasks.length === 0 ? (
-            <p className="text-xs text-gray-400">
-              No tasks added
-            </p>
+            <p className="text-xs text-gray-400">No tasks added</p>
           ) : (
             tasks.map((task) => (
               <div
@@ -70,16 +64,14 @@ export default function PhaseCard({ phase, onClick }) {
               >
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    task.status === "completed"
-                      ? "bg-green-500"
-                      : task.status === "in_progress"
-                      ? "bg-yellow-400"
-                      : "bg-gray-400"
+                    task.status === 'completed'
+                      ? 'bg-green-500'
+                      : task.status === 'in_progress'
+                        ? 'bg-yellow-400'
+                        : 'bg-gray-400'
                   }`}
                 />
-                <span className="truncate">
-                  {task.title}
-                </span>
+                <span className="truncate">{task.title}</span>
               </div>
             ))
           )}
@@ -89,9 +81,7 @@ export default function PhaseCard({ phase, onClick }) {
       {/* EMPLOYEE AVATARS */}
       <div className="flex -space-x-2 mb-3">
         {employees.length === 0 ? (
-          <span className="text-xs text-gray-400">
-            No assignees
-          </span>
+          <span className="text-xs text-gray-400">No assignees</span>
         ) : (
           employees.map((emp) => (
             <img

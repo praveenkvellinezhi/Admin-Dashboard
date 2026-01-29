@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchProjectById } from "../../../Redux/Slices/projectSlice";
+import { useParams } from "react-router";
 
 import {
   addTask,
@@ -16,6 +18,7 @@ import {
 
 export default function PhaseDetailsModal({ phase, onClose }) {
   const dispatch = useDispatch();
+  const {id} =useParams();
 
   const employees = useSelector(selectAllEmployees);
   const tasks = useSelector(selectAllTasks);
@@ -42,9 +45,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     dispatch(fetchTasksByPhase(phaseId));
   }, [dispatch, phaseId]);
 
-  /* =========================
-     ADD / EDIT TASK
-  ========================= */
+
   const handleSaveTask = async () => {
     if (!taskForm.title.trim()) return;
 
@@ -60,11 +61,15 @@ export default function PhaseDetailsModal({ phase, onClose }) {
         : [],
     };
 
-    if (editingTaskId) {
-      await dispatch(editTask({ taskId: editingTaskId, payload }));
-    } else {
-      await dispatch(addTask(payload));
-    }
+ if (editingTaskId) {
+  await dispatch(editTask({ taskId: editingTaskId, payload }));
+} else {
+  await dispatch(addTask(payload));
+}
+
+await dispatch(fetchProjectById(id)); // 🔥 REQUIRED
+await dispatch(fetchTasksByPhase(phaseId));         // modal sync
+
 
      dispatch(fetchTasksByPhase(phaseId));
 
@@ -86,8 +91,16 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   const handleDeleteTask = async (taskId) => {
     if (!window.confirm("Delete this task?")) return;
     await dispatch(deleteTask(taskId));
+
+
     dispatch(fetchTasksByPhase(phaseId));
+   
+
+   
+    
   };
+
+  
 
   /* =========================
      UI
@@ -99,7 +112,9 @@ export default function PhaseDetailsModal({ phase, onClose }) {
 
       {/* MODAL */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="bg-white w-full max-w-4xl rounded-xl shadow-lg p-5 max-h-[90vh] overflow-y-auto">
+        <div className="bg-white w-full max-w-4xl rounded-xl shadow-lg p-5 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation(  )}
+                >
 
           {/* HEADER */}
           <div className="flex justify-between mb-4">
@@ -173,7 +188,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
               <div className="col-span-2 flex justify-end gap-2">
                 <button
                   onClick={() => {
-                    setEditingTaskId(task.id);
+                    setEditingTaskId(task.task_id);
                     setShowAddTask(true);
                     setTaskForm({
                       title: task.title,
@@ -190,7 +205,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDeleteTask(task.id)}
+                  onClick={() => handleDeleteTask(task.task_id)}
                   className="text-xs border px-2 py-1 rounded text-red-600"
                 >
                   Delete

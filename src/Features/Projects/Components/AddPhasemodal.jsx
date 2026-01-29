@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 
 import {
   addPhase,
-  fetchPhase,
+  
   getPhaseAddStatus,
   getPhaseError,
   selectAllPhases,
@@ -53,7 +53,6 @@ export default function AddPhaseModal({ onClose }) {
   ========================= */
   useEffect(() => {
     dispatch(fetchEmployees());        // for fallback / safety
-    dispatch(fetchPhase(id));          // phases of this project
     dispatch(fetchProjectById(id));    // 🔥 REQUIRED for team_members
   }, [dispatch, id]);
 

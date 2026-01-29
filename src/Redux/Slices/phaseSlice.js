@@ -9,29 +9,13 @@ import { fetchProjectById } from "./projectSlice";
 const initialState = {
   phases: [],
 
-  status: "idle",        // fetch phases
+  status: "idle",
   addStatus: "idle",
   editStatus: "idle",
   deleteStatus: "idle",
 
   error: null,
 };
-export const fetchPhase = createAsyncThunk(
-  "phases/fetchPhase",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await axios.get(
-        `${BASE_URL}/project/phases/list/`,
-        
-      );
-      return res.data.data;
-    } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
-    }
-  }
-);
 
 /* =========================
    ADD PHASE
@@ -46,9 +30,7 @@ export const addPhase = createAsyncThunk(
       );
       return res.data.data;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -65,20 +47,12 @@ export const editPhase = createAsyncThunk(
         payload
       );
 
-      // ✅ manually return what Redux needs
-      return {
-        id: phaseId,
-        ...payload,
-      };
+      return { id: phaseId, ...payload };
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
-
-
 
 /* =========================
    DELETE PHASE
@@ -92,9 +66,7 @@ export const deletePhase = createAsyncThunk(
       );
       return phaseId;
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data || error.message
-      );
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
@@ -117,24 +89,12 @@ const phaseSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-    .addCase(fetchPhase.pending, (state) => {
-        state.status = "loading";
-        state.error = null;
-      })
-      .addCase(fetchPhase.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.phases = action.payload;
-      })
-      .addCase(fetchPhase.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
 
-
-    
+      /* =========================
+         PROJECT → PHASES SOURCE
+      ========================= */
       .addCase(fetchProjectById.pending, (state) => {
         state.status = "loading";
-        state.error = null;
       })
       .addCase(fetchProjectById.fulfilled, (state, action) => {
         state.status = "succeeded";
@@ -166,45 +126,29 @@ const phaseSlice = createSlice({
       /* =========================
          EDIT PHASE
       ========================= */
-      .addCase(editPhase.pending, (state) => {
-        state.editStatus = "loading";
-      })
- .addCase(editPhase.fulfilled, (state, action) => {
-  state.editStatus = "succeeded";
+      .addCase(editPhase.fulfilled, (state, action) => {
+        state.editStatus = "succeeded";
 
-  const index = state.phases.findIndex(
-    (p) => p.id === action.payload.id
-  );
+        const idx = state.phases.findIndex(
+          (p) => p.id === action.payload.id
+        );
 
-  if (index !== -1) {
-    state.phases[index] = {
-      ...state.phases[index],   // ✅ keep title, tasks, assigned_to
-      ...action.payload,        // ✅ update description & dates
-    };
-  }
-})
-
-
-      .addCase(editPhase.rejected, (state, action) => {
-        state.editStatus = "failed";
-        state.error = action.payload;
+        if (idx !== -1) {
+          state.phases[idx] = {
+            ...state.phases[idx],
+            ...action.payload,
+          };
+        }
       })
 
       /* =========================
          DELETE PHASE
       ========================= */
-      .addCase(deletePhase.pending, (state) => {
-        state.deleteStatus = "loading";
-      })
       .addCase(deletePhase.fulfilled, (state, action) => {
         state.deleteStatus = "succeeded";
         state.phases = state.phases.filter(
           (p) => p.id !== action.payload
         );
-      })
-      .addCase(deletePhase.rejected, (state, action) => {
-        state.deleteStatus = "failed";
-        state.error = action.payload;
       });
   },
 });
@@ -215,9 +159,7 @@ export default phaseSlice.reducer;
 /* =========================
    SELECTORS
 ========================= */
-
 export const selectAllPhases = (state) => state.phases.phases;
-
 export const getPhaseStatus = (state) => state.phases.status;
 export const getPhaseAddStatus = (state) => state.phases.addStatus;
 export const getPhaseEditStatus = (state) => state.phases.editStatus;

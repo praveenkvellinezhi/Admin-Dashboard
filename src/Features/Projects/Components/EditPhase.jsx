@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React,{ useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   editPhase,
@@ -10,16 +10,10 @@ import { fetchProjectById } from "../../../Redux/Slices/projectSlice";
 export default function EditPhaseModal({ phaseId, onClose }) {
   const dispatch = useDispatch();
 
- 
-  const phase = useSelector((state) =>
-    selectAllPhases(state).find(
-      (p) => Number(p.id) === Number(phaseId)
-    )
-  );
+  const phases = useSelector(selectAllPhases);
+  const phase = phases.find((p) => p.phase_id === phaseId);
 
-  /* =========================
-     FORM STATE (EDITABLE ONLY)
-  ========================= */
+ 
   const [formData, setFormData] = useState({
     description: "",
     start_date: "",
@@ -60,7 +54,7 @@ export default function EditPhaseModal({ phaseId, onClose }) {
 
 
 
-    onClose(); // close only after Redux updates
+    onClose(); 
   }
 };
 
@@ -72,6 +66,7 @@ export default function EditPhaseModal({ phaseId, onClose }) {
 
     if (confirmDelete) {
       dispatch(deletePhase(phaseId));
+
       onClose();
     }
   };

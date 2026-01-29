@@ -59,12 +59,37 @@ export default function ProjectAdd() {
      INPUT HANDLER
   ========================= */
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+  const { name, value, files } = e.target;
+
+  
+  if (name === "client_contact") {
+    const digitsOnly = value.replace(/\D/g, "");
+
+    if (digitsOnly.length > 10) return; 
+
     setFormData((prev) => ({
       ...prev,
-      [name]: files ? files[0] : value,
+      client_contact: digitsOnly,
     }));
-  };
+    return;
+  }
+
+  // 📁 FILE INPUT
+  if (files) {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files[0],
+    }));
+    return;
+  }
+
+  // ✅ DEFAULT
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
 
   /* =========================
      TEAM MEMBER TOGGLE

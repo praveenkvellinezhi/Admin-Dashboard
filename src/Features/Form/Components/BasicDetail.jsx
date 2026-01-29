@@ -69,21 +69,42 @@ export default function EmployeeBasicDetails({
   /* =========================
      CHANGE HANDLER
   ========================= */
-  const handleLocalChange = (e) => {
-    const { name, value } = e.target;
+ const handleLocalChange = (e) => {
+  const { name, value } = e.target;
 
-    // clear local error if valid
-    if (
-      (name === "email" && validateEmail(value)) ||
-      (name === "phone" && validatePhone(value)) ||
-      (name === "password" && validatePassword(value)) ||
-      (name === "date_of_birth" && validateDOB(value))
-    ) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
+  // 📱 PHONE NUMBER CONTROL
+  if (name === "phone") {
+    const digitsOnly = value.replace(/\D/g, "");
+
+    if (digitsOnly.length > 10) return; // 🚫 stop typing
+
+    // clear error only if valid
+    if (validatePhone(digitsOnly)) {
+      setErrors((prev) => ({ ...prev, phone: "" }));
     }
 
-    onChange(e);
-  };
+    onChange({
+      target: {
+        name: "phone",
+        value: digitsOnly,
+      },
+    });
+
+    return; // ⛔ important
+  }
+
+  // ✅ OTHER FIELD VALIDATIONS
+  if (
+    (name === "email" && validateEmail(value)) ||
+    (name === "password" && validatePassword(value)) ||
+    (name === "date_of_birth" && validateDOB(value))
+  ) {
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  }
+
+  onChange(e);
+};
+
 
   /* =========================
      UI
@@ -164,6 +185,7 @@ export default function EmployeeBasicDetails({
               error={errors.phone || backendErrors?.phone?.[0]}
               onChange={handleLocalChange}
               onBlur={handleBlur}
+              maxLength={10} 
             />
 
             <InputField

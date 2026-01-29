@@ -6,7 +6,7 @@ export default function ProjectList({ projects }) {
   const ITEMS_PER_PAGE = 8;
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [view, setView] = useState("grid"); // grid | list
+  const [view, setView] = useState("grid");
 
   const totalPages = Math.ceil(projects.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -53,7 +53,7 @@ export default function ProjectList({ projects }) {
       >
         {currentProjects.map((project) => (
           <Link
-            key={project.id}
+            key={project.project_id} // ✅ FIXED
             to={`/Projects/${project.project_id}`}
             state={project}
             className={`bg-white rounded-2xl shadow-md p-4 hover:shadow-lg transition ${
@@ -107,7 +107,7 @@ export default function ProjectList({ projects }) {
                   <div className="flex -space-x-3">
                     {project.team_members?.map((member) => (
                       <img
-                        key={member.id}
+                        key={member.employee_id} // ✅ FIXED
                         src={member.profile_image_url}
                         alt={member.name}
                         title={member.name}
@@ -141,7 +141,7 @@ export default function ProjectList({ projects }) {
             const page = i + 1;
             return (
               <button
-                key={page}
+                key={page} // ✅ OK (static pagination)
                 onClick={() => setCurrentPage(page)}
                 className={`px-3 py-1 text-sm border rounded ${
                   currentPage === page

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { adminLogin } from "../../Redux/Slices/adminauthSlice";
+import { Eye, EyeOff } from "lucide-react";
 
+import { adminLogin } from "../../Redux/Slices/adminauthSlice";
 import logo from "../../assets/Logo/logo.png";
 
 export default function Login() {
@@ -16,13 +17,22 @@ export default function Login() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  /* =========================
+     INPUT HANDLER
+  ========================= */
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
+  /* =========================
+     SUBMIT
+  ========================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await dispatch(adminLogin(formData));
@@ -33,6 +43,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-white flex items-center justify-center">
+      {/* BACKGROUND */}
       <div className="absolute inset-0">
         <div
           className="
@@ -44,6 +55,7 @@ export default function Login() {
         />
       </div>
 
+      {/* CARD */}
       <div
         className="
           relative z-10
@@ -54,24 +66,13 @@ export default function Login() {
           grid grid-cols-2
         "
       >
+        {/* LEFT */}
         <div className="flex flex-col items-center justify-center bg-transparent">
-          <img src={logo} alt="logo" className=" h-36 mb-4" />
-        
+          <img src={logo} alt="logo" className="h-36 mb-4" />
         </div>
 
+        {/* RIGHT */}
         <div className="relative flex items-center">
-          <div
-            className="
-              absolute inset-y-0 right-[-70px]
-              
-             
-              transform -skew-x-12
-              z-10
-            "
-          />
-
-          <div className="absolute inset-0" />
-
           <form
             onSubmit={handleSubmit}
             className="relative z-20 w-full px-12 text-white space-y-5"
@@ -80,6 +81,7 @@ export default function Login() {
               Sign in to your account
             </h3>
 
+            {/* EMAIL */}
             <div>
               <label className="block text-xs text-white mb-1">
                 Your email
@@ -88,6 +90,7 @@ export default function Login() {
                 type="email"
                 name="email"
                 placeholder="Enter your email"
+                value={formData.email}
                 onChange={handleChange}
                 className="
                   w-full px-4 py-2 rounded-md
@@ -95,35 +98,43 @@ export default function Login() {
                   bg-white
                   focus:outline-none focus:ring-2 focus:ring-slate-400
                 "
+                required
               />
             </div>
 
-            <div>
+            {/* PASSWORD WITH EYE ICON */}
+            <div className="relative">
               <label className="block text-xs text-slate-300 mb-1">
                 Password
               </label>
+
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="Enter your password"
+                value={formData.password}
                 onChange={handleChange}
                 className="
-                  w-full px-4 py-2 rounded-md
+                  w-full px-4 py-2 pr-10 rounded-md
                   text-sm text-slate-800
                   bg-white
                   focus:outline-none focus:ring-2 focus:ring-slate-400
                 "
+                required
               />
+
+              {/* 👁️ TOGGLE */}
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                className="absolute right-3 top-[34px] text-slate-500 hover:text-slate-700"
+                aria-label="Toggle password visibility"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-slate-300">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" />
-                Remember me
-              </label>
-              
-            </div>
-
+            {/* SUBMIT */}
             <button
               type="submit"
               disabled={status === "loading"}
@@ -136,6 +147,7 @@ export default function Login() {
               {status === "loading" ? "Signing in..." : "Sign In"}
             </button>
 
+            {/* ERROR */}
             {error && (
               <p className="text-red-300 text-xs mt-2">
                 {error?.message || "Login failed"}

@@ -2,9 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BASE_URL } from "../Baseurl";
 
-/* =========================
-   INITIAL STATE
-========================= */
+
 const initialState = {
   tasks: [],
 
@@ -16,11 +14,7 @@ const initialState = {
   error: null,
 };
 
-/* =========================
-   THUNKS
-========================= */
 
-/* FETCH TASKS BY PHASE ✅ */
 export const fetchTasksByPhase = createAsyncThunk(
   "tasks/fetchByPhase",
   async (phaseId, { rejectWithValue }) => {
@@ -78,7 +72,7 @@ export const deleteTask = createAsyncThunk(
   async (taskId, { rejectWithValue }) => {
     try {
       await axios.delete(
-        `${BASE_URL}/project/tasks/edit/${taskId}/`
+        `${BASE_URL}/project/tasks/delete/${taskId}/`
       );
       return taskId;
     } catch (error) {
