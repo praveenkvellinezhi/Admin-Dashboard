@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjectById } from "../../../Redux/Slices/projectSlice";
 import { useParams } from "react-router";
 
 import {
@@ -16,18 +15,29 @@ import {
   selectAllEmployees,
 } from "../../../Redux/Slices/employeeslice";
 
+import {
+  fetchProjectById,
+  selectSelectedProject,
+} from "../../../Redux/Slices/projectSlice";
+
+// ✅ Reusable delete modal
+import DeleteModal from "../../../Components/Shared/DeleteModal";
+
 export default function PhaseDetailsModal({ phase, onClose }) {
   const dispatch = useDispatch();
-  const {id} =useParams();
+  const { id } = useParams();
 
+  const project = useSelector(selectSelectedProject);
   const employees = useSelector(selectAllEmployees);
   const tasks = useSelector(selectAllTasks);
 
-  
   const phaseId = phase?.phase_id;
 
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState(null);
+
+  const [showDelete, setShowDelete] = useState(false);
+  const [deleteTaskId, setDeleteTaskId] = useState(null);
 
   const [taskForm, setTaskForm] = useState({
     title: "",
@@ -38,14 +48,19 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     assigned_to: "",
   });
 
-
+  /* =========================
+     FETCH DATA
+  ========================= */
   useEffect(() => {
     if (!phaseId) return;
     dispatch(fetchEmployees());
+    dispatch(fetchProjectById(id));
     dispatch(fetchTasksByPhase(phaseId));
-  }, [dispatch, phaseId]);
+  }, [dispatch, phaseId, id]);
 
-
+  /* =========================
+     SAVE TASK
+  ========================= */
   const handleSaveTask = async () => {
     if (!taskForm.title.trim()) return;
 
@@ -61,17 +76,14 @@ export default function PhaseDetailsModal({ phase, onClose }) {
         : [],
     };
 
- if (editingTaskId) {
-  await dispatch(editTask({ taskId: editingTaskId, payload }));
-} else {
-  await dispatch(addTask(payload));
-}
+    if (editingTaskId) {
+      await dispatch(editTask({ taskId: editingTaskId, payload }));
+    } else {
+      await dispatch(addTask(payload));
+    }
 
-await dispatch(fetchProjectById(id)); // 🔥 REQUIRED
-await dispatch(fetchTasksByPhase(phaseId));         // modal sync
-
-
-     dispatch(fetchTasksByPhase(phaseId));
+    await dispatch(fetchProjectById(id));
+    await dispatch(fetchTasksByPhase(phaseId));
 
     setTaskForm({
       title: "",
@@ -81,30 +93,35 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
       end_date: "",
       assigned_to: "",
     });
+
     setEditingTaskId(null);
     setShowAddTask(false);
   };
 
   /* =========================
-     DELETE TASK
+     CONFIRM DELETE
   ========================= */
-  const handleDeleteTask = async (taskId) => {
-    if (!window.confirm("Delete this task?")) return;
-    await dispatch(deleteTask(taskId));
+  const handleConfirmDelete = async () => {
+    await dispatch(deleteTask(deleteTaskId));
+    await dispatch(fetchTasksByPhase(phaseId));
 
-
-    dispatch(fetchTasksByPhase(phaseId));
-   
-
-   
-    
+    setShowDelete(false);
+    setDeleteTaskId(null);
   };
 
-  
-
   /* =========================
-     UI
+     PROJECT TEAM FILTER
   ========================= */
+  const projectEmployees =
+    project?.team_members?.map((m) => m.employee_id) || [];
+
+  const assignedEmployees = employees.filter((emp) =>
+    projectEmployees.includes(emp.employee_id)
+  );
+
+  const capitalizeFirst = (str) =>
+    str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
+
   return (
     <>
       {/* BACKDROP */}
@@ -112,10 +129,10 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
 
       {/* MODAL */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="bg-white w-full max-w-4xl rounded-xl shadow-lg p-5 max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation(  )}
-                >
-
+        <div
+          className="bg-white w-full max-w-5xl rounded-xl shadow-lg p-5 max-h-[90vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* HEADER */}
           <div className="flex justify-between mb-4">
             <h3 className="text-lg font-semibold capitalize">
@@ -129,6 +146,10 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
             </button>
           </div>
 
+          <p className="mb-3 text-sm text-gray-600">
+            {capitalizeFirst(phase.description)}
+          </p>
+
           {/* TABLE HEADER */}
           <div className="grid grid-cols-12 text-xs font-semibold text-gray-500 border-b pb-2">
             <div className="col-span-3">Designer</div>
@@ -138,11 +159,13 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
             <div className="col-span-2 text-right">Actions</div>
           </div>
 
-          {/* TASK ROWS */}
+          {/* TASK LIST */}
           {tasks.map((task) => (
             <div
-              key={task.id}
-              className="grid grid-cols-12 items-center py-3 text-sm border-b hover:bg-gray-50"
+              key={task.task_id}
+              className="grid grid-cols-12 items-center px-4 py-3 text-sm mt-2
+                         bg-white rounded-xl border border-gray-400 hover:shadow-md
+                         transition mb-3"
             >
               {/* DESIGNER */}
               <div className="col-span-3 flex items-center gap-2">
@@ -150,24 +173,28 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
                   <>
                     <img
                       src={task.assigned_to[0].profile_image_url}
-                      className="w-7 h-7 rounded-full object-cover"
+                      className="w-8 h-8 rounded-full object-cover"
                     />
-                    <span>{task.assigned_to[0].name}</span>
+                    <span className="font-medium">
+                      {task.assigned_to[0].name}
+                    </span>
                   </>
                 ) : (
-                  <span className="text-gray-400">Unassigned</span>
+                  <span className="text-gray-400 italic">
+                    Unassigned
+                  </span>
                 )}
               </div>
 
               {/* TASK */}
-              <div className="col-span-3 truncate">
-                {task.title}
+              <div className="col-span-3 truncate font-medium">
+                {capitalizeFirst(task.title)}
               </div>
 
               {/* STATUS */}
               <div className="col-span-2">
                 <span
-                  className={`text-xs px-2 py-1 rounded-full ${
+                  className={`text-xs px-3 py-1 rounded-full ${
                     task.status === "completed"
                       ? "bg-green-100 text-green-700"
                       : task.status === "pending"
@@ -200,13 +227,18 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
                         task.assigned_to?.[0]?.employee_id || "",
                     });
                   }}
-                  className="text-xs border px-2 py-1 rounded"
+                  className="text-xs px-3 py-1 border rounded-lg"
                 >
                   Edit
                 </button>
+
                 <button
-                  onClick={() => handleDeleteTask(task.task_id)}
-                  className="text-xs border px-2 py-1 rounded text-red-600"
+                  onClick={() => {
+                    setDeleteTaskId(task.task_id);
+                    setShowDelete(true);
+                  }}
+                  className="text-xs px-3 py-1 border border-red-200
+                             text-red-600 rounded-lg hover:bg-red-50"
                 >
                   Delete
                 </button>
@@ -233,7 +265,10 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
                   placeholder="Title"
                   value={taskForm.title}
                   onChange={(e) =>
-                    setTaskForm((p) => ({ ...p, title: e.target.value }))
+                    setTaskForm((p) => ({
+                      ...p,
+                      title: e.target.value,
+                    }))
                   }
                   className="w-full border rounded px-3 py-2"
                 />
@@ -242,16 +277,21 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
                   placeholder="Description"
                   value={taskForm.description}
                   onChange={(e) =>
-                    setTaskForm((p) => ({ ...p, description: e.target.value }))
+                    setTaskForm((p) => ({
+                      ...p,
+                      description: e.target.value,
+                    }))
                   }
                   className="w-full border rounded px-3 py-2"
                 />
 
-                {/* STATUS INPUT */}
                 <select
                   value={taskForm.status}
                   onChange={(e) =>
-                    setTaskForm((p) => ({ ...p, status: e.target.value }))
+                    setTaskForm((p) => ({
+                      ...p,
+                      status: e.target.value,
+                    }))
                   }
                   className="w-full border rounded px-3 py-2"
                 >
@@ -296,8 +336,11 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
                   className="w-full border rounded px-3 py-2"
                 >
                   <option value="">Assign employee</option>
-                  {employees.map((emp) => (
-                    <option key={emp.employee_id} value={emp.employee_id}>
+                  {assignedEmployees.map((emp) => (
+                    <option
+                      key={emp.employee_id}
+                      value={emp.employee_id}
+                    >
                       {emp.name}
                     </option>
                   ))}
@@ -323,9 +366,17 @@ await dispatch(fetchTasksByPhase(phaseId));         // modal sync
               </div>
             )}
           </div>
-
         </div>
       </div>
+
+      {/* DELETE MODAL */}
+      <DeleteModal
+        open={showDelete}
+        onClose={() => setShowDelete(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Task"
+        description="Are you sure you want to delete this task? This action cannot be undone."
+      />
     </>
   );
 }

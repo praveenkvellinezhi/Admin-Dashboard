@@ -45,7 +45,7 @@ export default function ProjectOverview({ project }) {
                 src={member.profile_image_url || "https://i.pravatar.cc/100"}
                 alt={member.name}
                 title={member.name}
-                className="w-8 h-8 rounded-full border object-cover"
+                className="w-8 h-8 rounded-full  object-cover"
               />
             ))}
           </div>

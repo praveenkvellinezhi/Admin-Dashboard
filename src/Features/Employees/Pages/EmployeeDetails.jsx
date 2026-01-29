@@ -2,6 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+ 
 
 import EmployeeDetailsHeader from "../Components/DetailsHeader";
 import BasicInformation from "../Components/BasicInformation";
@@ -52,7 +53,7 @@ export default function EmployeePageDetails() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ">
      <EmployeeDetailsHeader
   employee={employee}
   onEdit={() =>

@@ -1,13 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { X, ChevronDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import {
   addPhase,
-  
   getPhaseAddStatus,
   getPhaseError,
   selectAllPhases,
@@ -25,7 +23,7 @@ import {
 
 export default function AddPhaseModal({ onClose }) {
   const dispatch = useDispatch();
-  const { id } = useParams(); // project_id
+  const { id } = useParams();
 
   const employees = useSelector(selectAllEmployees) || [];
   const phases = useSelector(selectAllPhases) || [];
@@ -52,8 +50,8 @@ export default function AddPhaseModal({ onClose }) {
      FETCH REQUIRED DATA
   ========================= */
   useEffect(() => {
-    dispatch(fetchEmployees());        // for fallback / safety
-    dispatch(fetchProjectById(id));    // 🔥 REQUIRED for team_members
+    dispatch(fetchEmployees());
+    dispatch(fetchProjectById(id));
   }, [dispatch, id]);
 
   /* =========================
@@ -61,16 +59,16 @@ export default function AddPhaseModal({ onClose }) {
   ========================= */
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((p) => ({ ...p, [name]: value }));
     setLocalError("");
   };
 
   const toggleAssign = (employee_id) => {
-    setFormData((prev) => ({
-      ...prev,
-      employee_ids: prev.employee_ids.includes(employee_id)
-        ? prev.employee_ids.filter((x) => x !== employee_id)
-        : [...prev.employee_ids, employee_id],
+    setFormData((p) => ({
+      ...p,
+      employee_ids: p.employee_ids.includes(employee_id)
+        ? p.employee_ids.filter((x) => x !== employee_id)
+        : [...p.employee_ids, employee_id],
     }));
   };
 
@@ -78,13 +76,11 @@ export default function AddPhaseModal({ onClose }) {
      SUBMIT
   ========================= */
   const handleSubmit = async () => {
-    // Phase required
     if (!formData.phase_type) {
       setLocalError("Phase type is required");
       return;
     }
 
-    // Unique phase check
     const exists = phases.some(
       (p) =>
         String(p.project_id) === String(id) &&
@@ -92,24 +88,16 @@ export default function AddPhaseModal({ onClose }) {
     );
 
     if (exists) {
-      setLocalError(
-        `${formData.phase_type} phase already exists for this project`
-      );
+      setLocalError(`${formData.phase_type} phase already exists`);
       return;
     }
 
-    // Employees must belong to project team
     const invalidEmployees = formData.employee_ids.filter(
-      (empId) =>
-        !projectTeam.some(
-          (tm) => tm.employee_id === empId
-        )
+      (empId) => !projectTeam.some((tm) => tm.employee_id === empId)
     );
 
     if (invalidEmployees.length > 0) {
-      setLocalError(
-        "Selected employees must belong to the project team"
-      );
+      setLocalError("Selected employees must belong to the project team");
       return;
     }
 
@@ -118,16 +106,19 @@ export default function AddPhaseModal({ onClose }) {
     if (addPhase.fulfilled.match(result)) {
       dispatch(fetchProjectById(id));
       toast.success("Phase added successfully");
-      // refresh phases
       onClose();
     }
   };
 
   /* =========================
-     EMPLOYEE SOURCE (IMPORTANT)
+     EMPLOYEE SOURCE
   ========================= */
   const employeeSource =
     projectTeam.length > 0 ? projectTeam : employees;
+
+  const assignedEmployees = employeeSource.filter((emp) =>
+    formData.employee_ids.includes(emp.employee_id)
+  );
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
@@ -150,36 +141,30 @@ export default function AddPhaseModal({ onClose }) {
           )}
 
           {/* PHASE TYPE */}
-          <div>
-            <label className="text-xs font-medium text-gray-600">
-              Phase Type
-            </label>
-            <select
-              name="phase_type"
-              value={formData.phase_type}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-            >
-              <option value="">Select phase</option>
-              {["planning", "design", "development", "testing", "deployment"].map(
-                (type) => (
-                  <option
-                    key={type}
-                    value={type}
-                    disabled={phases.some(
-                      (p) =>
-                        String(p.project_id) === String(id) &&
-                        p.phase_type === type
-                    )}
-                  >
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </option>
-                )
-              )}
-            </select>
-          </div>
+          <select
+            name="phase_type"
+            value={formData.phase_type}
+            onChange={handleChange}
+            className="w-full border rounded-lg px-3 py-2 text-sm"
+          >
+            <option value="">Select phase</option>
+            {["planning", "design", "development", "testing", "deployment"].map(
+              (type) => (
+                <option
+                  key={type}
+                  value={type}
+                  disabled={phases.some(
+                    (p) =>
+                      String(p.project_id) === String(id) &&
+                      p.phase_type === type
+                  )}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </option>
+              )
+            )}
+          </select>
 
-          {/* DESCRIPTION */}
           <textarea
             name="description"
             value={formData.description}
@@ -189,7 +174,6 @@ export default function AddPhaseModal({ onClose }) {
             placeholder="Phase description"
           />
 
-          {/* DATES */}
           <div className="grid grid-cols-2 gap-3">
             <input
               type="date"
@@ -207,12 +191,8 @@ export default function AddPhaseModal({ onClose }) {
             />
           </div>
 
-          {/* ASSIGNED EMPLOYEES */}
+          {/* ASSIGN SELECT */}
           <div className="relative">
-            <label className="text-xs font-medium text-gray-600">
-              Assigned Employees
-            </label>
-
             <button
               type="button"
               onClick={() => setIsAssignOpen((p) => !p)}
@@ -221,12 +201,7 @@ export default function AddPhaseModal({ onClose }) {
               <span className="truncate">
                 {formData.employee_ids.length === 0
                   ? "Select employees"
-                  : employeeSource
-                      .filter((e) =>
-                        formData.employee_ids.includes(e.employee_id)
-                      )
-                      .map((e) => e.name)
-                      .join(", ")}
+                  : assignedEmployees.map((e) => e.name).join(", ")}
               </span>
               <ChevronDown size={16} />
             </button>
@@ -236,7 +211,7 @@ export default function AddPhaseModal({ onClose }) {
                 {employeeSource.map((emp) => (
                   <label
                     key={emp.employee_id}
-                    className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50"
                   >
                     <input
                       type="checkbox"
@@ -244,28 +219,39 @@ export default function AddPhaseModal({ onClose }) {
                       onChange={() => toggleAssign(emp.employee_id)}
                     />
                     {emp.name}
-                    <span className="text-xs text-gray-400">
-                      ({emp.department})
-                    </span>
                   </label>
                 ))}
               </div>
             )}
           </div>
+
+          {/* ASSIGNED EMPLOYEE CHIPS */}
+          {assignedEmployees.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-2">
+              {assignedEmployees.map((emp) => (
+                <button
+                  key={emp.employee_id}
+                  onClick={() => toggleAssign(emp.employee_id)}
+                  className="flex items-center gap-2 px-3 py-1.5
+                             rounded-full border bg-gray-50 text-sm"
+                >
+                  {emp.name}
+                  <X size={12} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* FOOTER */}
         <div className="sticky bottom-0 bg-white border-t px-6 py-4 flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 border rounded-md text-sm"
-          >
+          <button onClick={onClose} className="px-4 py-2 border rounded-md text-sm">
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={addStatus === "loading"}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm disabled:opacity-60"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm"
           >
             {addStatus === "loading" ? "Saving..." : "Add Phase"}
           </button>

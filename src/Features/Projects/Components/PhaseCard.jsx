@@ -1,14 +1,16 @@
 import React from 'react';
 
 export default function PhaseCard({ phase, onClick }) {
-  /* =========================
-     SAFE TASK LIST
-  ========================= */
+
+  function capitalizeFirst(str) {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+ 
   const tasks = Array.isArray(phase?.tasks) ? phase.tasks : [];
 
-  /* =========================
-     UNIQUE EMPLOYEES FROM TASKS
-  ========================= */
+
   const employees =
     tasks
       .flatMap((task) => task?.assigned_to || [])
@@ -43,7 +45,7 @@ export default function PhaseCard({ phase, onClick }) {
 
         {/* DESCRIPTION */}
         <p className="text-xs text-gray-600 mb-3 line-clamp-2">
-          {phase?.description || 'No description'}
+          {capitalizeFirst(phase?.description || 'No description')}
         </p>
 
         {/* DATES */}
@@ -71,7 +73,7 @@ export default function PhaseCard({ phase, onClick }) {
                         : 'bg-gray-400'
                   }`}
                 />
-                <span className="truncate">{task.title}</span>
+                <span className="truncate">{capitalizeFirst(task.title)}</span>
               </div>
             ))
           )}

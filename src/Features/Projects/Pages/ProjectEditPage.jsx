@@ -169,7 +169,7 @@ export default function ProjectEdit() {
         </div>
 
         {/* RIGHT COLUMN */}
-        <div className="space-y-4">
+        <div className="space-y-4 py-3">
           <div className="grid grid-cols-2 gap-4">
             <Input label="Priority" value={formData.priority} disabled />
             <Input label="Project Type" value={formData.project_type} disabled />

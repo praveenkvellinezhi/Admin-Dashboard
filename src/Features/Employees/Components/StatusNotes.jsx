@@ -1,3 +1,4 @@
+import React from "react";
 export default function StatusNotes({ employee }) {
   const emp = employee?.employee;
   if (!emp) return null;
@@ -17,15 +18,7 @@ export default function StatusNotes({ employee }) {
           <StatusBadge status={emp.status} />
         </div>
 
-                <div>
-          <label className="text-gray-500 block mb-1">
-            Notes & Remarks
-          </label>
-
-          <p className=" rounded-md  py-2  text-gray-700">
-            No notes available
-          </p>
-        </div>
+   
       </div>
     </div>
   );
