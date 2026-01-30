@@ -1,51 +1,82 @@
 import React from "react";
+import {
+  Briefcase,
+  User,
+  Calendar,
+  Flag,
+  Users,
+  FileText,
+} from "lucide-react";
 
 export default function ProjectOverview({ project }) {
-  const capitalizeFirst = (value) => {
-    if (value === null || value === undefined || value === "") return "—";
-    const str = String(value);
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
-  // ✅ HARD GUARD
   if (!project) return null;
 
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-5">
-      <h3 className="text-sm font-semibold mb-4">
-        Project Overview
-      </h3>
+  const capitalize = (v) =>
+    v ? v.charAt(0).toUpperCase() + v.slice(1) : "—";
 
-      {/* DETAILS GRID */}
-      <div className="grid grid-cols-2 gap-4 text-sm">
-        <Item label="Project Name" value={capitalizeFirst(project.project_name)} />
-        <Item label="Project ID" value={project.project_id || "—"} />
-        <Item label="Client Name" value={capitalizeFirst(project.client_name)} />
-        <Item label="Start Date" value={project.start_date || "—"} />
-        <Item label="End Date" value={project.end_date || "—"} />
-        <Item label="Status" value="Active" />
-        <Item
-          label="Project Manager"
-          value={capitalizeFirst(project.project_manager_name)}
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 space-y-6">
+      {/* HEADER */}
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900">
+            {capitalize(project.project_name)}
+          </h2>
+          <p className="text-sm text-gray-500">
+            ID: {project.project_id}
+          </p>
+        </div>
+
+        <div className="flex gap-2">
+          <span className="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">
+            Active
+          </span>
+          <span className="px-3 py-1 text-xs rounded-full bg-red-100 text-red-600">
+            {capitalize(project.priority)} Priority
+          </span>
+        </div>
+      </div>
+
+      {/* INFO GRID */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <InfoCard
+          icon={<Briefcase size={16} />}
+          label="Client"
+          value={capitalize(project.client_name)}
         />
-        <Item label="Priority" value={capitalizeFirst(project.priority)} />
+        <InfoCard
+          icon={<User size={16} />}
+          label="Manager"
+          value={capitalize(project.project_manager_name)}
+        />
+        <InfoCard
+          icon={<Calendar size={16} />}
+          label="Start Date"
+          value={project.start_date || "—"}
+        />
+        <InfoCard
+          icon={<Calendar size={16} />}
+          label="End Date"
+          value={project.end_date || "—"}
+        />
       </div>
 
       {/* TEAM MEMBERS */}
-      <div className="mt-5">
-        <p className="text-xs text-gray-500 mb-2">
+      <div>
+        <div className="flex items-center gap-2 text-sm text-gray-700 mb-2">
+          <Users size={16} />
           Team Members
-        </p>
+        </div>
 
-        {project.team_members?.length > 0 ? (
+        {project.team_members?.length ? (
           <div className="flex -space-x-3">
-            {project.team_members.map((member) => (
+            {project.team_members.map((m) => (
               <img
-                key={member.employee_id} // ✅ FIXED KEY
-                src={member.profile_image_url || "https://i.pravatar.cc/100"}
-                alt={member.name}
-                title={member.name}
-                className="w-8 h-8 rounded-full  object-cover"
+                key={m.employee_id}
+                src={m.profile_image_url || "https://i.pravatar.cc/100"}
+                alt={m.name}
+                title={m.name}
+                className="w-9 h-9 rounded-full border object-cover"
               />
             ))}
           </div>
@@ -55,26 +86,30 @@ export default function ProjectOverview({ project }) {
       </div>
 
       {/* DESCRIPTION */}
-      <div className="mt-5">
-        <p className="text-xs text-gray-500 mb-1">Description</p>
-        <p className="text-sm text-gray-700 leading-relaxed">
-          {capitalizeFirst(project.description)}
+      <div>
+        <div className="flex items-center gap-2 text-sm text-gray-700 mb-1">
+          <FileText size={16} />
+          Description
+        </div>
+        <p className="text-sm text-gray-600 leading-relaxed">
+          {capitalize(project.description)}
         </p>
       </div>
     </div>
   );
 }
 
-/* =========================
-   REUSABLE ITEM
-========================= */
-function Item({ label, value }) {
+/* ---------- Small reusable card ---------- */
+function InfoCard({ icon, label, value }) {
   return (
-    <div>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="font-medium text-gray-800">
-        {value || "—"}
-      </p>
+    <div className="flex items-start gap-3 border bg-gray-100 border-gray-200 rounded-xl p-4">
+      <div className="text-gray-500">{icon}</div>
+      <div>
+        <p className="text-xs text-gray-500">{label}</p>
+        <p className="text-sm font-semibold text-gray-800">
+          {value}
+        </p>
+      </div>
     </div>
   );
 }

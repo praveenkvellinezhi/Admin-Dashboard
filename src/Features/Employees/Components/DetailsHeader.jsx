@@ -9,13 +9,11 @@ import {
 } from "../../../Redux/Slices/employeeslice";
 import { fetchInterns } from "../../../Redux/Slices/internSlice";
 
-// 🔥 Reusable delete modal
 import DeleteModal from "../../../Components/Shared/DeleteModal";
 
 export default function EmployeeDetailsHeader({ employee }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const [showDelete, setShowDelete] = useState(false);
 
   if (!employee) return null;
@@ -41,39 +39,50 @@ export default function EmployeeDetailsHeader({ employee }) {
   return (
     <>
       {/* HEADER */}
-      <div className="border-b  bg-white px-2 py-4 flex justify-between items-center">
-        <h1 className="text-lg font-semibold">
-          {isIntern ? "Intern Details" : "Employee Details"}
-        </h1>
+      <div className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          
+          {/* LEFT */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(isIntern ? "/interns" : "/employees")}
+              className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800"
+            >
+              <ChevronLeft size={18} />
+              Back
+            </button>
 
-        <div className="flex gap-3">
-          <button
-            onClick={() => navigate("/employees")}
-            className="flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm"
-          >
-            <ChevronLeft size={16} />
-            Back
-          </button>
+            <div className="h-6 w-px bg-gray-300" />
 
-          <button
-            onClick={() =>
-              navigate(`/employees/edit/${emp.employee_id}`)
-            }
-            className="flex items-center gap-2 px-3 py-1.5 border rounded-md text-sm"
-          >
-            <Pencil size={16} />
-            Edit
-          </button>
+            <h1 className="text-lg font-semibold text-gray-900">
+              {isIntern ? "Intern Details" : "Employee Details"}
+            </h1>
+          </div>
 
-          <button
-            onClick={() => setShowDelete(true)}
-            className="flex items-center gap-2 px-3 py-1.5
-                       border border-red-300 text-red-600
-                       rounded-md text-sm hover:bg-red-50"
-          >
-            <Trash2 size={16} />
-            Delete
-          </button>
+          {/* RIGHT ACTIONS */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() =>
+                navigate(
+                  isIntern
+                    ? `/interns/edit/${emp.employee_id}`
+                    : `/employees/edit/${emp.employee_id}`
+                )
+              }
+              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+            >
+              <Pencil size={16} />
+              Edit
+            </button>
+
+            <button
+              onClick={() => setShowDelete(true)}
+              className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-600 rounded-lg text-sm hover:bg-red-50"
+            >
+              <Trash2 size={16} />
+              Delete
+            </button>
+          </div>
         </div>
       </div>
 

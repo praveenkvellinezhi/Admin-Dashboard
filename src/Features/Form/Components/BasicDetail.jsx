@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Upload, Eye, EyeOff } from "lucide-react";
+import { Upload, Eye, EyeOff, User, PersonStanding } from "lucide-react";
 
 export default function EmployeeBasicDetails({
   formData,
@@ -52,7 +52,7 @@ export default function EmployeeBasicDetails({
         name === "email" && value && !validateEmail(value)
           ? "Invalid email"
           : name === "phone" && value && !validatePhone(value)
-          ? "Invalid phone"
+          ? "Invalid phone number"
           : name === "password" && value && !validatePassword(value)
           ? "6 digits required"
           : name === "date_of_birth" && value && !validateDOB(value)
@@ -75,9 +75,7 @@ export default function EmployeeBasicDetails({
         setErrors((prev) => ({ ...prev, phone: "" }));
       }
 
-      onChange({
-        target: { name, value: digits },
-      });
+      onChange({ target: { name, value: digits } });
       return;
     }
 
@@ -93,49 +91,61 @@ export default function EmployeeBasicDetails({
   };
 
   return (
-    <div className="bg-white  border border-gray-200 shadow-sm">
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
       {/* HEADER */}
-      <div className="px-4 py-2 border-b bg-gray-50 rounded-t-xl">
-        <h3 className="text-xs font-semibold text-gray-700">
+      <div className="flex items-center gap-3 px-5 py-4 border-b rounded-t-xl">
+        <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
+          <User size={16} className="text-gray-600" />
+        </div>
+        <h3 className="text-sm font-semibold text-gray-800">
           Employee Basic Details
         </h3>
       </div>
 
-      <div className="p-4">
-        <div className="flex gap-6">
-          {/* IMAGE */}
-          <div className="flex flex-col items-center gap-2">
-            <img
-              src={
-                previewUrl ||
-                formData.profile_image_url ||
-                "https://i.pravatar.cc/150?img=3"
-              }
-              alt="Employee"
-              className="w-28 h-28 rounded-full object-cover border"
-            />
+      {/* BODY */}
+      <div className="p-6">
+        <div className="grid grid-cols-12 gap-8">
+          {/* PROFILE IMAGE */}
+          <div className="col-span-12 md:col-span-3">
+            <div className="flex flex-col items-center gap-3">
+              <div className="relative w-32 h-32 rounded-xl border bg-gray-100 flex items-center justify-center overflow-hidden">
+                {previewUrl || formData.profile_image_url ? (
+                  <img
+                    src={previewUrl || formData.profile_image_url}
+                    alt="Employee"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <PersonStanding size={48} className="text-gray-300" />
+                )}
 
-            <label className="flex items-center gap-1 text-[11px] text-white bg-red-500 px-3 py-1 rounded-full cursor-pointer">
-              <Upload size={12} />
-              Upload
-              <input
-                type="file"
-                name="profile_image"
-                accept="image/*"
-                onChange={onImageChange}
-                hidden
-              />
-            </label>
+                <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition cursor-pointer">
+                  <Upload size={20} className="text-white" />
+                  <input
+                    type="file"
+                    name="profile_image"
+                    accept="image/*"
+                    onChange={onImageChange}
+                    hidden
+                    required
+                  />
+                </label>
+              </div>
 
-            {backendErrors?.profile_image && (
-              <p className="text-[11px] text-red-500">
-                {backendErrors.profile_image[0]}
+              <p className="text-xs text-gray-500">
+                Upload profile photo <span className="text-red-500">*</span>
               </p>
-            )}
+
+              {backendErrors?.profile_image && (
+                <p className="text-[11px] text-red-500">
+                  {backendErrors.profile_image[0]}
+                </p>
+              )}
+            </div>
           </div>
 
           {/* FORM */}
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="col-span-12 md:col-span-9 grid grid-cols-1 md:grid-cols-2 gap-5">
             <InputField
               label="Full Name"
               name="name"
@@ -145,15 +155,7 @@ export default function EmployeeBasicDetails({
             />
 
             <InputField
-              label="Address"
-              name="address"
-              value={formData.address || ""}
-              error={backendErrors?.address?.[0]}
-              onChange={handleLocalChange}
-            />
-
-            <InputField
-              label="Email"
+              label="Email Address"
               name="email"
               type="email"
               value={formData.email || ""}
@@ -163,7 +165,7 @@ export default function EmployeeBasicDetails({
             />
 
             <InputField
-              label="Phone"
+              label="Phone Number"
               name="phone"
               value={formData.phone || ""}
               error={errors.phone || backendErrors?.phone?.[0]}
@@ -172,7 +174,7 @@ export default function EmployeeBasicDetails({
             />
 
             <InputField
-              label="DOB"
+              label="Date of Birth"
               name="date_of_birth"
               type="date"
               value={formData.date_of_birth || ""}
@@ -181,17 +183,22 @@ export default function EmployeeBasicDetails({
               onBlur={handleBlur}
             />
 
-            {/* ✅ GENDER */}
+            {/* GENDER */}
             <div>
-              <label className="text-[11px] text-gray-600 block mb-1">
-                Gender
+              <label className="text-xs text-gray-600 mb-2 block">
+                Gender <span className="text-red-500">*</span>
               </label>
 
-              <div className="flex items-center gap-4 text-xs">
+              <div className="flex gap-3">
                 {["male", "female", "other"].map((g) => (
                   <label
                     key={g}
-                    className="flex items-center gap-1 cursor-pointer"
+                    className={`px-4 py-2 border rounded-full cursor-pointer text-sm
+                      ${
+                        formData.gender === g
+                          ? "bg-black text-white border-black"
+                          : "border-gray-300"
+                      }`}
                   >
                     <input
                       type="radio"
@@ -199,24 +206,19 @@ export default function EmployeeBasicDetails({
                       value={g}
                       checked={formData.gender === g}
                       onChange={handleLocalChange}
-                      className="accent-red-500"
+                      className="hidden"
+                      required
                     />
-                    <span className="capitalize">{g}</span>
+                    {g}
                   </label>
                 ))}
               </div>
-
-              {backendErrors?.gender && (
-                <p className="text-[11px] text-red-500 mt-0.5">
-                  {backendErrors.gender[0]}
-                </p>
-              )}
             </div>
 
             {/* PASSWORD */}
             <div>
-              <label className="text-[11px] text-gray-600 block">
-                Password (6 digits)
+              <label className="text-xs text-gray-600 mb-1 block">
+                Password (6 digits) <span className="text-red-500">*</span>
               </label>
 
               <div className="relative">
@@ -227,8 +229,8 @@ export default function EmployeeBasicDetails({
                   onChange={handleLocalChange}
                   onBlur={handleBlur}
                   maxLength={6}
-                  inputMode="numeric"
-                  className={`w-full border rounded-md px-2 py-1.5 pr-8 text-xs ${
+                  required
+                  className={`w-full border rounded-lg px-3 py-2 pr-10 text-sm ${
                     errors.password || backendErrors?.password
                       ? "border-red-500"
                       : "border-gray-300"
@@ -238,18 +240,28 @@ export default function EmployeeBasicDetails({
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
-                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
 
               {(errors.password || backendErrors?.password) && (
-                <p className="text-[11px] text-red-500 mt-1">
+                <p className="text-xs text-red-500 mt-1">
                   {errors.password || backendErrors.password[0]}
                 </p>
               )}
             </div>
+
+            {/* ADDRESS (OPTIONAL) */}
+            <InputField
+              label="Address"
+              name="address"
+              value={formData.address || ""}
+              onChange={handleLocalChange}
+              required={false}
+              full
+            />
           </div>
         </div>
       </div>
@@ -258,34 +270,25 @@ export default function EmployeeBasicDetails({
 }
 
 /* =========================
-   INPUT FIELD
+   INPUT FIELD (REQUIRED BY DEFAULT)
 ========================= */
-function InputField({
-  label,
-  name,
-  type = "text",
-  value,
-  error,
-  onChange,
-  onBlur,
-}) {
+function InputField({ label, full, required = true, error, ...props }) {
   return (
-    <div>
-      <label className="text-[11px] text-gray-600 block">{label}</label>
+    <div className={full ? "md:col-span-2" : ""}>
+      <label className="text-xs text-gray-600 mb-1 block">
+        {label}
+        {required && <span className="text-red-500"> *</span>}
+      </label>
+
       <input
-        type={type}
-        name={name}
-        value={value}
-        placeholder={` ${name} `}
-        onChange={onChange}
-        onBlur={onBlur}
-        className={`w-full border rounded-md px-2 py-2 text-xs ${
+        {...props}
+        required={required}
+        className={`w-full border rounded-lg px-3 py-2 text-sm ${
           error ? "border-red-500" : "border-gray-300"
         }`}
       />
-      {error && (
-        <p className="text-[11px] text-red-500 mt-0.5">{error}</p>
-      )}
+
+      {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
     </div>
   );
 }

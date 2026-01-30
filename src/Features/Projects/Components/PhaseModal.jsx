@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { X, Pencil, Trash2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router";
 
@@ -20,7 +21,6 @@ import {
   selectSelectedProject,
 } from "../../../Redux/Slices/projectSlice";
 
-// ✅ Reusable delete modal
 import DeleteModal from "../../../Components/Shared/DeleteModal";
 
 export default function PhaseDetailsModal({ phase, onClose }) {
@@ -59,7 +59,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   }, [dispatch, phaseId, id]);
 
   /* =========================
-     SAVE TASK
+     SAVE TASK (ADD / EDIT)
   ========================= */
   const handleSaveTask = async () => {
     if (!taskForm.title.trim()) return;
@@ -99,18 +99,17 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   };
 
   /* =========================
-     CONFIRM DELETE
+     DELETE TASK
   ========================= */
   const handleConfirmDelete = async () => {
     await dispatch(deleteTask(deleteTaskId));
     await dispatch(fetchTasksByPhase(phaseId));
-
     setShowDelete(false);
     setDeleteTaskId(null);
   };
 
   /* =========================
-     PROJECT TEAM FILTER
+     HELPERS
   ========================= */
   const projectEmployees =
     project?.team_members?.map((m) => m.employee_id) || [];
@@ -119,7 +118,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     projectEmployees.includes(emp.employee_id)
   );
 
-  const capitalizeFirst = (str) =>
+  const capitalize = (str) =>
     str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
   return (
@@ -130,151 +129,176 @@ export default function PhaseDetailsModal({ phase, onClose }) {
       {/* MODAL */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div
-          className="bg-white w-full max-w-5xl rounded-xl shadow-lg p-5 max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
+          className="bg-white w-full max-w-6xl rounded-2xl shadow-lg overflow-hidden"
         >
           {/* HEADER */}
-          <div className="flex justify-between mb-4">
-            <h3 className="text-lg font-semibold capitalize">
-              {phase.phase_type} Tasks
-            </h3>
+          <div className="flex justify-between items-start px-6 py-5 border-b">
+            <div>
+              <h2 className="text-lg font-semibold capitalize">
+                {phase.phase_type}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {capitalize(phase.description)}
+              </p>
+            </div>
+
             <button
               onClick={onClose}
-              className="text-xs border px-3 py-1 rounded"
+              className="p-2 rounded hover:bg-gray-100"
             >
-              Back
+              <X size={18} />
             </button>
           </div>
 
-          <p className="mb-3 text-sm text-gray-600">
-            {capitalizeFirst(phase.description)}
-          </p>
-
-          {/* TABLE HEADER */}
-          <div className="grid grid-cols-12 text-xs font-semibold text-gray-500 border-b pb-2">
-            <div className="col-span-3">Designer</div>
-            <div className="col-span-3">Task</div>
-            <div className="col-span-2">Status</div>
-            <div className="col-span-2">Dates</div>
-            <div className="col-span-2 text-right">Actions</div>
-          </div>
-
-          {/* TASK LIST */}
-          {tasks.map((task) => (
-            <div
-              key={task.task_id}
-              className="grid grid-cols-12 items-center px-4 py-3 text-sm mt-2
-                         bg-white rounded-xl border border-gray-400 hover:shadow-md
-                         transition mb-3"
-            >
-              {/* DESIGNER */}
-              <div className="col-span-3 flex items-center gap-2">
-                {task.assigned_to?.[0] ? (
-                  <>
-                    <img
-                      src={task.assigned_to[0].profile_image_url}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                    <span className="font-medium">
-                      {task.assigned_to[0].name}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-gray-400 italic">
-                    Unassigned
-                  </span>
-                )}
-              </div>
-
-              {/* TASK */}
-              <div className="col-span-3 truncate font-medium">
-                {capitalizeFirst(task.title)}
-              </div>
-
-              {/* STATUS */}
-              <div className="col-span-2">
-                <span
-                  className={`text-xs px-3 py-1 rounded-full ${
-                    task.status === "completed"
-                      ? "bg-green-100 text-green-700"
-                      : task.status === "pending"
-                      ? "bg-yellow-100 text-yellow-700"
-                      : "bg-blue-100 text-blue-700"
-                  }`}
-                >
-                  {task.status.replace("_", " ")}
-                </span>
-              </div>
-
-              {/* DATES */}
-              <div className="col-span-2 text-xs text-gray-500">
-                {task.start_date} → {task.end_date}
-              </div>
-
-              {/* ACTIONS */}
-              <div className="col-span-2 flex justify-end gap-2">
-                <button
-                  onClick={() => {
-                    setEditingTaskId(task.task_id);
-                    setShowAddTask(true);
-                    setTaskForm({
-                      title: task.title,
-                      description: task.description || "",
-                      status: task.status,
-                      start_date: task.start_date,
-                      end_date: task.end_date,
-                      assigned_to:
-                        task.assigned_to?.[0]?.employee_id || "",
-                    });
-                  }}
-                  className="text-xs px-3 py-1 border rounded-lg"
-                >
-                  Edit
-                </button>
-
-                <button
-                  onClick={() => {
-                    setDeleteTaskId(task.task_id);
-                    setShowDelete(true);
-                  }}
-                  className="text-xs px-3 py-1 border border-red-200
-                             text-red-600 rounded-lg hover:bg-red-50"
-                >
-                  Delete
-                </button>
-              </div>
+          {/* CONTENT */}
+          <div className="px-6 py-4 max-h-[70vh] overflow-y-auto">
+            {/* TABLE HEADER */}
+            <div className="grid grid-cols-12 text-sm text-gray-500 border-b pb-3">
+              <div className="col-span-3">Assignee</div>
+              <div className="col-span-3">Task</div>
+              <div className="col-span-2">Status</div>
+              <div className="col-span-2">Dates</div>
+              <div className="col-span-2 text-right">Actions</div>
             </div>
-          ))}
 
-          {/* ADD / EDIT FORM */}
-          <div className="mt-5">
-            {!showAddTask ? (
+            {/* TASK ROWS */}
+            <div className="space-y-2 mt-3">
+              {tasks.map((task) => (
+                <div
+                  key={task.task_id}
+                  className="grid grid-cols-12 items-center px-4 py-3 bg-white border rounded-xl hover:shadow-sm transition"
+                >
+                  {/* ASSIGNEE */}
+                  <div className="col-span-3 flex items-center gap-3">
+                    {task.assigned_to?.[0] ? (
+                      <>
+                        <img
+                          src={task.assigned_to[0].profile_image_url}
+                          className="w-9 h-9 rounded-full object-cover"
+                        />
+                        <span className="font-medium">
+                          {task.assigned_to[0].name}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-gray-400 italic">
+                        Unassigned
+                      </span>
+                    )}
+                  </div>
+
+                  {/* TASK */}
+                  <div className="col-span-3 font-medium truncate">
+                    {capitalize(task.title)}
+                  </div>
+
+                  {/* STATUS */}
+                  <div className="col-span-2">
+                    <span
+                      className={`px-3 py-1 text-xs rounded-full font-medium
+                        ${
+                          task.status === "completed"
+                            ? "bg-green-100 text-green-700"
+                            : task.status === "pending"
+                            ? "bg-gray-100 text-gray-600"
+                            : "bg-orange-100 text-orange-700"
+                        }`}
+                    >
+                      {task.status.replace("_", " ")}
+                    </span>
+                  </div>
+
+                  {/* DATES */}
+                  <div className="col-span-2 text-sm text-gray-500">
+                    {task.start_date || "--"} →{" "}
+                    {task.end_date || "--"}
+                  </div>
+
+                  {/* ACTIONS */}
+                  <div className="col-span-2 flex justify-end gap-3">
+                    <button
+                      onClick={() => {
+                        setEditingTaskId(task.task_id);
+                        setShowAddTask(true);
+                        setTaskForm({
+                          title: task.title,
+                          description: task.description || "",
+                          status: task.status,
+                          start_date: task.start_date,
+                          end_date: task.end_date,
+                          assigned_to:
+                            task.assigned_to?.[0]?.employee_id || "",
+                        });
+                      }}
+                      className="p-2 rounded hover:bg-gray-100"
+                    >
+                      <Pencil size={16} />
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setDeleteTaskId(task.task_id);
+                        setShowDelete(true);
+                      }}
+                      className="p-2 rounded hover:bg-red-50 text-red-600"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ADD TASK BUTTON */}
+            {!showAddTask && (
               <button
                 onClick={() => setShowAddTask(true)}
-                className="text-xs border px-3 py-1 text-blue-600 rounded"
+                className="mt-4 text-sm text-blue-600 font-medium"
               >
-                Add Task
+                + Add Task
               </button>
-            ) : (
-              <div className="border rounded-lg p-4 mt-3 bg-gray-50 space-y-3">
-                <h4 className="text-sm font-semibold">
-                  {editingTaskId ? "Edit Task" : "Add Task"}
-                </h4>
+            )}
 
-                <input
-                  placeholder="Title"
-                  value={taskForm.title}
-                  onChange={(e) =>
-                    setTaskForm((p) => ({
-                      ...p,
-                      title: e.target.value,
-                    }))
-                  }
-                  className="w-full border rounded px-3 py-2"
-                />
+            {/* ADD / EDIT TASK FORM */}
+            {showAddTask && (
+              <div className="border border-gray-200 rounded-2xl p-6 bg-white mt-6">
+                <h3 className="text-lg font-semibold mb-5">
+                  {editingTaskId ? "Edit Task" : "Add Task"}
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <input
+                    type="text"
+                    placeholder="Task title"
+                    value={taskForm.title}
+                    onChange={(e) =>
+                      setTaskForm((p) => ({
+                        ...p,
+                        title: e.target.value,
+                      }))
+                    }
+                    className="md:col-span-2 w-full border rounded-xl px-4 py-3 text-sm"
+                  />
+
+                  <select
+                    value={taskForm.status}
+                    onChange={(e) =>
+                      setTaskForm((p) => ({
+                        ...p,
+                        status: e.target.value,
+                      }))
+                    }
+                    className="w-full border rounded-xl px-4 py-3 text-sm"
+                  >
+                    <option value="completed">Completed</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="pending">Pending</option>
+                  </select>
+                </div>
 
                 <textarea
-                  placeholder="Description"
+                  placeholder="Task description"
                   value={taskForm.description}
                   onChange={(e) =>
                     setTaskForm((p) => ({
@@ -282,25 +306,11 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                       description: e.target.value,
                     }))
                   }
-                  className="w-full border rounded px-3 py-2"
+                  rows={3}
+                  className="w-full border rounded-xl px-4 py-3 text-sm mb-4"
                 />
 
-                <select
-                  value={taskForm.status}
-                  onChange={(e) =>
-                    setTaskForm((p) => ({
-                      ...p,
-                      status: e.target.value,
-                    }))
-                  }
-                  className="w-full border rounded px-3 py-2"
-                >
-                  <option value="in_progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                  <option value="pending">Pending</option>
-                </select>
-
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <input
                     type="date"
                     value={taskForm.start_date}
@@ -310,8 +320,9 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                         start_date: e.target.value,
                       }))
                     }
-                    className="border rounded px-3 py-2"
+                    className="w-full border rounded-xl px-4 py-3 text-sm"
                   />
+
                   <input
                     type="date"
                     value={taskForm.end_date}
@@ -321,7 +332,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                         end_date: e.target.value,
                       }))
                     }
-                    className="border rounded px-3 py-2"
+                    className="w-full border rounded-xl px-4 py-3 text-sm"
                   />
                 </div>
 
@@ -333,7 +344,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                       assigned_to: e.target.value,
                     }))
                   }
-                  className="w-full border rounded px-3 py-2"
+                  className="w-full border rounded-xl px-4 py-3 text-sm mb-6"
                 >
                   <option value="">Assign employee</option>
                   {assignedEmployees.map((emp) => (
@@ -346,21 +357,24 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                   ))}
                 </select>
 
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-4">
                   <button
                     onClick={() => {
                       setShowAddTask(false);
                       setEditingTaskId(null);
                     }}
-                    className="text-xs border px-3 py-1 rounded"
+                    className="text-sm text-gray-600 hover:text-gray-800"
                   >
                     Cancel
                   </button>
+
                   <button
                     onClick={handleSaveTask}
-                    className="text-xs bg-blue-600 text-white px-3 py-1 rounded"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium"
                   >
-                    {editingTaskId ? "Update Task" : "Save Task"}
+                    {editingTaskId
+                      ? "Update Task"
+                      : "Save Task"}
                   </button>
                 </div>
               </div>
@@ -369,7 +383,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
         </div>
       </div>
 
-      {/* DELETE MODAL */}
+      {/* DELETE CONFIRM MODAL */}
       <DeleteModal
         open={showDelete}
         onClose={() => setShowDelete(false)}

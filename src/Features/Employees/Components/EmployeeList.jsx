@@ -1,3 +1,4 @@
+import React from "react";
 import { Mail, Phone, LayoutGrid, List, Eye } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useState } from "react";

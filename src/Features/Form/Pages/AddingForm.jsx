@@ -109,7 +109,7 @@ export default function AddForm() {
       formData.employment_type === "staff" &&
       !formData.salary
     ) {
-      alert("Salary is required for staff employees");
+      toast.error("Salary is required for staff employees");
       return false;
     }
     return true;
@@ -179,7 +179,7 @@ export default function AddForm() {
 
 
   return (<>
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto px-4">
       <EmployeeBasicDetails
         formData={formData}
         onChange={handleChange}

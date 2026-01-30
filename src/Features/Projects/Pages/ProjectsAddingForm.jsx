@@ -2,17 +2,32 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import {
+  ArrowLeft,
+  Briefcase,
+  Calendar,
+  Check,
+  ChevronDown,
+  DollarSign,
+  FileText,
+  Mail,
+  Phone,
+  Upload,
+  User,
+  Users,
+  X,
+  Building2,
+  Flag,
+  Layers,
+} from "lucide-react";
 
 /* =========================
-   REDUX IMPORTS
+   REDUX
 ========================= */
 import {
-  fetchManagers,
   fetchEmployees,
   selectAllEmployees,
-  selectAllManagers,
 } from "../../../Redux/Slices/employeeslice";
-
 import {
   addProject,
   getAddProjectStatus,
@@ -25,18 +40,17 @@ export default function ProjectAdd() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const managers = useSelector(selectAllManagers);
   const employees = useSelector(selectAllEmployees) || [];
   const addStatus = useSelector(getAddProjectStatus);
 
   const [isTeamOpen, setIsTeamOpen] = useState(false);
+  const [logoPreview, setLogoPreview] = useState(null);
 
   /* =========================
-     FETCH EMPLOYEES
+     FETCH
   ========================= */
   useEffect(() => {
     dispatch(fetchEmployees());
-    dispatch(fetchManagers());
   }, [dispatch]);
 
   /* =========================
@@ -65,29 +79,31 @@ export default function ProjectAdd() {
     const { name, value, files } = e.target;
 
     if (name === "client_contact") {
-      const digitsOnly = value.replace(/\D/g, "");
-      if (digitsOnly.length > 10) return;
-      setFormData((prev) => ({ ...prev, client_contact: digitsOnly }));
+      const digits = value.replace(/\D/g, "");
+      if (digits.length > 10) return;
+      setFormData((p) => ({ ...p, client_contact: digits }));
       return;
     }
 
     if (files) {
-      setFormData((prev) => ({ ...prev, [name]: files[0] }));
+      const file = files[0];
+      setFormData((p) => ({ ...p, [name]: file }));
+      setLogoPreview(URL.createObjectURL(file));
       return;
     }
 
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
   /* =========================
-     TEAM MEMBER TOGGLE
+     TEAM TOGGLE
   ========================= */
-  const toggleTeamMember = (employee_id) => {
-    setFormData((prev) => ({
-      ...prev,
-      team_members: prev.team_members.includes(employee_id)
-        ? prev.team_members.filter((id) => id !== employee_id)
-        : [...prev.team_members, employee_id],
+  const toggleTeamMember = (id) => {
+    setFormData((p) => ({
+      ...p,
+      team_members: p.team_members.includes(id)
+        ? p.team_members.filter((x) => x !== id)
+        : [...p.team_members, id],
     }));
   };
 
@@ -98,164 +114,158 @@ export default function ProjectAdd() {
     const data = new FormData();
 
     Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null && value !== "" && value !== undefined) {
-        if (key === "team_members") {
-          value.forEach((id) => data.append("team_member_ids", id));
-        } else {
-          data.append(key, value);
-        }
+      if (!value) return;
+
+      if (key === "team_members") {
+        value.forEach((id) => data.append("team_member_ids", id));
+      } else {
+        data.append(key, value);
       }
     });
 
-    const result = await dispatch(addProject(data));
+    const res = await dispatch(addProject(data));
 
-    if (addProject.fulfilled.match(result)) {
+    if (addProject.fulfilled.match(res)) {
       toast.success("Project added successfully");
       navigate("/projects");
     }
   };
 
+  const selectedMembers = employees.filter((e) =>
+    formData.team_members.includes(e.employee_id)
+  );
+
   return (
-    <div className="min-h-screen bg-gray-200 px-6">
+    <div className="min-h-screen bg-gray-100">
       {/* HEADER */}
-      <div className="-mx-6 px-6 py-4 flex items-center bg-white justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Add New Project
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Dashboard &gt; Projects &gt; Add Project
-          </p>
+      <header className="sticky top-0 z-10 bg-white border-b">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="h-9 w-9 rounded-lg border flex items-center justify-center hover:bg-gray-100"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+            <div>
+              <h1 className="text-lg font-semibold">Create New Project</h1>
+              <p className="text-sm text-gray-500">
+                Dashboard / Projects / New
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleSubmit}
+            disabled={addStatus === "loading"}
+            className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-60"
+          >
+            {addStatus === "loading" ? "Saving..." : <><Check className="h-4 w-4" /> Save Project</>}
+          </button>
         </div>
+      </header>
 
-        <button
-          onClick={handleSubmit}
-          disabled={addStatus === "loading"}
-          className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium
-                     hover:bg-blue-700 disabled:opacity-60"
-        >
-          {addStatus === "loading" ? "Saving..." : "Save Project"}
-        </button>
-      </div>
-
-      {/* ✅ SINGLE WHITE CONTAINER */}
-      <div className="bg-white  shadow-sm p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* LEFT */}
-          <div className="space-y-6">
-            <Section title="Project Details">
-              <Input label="Project Name" name="project_name" value={formData.project_name} onChange={handleChange} />
-
-              <Select
-                label="Project Type"
-                name="project_type"
-                value={formData.project_type}
-                onChange={handleChange}
+      {/* CONTENT */}
+      <main className=" mx-auto px-6 py-8 grid lg:grid-cols-3 gap-6">
+        {/* LEFT */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card icon={<Briefcase />} title="Project Details">
+            <Input label="Project Name" name="project_name" value={formData.project_name} onChange={handleChange} />
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Select label="Project Type" name="project_type" value={formData.project_type} onChange={handleChange}
                 options={[
                   { value: "web", label: "Web" },
                   { value: "app", label: "Mobile App" },
                   { value: "webapp", label: "Web App" },
-                  { value: "software", label: "Software" },
                 ]}
               />
-
-              <Select
-                label="Priority"
-                name="priority"
-                value={formData.priority}
-                onChange={handleChange}
+              <Select label="Priority" name="priority" value={formData.priority} onChange={handleChange}
                 options={[
                   { value: "low", label: "Low" },
                   { value: "medium", label: "Medium" },
                   { value: "high", label: "High" },
                 ]}
               />
+            </div>
+            <Textarea label="Description" name="description" value={formData.description} onChange={handleChange} />
+          </Card>
 
-              <Input label="Client Name" name="client_name" value={formData.client_name} onChange={handleChange} />
-              <Input label="Client Email" type="email" name="client_email" value={formData.client_email} onChange={handleChange} />
-              <Input label="Client Contact Number" name="client_contact" value={formData.client_contact} onChange={handleChange} />
+          <Card icon={<Building2 />} title="Client Info">
+            <Input label="Client Name" name="client_name" value={formData.client_name} onChange={handleChange} />
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Input label="Email" name="client_email" value={formData.client_email} onChange={handleChange} />
+              <Input label="Contact" name="client_contact" value={formData.client_contact} onChange={handleChange} />
+            </div>
+          </Card>
 
-              <Textarea label="Project Description" name="description" value={formData.description} onChange={handleChange} />
-            </Section>
-
-            <Section title="Timeline">
-              <div className="grid grid-cols-2 gap-4">
-                <Input type="date" label="Start Date" name="start_date" value={formData.start_date} onChange={handleChange} />
-                <Input type="date" label="End Date" name="end_date" value={formData.end_date} onChange={handleChange} />
-              </div>
-            </Section>
-          </div>
-
-          {/* RIGHT */}
-          <div className="space-y-6">
-            <Section title="Team & Responsibility">
-              <Select
-                label="Project Manager"
-                name="project_manager_id"
-                value={formData.project_manager_id}
-                onChange={handleChange}
-                options={employees.map((emp) => ({
-                  value: emp.employee_id,
-                  label: emp.name,
-                }))}
-              />
-
-              <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Team Members
-                </label>
-
-                <button
-                  type="button"
-                  onClick={() => setIsTeamOpen((p) => !p)}
-                  className="w-full flex justify-between items-center rounded-lg border px-3 py-2 text-sm bg-white"
-                >
-                  <span className="truncate">
-                    {formData.team_members.length === 0
-                      ? "Select team members"
-                      : employees
-                          .filter((e) => formData.team_members.includes(e.employee_id))
-                          .map((e) => e.name)
-                          .join(", ")}
-                  </span>
-                  <span className="text-gray-400">▾</span>
-                </button>
-
-                {isTeamOpen && (
-                  <div className="absolute z-20 mt-2 w-full max-h-56 overflow-auto rounded-lg border bg-white shadow-lg">
-                    {employees.map((emp) => (
-                      <label
-                        key={emp.employee_id}
-                        className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={formData.team_members.includes(emp.employee_id)}
-                          onChange={() => toggleTeamMember(emp.employee_id)}
-                        />
-                        {emp.name}
-                        <span className="text-xs text-gray-400">
-                          ({emp.department})
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Section>
-
-            <Section title="Budget & Logo">
-              <Input label="Total Budget" name="total_budget" value={formData.total_budget} onChange={handleChange} />
-              <input
-                type="file"
-                name="project_logo"
-                onChange={handleChange}
-                className="w-full border rounded-lg px-3 py-2 text-sm"
-              />
-            </Section>
-          </div>
+          <Card icon={<Calendar />} title="Timeline">
+            <div className="grid sm:grid-cols-2 gap-4">
+              <Input type="date" label="Start Date" name="start_date" value={formData.start_date} onChange={handleChange} />
+              <Input type="date" label="End Date" name="end_date" value={formData.end_date} onChange={handleChange} />
+            </div>
+          </Card>
         </div>
-      </div>
+
+        {/* RIGHT */}
+        <div className="space-y-6">
+          <Card icon={<Users />} title="Team">
+            <Select
+              label="Project Manager"
+              name="project_manager_id"
+              value={formData.project_manager_id}
+              onChange={handleChange}
+              options={employees.map((e) => ({
+                value: e.employee_id,
+                label: e.name,
+              }))}
+            />
+
+            {/* TEAM MULTI */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsTeamOpen(!isTeamOpen)}
+                className="w-full border rounded-lg px-4 py-3 flex justify-between text-sm bg-white"
+              >
+                {formData.team_members.length === 0
+                  ? "Select team members"
+                  : `${formData.team_members.length} selected`}
+                <ChevronDown />
+              </button>
+
+              {isTeamOpen && (
+                <div className="absolute z-20 w-full mt-2 bg-white border rounded-lg shadow">
+                  {employees.map((emp) => (
+                    <label key={emp.employee_id} className="flex gap-2 px-3 py-2 hover:bg-gray-50">
+                      <input
+                        type="checkbox"
+                        checked={formData.team_members.includes(emp.employee_id)}
+                        onChange={() => toggleTeamMember(emp.employee_id)}
+                      />
+                      {emp.name}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          </Card>
+
+          <Card icon={<DollarSign />} title="Budget">
+            <Input label="Total Budget" name="total_budget" value={formData.total_budget} onChange={handleChange} />
+          </Card>
+
+          <Card icon={<Upload />} title="Project Logo">
+            <label className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center cursor-pointer">
+              {logoPreview ? (
+                <img src={logoPreview} className="h-24 w-24 rounded-lg object-cover" />
+              ) : (
+                <Upload />
+              )}
+              <input type="file" name="project_logo" onChange={handleChange} hidden />
+            </label>
+          </Card>
+        </div>
+      </main>
     </div>
   );
 }
@@ -263,54 +273,39 @@ export default function ProjectAdd() {
 /* =========================
    UI HELPERS
 ========================= */
-const Section = ({ title, children }) => (
-  <div className="border-b last:border-b-0 pb-6">
-    <h3 className="text-sm font-semibold text-gray-800 mb-4">
-      {title}
-    </h3>
-    <div className="space-y-4">{children}</div>
+const Card = ({ icon, title, children }) => (
+  <div className="bg-white rounded-xl  p-6 shadow-sm space-y-4">
+    <div className="flex items-center gap-3">
+      <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+        {icon}
+      </div>
+      <h2 className="font-semibold">{title}</h2>
+    </div>
+    {children}
   </div>
 );
 
 const Input = ({ label, ...props }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      {label}
-    </label>
-    <input
-      {...props}
-      className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
-    />
+    <label className="text-sm font-medium mb-1 block">{label}</label>
+    <input {...props} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm" />
   </div>
 );
 
 const Textarea = ({ label, ...props }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      {label}
-    </label>
-    <textarea
-      {...props}
-      rows={3}
-      className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
-    />
+    <label className="text-sm font-medium mb-1 block">{label}</label>
+    <textarea {...props} rows={3} className="w-full border border-gray-300  rounded-lg px-4 py-3 text-sm" />
   </div>
 );
 
-const Select = ({ label, options = [], ...props }) => (
+const Select = ({ label, options, ...props }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      {label}
-    </label>
-    <select
-      {...props}
-      className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-gray-500"
-    >
+    <label className="text-sm font-medium mb-1 block">{label}</label>
+    <select {...props} className="w-full border  border-gray-300  rounded-lg px-4 py-3 text-sm">
       <option value="">Select</option>
-      {options.map((opt) => (
-        <option key={opt.value} value={opt.value}>
-          {opt.label}
-        </option>
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
       ))}
     </select>
   </div>

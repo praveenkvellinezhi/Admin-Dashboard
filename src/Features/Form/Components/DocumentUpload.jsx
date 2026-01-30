@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UploadCloud, FileText } from "lucide-react";
 
 /* =========================
-   UPLOAD BOX
+   UPLOAD BOX (UI IMPROVED)
 ========================= */
 function UploadBox({ label, name, file, onChange, disabled = false }) {
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -18,42 +18,49 @@ function UploadBox({ label, name, file, onChange, disabled = false }) {
   }, [file]);
 
   return (
-    <div className={disabled ? "opacity-50" : ""}>
-      <p className="text-sm text-gray-700 mb-2">{label}</p>
+    <div className={disabled ? "opacity-60 pointer-events-none" : ""}>
+      <p className="text-sm font-medium text-gray-700 mb-2">{label}</p>
 
       <label
-        className={`relative flex flex-col items-center justify-center border-2 border-dashed rounded-lg h-28 transition bg-white overflow-hidden
+        className={`
+          relative flex items-center justify-center
+          h-36 rounded-xl border-2 border-dashed
+          transition-all duration-200 bg-white
           ${
             disabled
-              ? "border-gray-200 cursor-not-allowed"
-              : "border-gray-300 cursor-pointer hover:border-blue-400"
+              ? "border-gray-200 bg-gray-50"
+              : "border-gray-300 hover:border-blue-500 hover:bg-blue-50 cursor-pointer"
           }
         `}
       >
         {!file && (
-          <>
-            <UploadCloud size={22} className="text-gray-400 mb-2" />
-            <p className="text-sm text-gray-500">
-              Drag & Drop or{" "}
-              <span className="text-blue-600 font-medium">Browse</span>
+          <div className="flex flex-col items-center gap-2 text-center">
+            <div className="p-3 rounded-full bg-gray-100">
+              <UploadCloud className="text-gray-500" size={22} />
+            </div>
+            <p className="text-sm text-gray-600">
+              Drop file here or{" "}
+              <span className="text-blue-600 font-semibold">browse</span>
             </p>
-          </>
+          </div>
         )}
 
         {file && (
-          <div className="flex items-center gap-3 px-3">
+          <div className="flex items-center gap-4 px-4">
             {isImage ? (
               <img
                 src={previewUrl}
                 alt="preview"
-                className="w-14 h-14 object-cover rounded border"
+                className="w-14 h-14 rounded-lg object-cover border"
               />
             ) : (
-              <FileText className="text-blue-600" size={32} />
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <FileText className="text-blue-600" size={28} />
+              </div>
             )}
 
-            <div className="text-left">
-              <p className="text-sm font-medium text-gray-700 truncate max-w-[140px]">
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-gray-800 truncate max-w-[160px]">
                 {file.name}
               </p>
               <p className="text-xs text-gray-500">
@@ -76,12 +83,12 @@ function UploadBox({ label, name, file, onChange, disabled = false }) {
 }
 
 /* =========================
-   ID PROOF TYPE SELECT
+   ID PROOF TYPE SELECT (UI)
 ========================= */
 function IdProofTypeSelect({ value, onChange }) {
   return (
     <div>
-      <label className="text-sm text-gray-700 mb-1 block">
+      <label className="text-sm font-medium text-gray-700 mb-2 block">
         ID Proof Type <span className="text-red-500">*</span>
       </label>
 
@@ -89,9 +96,13 @@ function IdProofTypeSelect({ value, onChange }) {
         name="id_proof_type"
         value={value || ""}
         onChange={onChange}
-        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
+        className="
+          w-full rounded-xl border border-gray-300
+          px-4 py-3 text-sm bg-white
+          focus:outline-none focus:ring-2 focus:ring-blue-500
+        "
       >
-        <option value="">Select ID Proof</option>
+        <option value="">Select ID Proof Type</option>
         <option value="aadhaar">Aadhaar Card</option>
         <option value="pan">PAN Card</option>
         <option value="passport">Passport</option>
@@ -102,7 +113,7 @@ function IdProofTypeSelect({ value, onChange }) {
 }
 
 /* =========================
-   DOCUMENTS UPLOAD
+   DOCUMENTS UPLOAD (CARD)
 ========================= */
 export default function DocumentsUpload({
   formData,
@@ -112,15 +123,19 @@ export default function DocumentsUpload({
   const uploadDisabled = !formData.id_proof_type;
 
   return (
-    <div className="bg-white border border-gray-200  shadow-sm">
-      <div className="flex items-center gap-2 px-4 py-2 border-b bg-gray-50 rounded-t-lg">
-        <FileText size={16} className="text-gray-600" />
-        <h3 className="text-sm font-semibold text-gray-700">
+    <div className="bg-white border border-gray-200 rounded-2xl shadow-sm">
+      {/* HEADER */}
+      <div className="flex items-center gap-3 px-6 py-4 border-b bg-gray-50 rounded-t-2xl">
+        <div className="p-2 bg-gray-200 rounded-lg">
+          <FileText size={18} className="text-gray-700" />
+        </div>
+        <h3 className="text-base font-semibold text-gray-800">
           Documents Upload
         </h3>
       </div>
 
-      <div className="p-4 space-y-4">
+      {/* CONTENT */}
+      <div className="p-6 space-y-6">
         {/* RESUME */}
         <UploadBox
           label="Resume"
@@ -129,23 +144,25 @@ export default function DocumentsUpload({
           onChange={onFileChange}
         />
 
-        {/* 🔥 ID TYPE + OFFER LETTER (SAME ROW) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          
-          <div>
+        {/* GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* LEFT */}
+          <div className="space-y-4">
             <IdProofTypeSelect
-            value={formData.id_proof_type}
-            onChange={onChange}
-          />
-              <UploadBox
-          label="ID Proof Document"
-          name="id_proof_document"
-          file={formData.id_proof_document}
-          onChange={onFileChange}
-          disabled={uploadDisabled}
-        />
-            </div>
+              value={formData.id_proof_type}
+              onChange={onChange}
+            />
 
+            <UploadBox
+              label="ID Proof Document"
+              name="id_proof_document"
+              file={formData.id_proof_document}
+              onChange={onFileChange}
+              disabled={uploadDisabled}
+            />
+          </div>
+
+          {/* RIGHT */}
           <UploadBox
             label="Offer Letter"
             name="offer_letter"
@@ -153,11 +170,7 @@ export default function DocumentsUpload({
             onChange={onFileChange}
           />
         </div>
-
-        {/* 🔥 ID PROOF DOCUMENT (FULL WIDTH) */}
-    
       </div>
     </div>
   );
 }
-

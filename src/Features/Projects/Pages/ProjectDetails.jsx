@@ -79,49 +79,65 @@ function ProjectDetails() {
      UI
   ========================= */
   return (
-    <div className="bg-gray-50 min-h-screen p-6 space-y-6">
-      {/* HEADER */}
-      <ProjectDetailsHeader
-        onEdit={() =>
-          navigate(`/projects/edit/${project.id}`)
-        }
-        onDelete={() => setShowDeleteModal(true)}
-        onAddPhase={() => setShowPhaseModal(true)}
-      />
 
-      {/* OVERVIEW + METRICS */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-7xl mx-auto">
-        <ProjectOverview project={project} />
-        <ProjectMetrics project={project} />
+  <div className="bg-gray-50 min-h-screen p-6 space-y-6">
+    {/* HEADER */}
+    <ProjectDetailsHeader
+      onEdit={() =>
+        navigate(`/projects/edit/${project.id}`)
+      }
+      onDelete={() => setShowDeleteModal(true)}
+      onAddPhase={() => setShowPhaseModal(true)}
+    />
+
+    {/* OVERVIEW (BIG) + METRICS (SMALL) */}
+    <div className="w-full max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        
+        {/* LEFT — OVERVIEW (2/3 WIDTH) */}
+        <div className="lg:col-span-2">
+          <ProjectOverview project={project} />
+        </div>
+
+        {/* RIGHT — METRICS (1/3 WIDTH) */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-6">
+            <ProjectMetrics project={project} />
+          </div>
+        </div>
+
       </div>
-
-      {/* PHASES */}
-      <div className="w-full max-w-7xl mx-auto">
-        <ProjectPhases
-          project={project}
-          phases={phases}
-        />
-      </div>
-
-      {/* ADD PHASE MODAL */}
-      {showPhaseModal && (
-        <AddPhaseModal
-          projectId={project.id}
-          onClose={() => setShowPhaseModal(false)}
-        />
-      )}
-
-      {/* DELETE CONFIRM MODAL */}
-      {showDeleteModal && (
-        <DeleteProjectModal
-          isOpen={showDeleteModal}
-          onClose={() => setShowDeleteModal(false)}
-          onConfirm={handleDelete}
-          loading={deleteStatus === "loading"}
-        />
-      )}
     </div>
-  );
+
+    {/* PHASES — FULL WIDTH BELOW */}
+    <div className="w-full max-w-7xl mx-auto">
+      <ProjectPhases
+        project={project}
+        phases={phases}
+      />
+    </div>
+
+    {/* ADD PHASE MODAL */}
+    {showPhaseModal && (
+      <AddPhaseModal
+        projectId={project.id}
+        onClose={() => setShowPhaseModal(false)}
+      />
+    )}
+
+    {/* DELETE CONFIRM MODAL */}
+    {showDeleteModal && (
+      <DeleteProjectModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        loading={deleteStatus === "loading"}
+      />
+    )}
+  </div>
+);
+
+  
 }
 
 export default ProjectDetails;

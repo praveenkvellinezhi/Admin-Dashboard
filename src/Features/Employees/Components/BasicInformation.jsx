@@ -1,81 +1,137 @@
-import React from "react";
-import { Mail, Phone } from "lucide-react";
-
-
+import React from 'react';
+import {
+  Mail,
+  Phone,
+  MapPinned,
+  BadgeCheck,
+  Briefcase,
+  Calendar,
+  User,
+} from 'lucide-react';
 
 export default function BasicInformation({ employee }) {
   const emp = employee?.employee;
   if (!emp) return null;
 
-  const capitalize = (val) =>
-    val ? String(val).charAt(0).toUpperCase() + String(val).slice(1) : "—";
+   const capitalize = (val) =>
+    val ? String(val).charAt(0).toUpperCase() + String(val).slice(1) : '—';
 
   return (
-    <div className="space-y-4 mt-4">
-
-      <div className="bg-white rounded-2xl shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-
-        <div className="flex items-center gap-4">
-          <img
-            src={emp.profile_image_url || "https://via.placeholder.com/100"}
-            alt={emp.name}
-            className="w-28 h-28 rounded-full object-cover border"
-          />
+    <div className="space-y-6 mt-6">
+      {/* ================= TOP PROFILE CARD ================= */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        {/* LEFT */}
+        <div className="flex items-center gap-5">
+          <div className="relative">
+            <img
+              src={emp.profile_image_url || 'https://via.placeholder.com/120'}
+              alt={emp.name}
+              className="w-28 h-28 rounded-full object-cover border-4 border-white shadow"
+            />
+            {/* ACTIVE DOT */}
+            <span
+              className={`absolute bottom-2 right-2 w-4 h-4 border-2 border-white rounded-full
+    ${emp.status?.toLowerCase() === 'inactive' ? 'bg-red-500' : 'bg-green-500'}
+  `}
+            />
+          </div>
 
           <div>
-            <h2 className="text-xl font-semibold uppercase">
+            <h2 className="text-2xl font-semibold text-gray-900">
               {capitalize(emp.name)}
             </h2>
-            <p className="text-sm text-gray-500">
-              {capitalize(emp.role || emp.department) }
+
+            <p className="text-sm text-gray-500 mt-1">
+              {capitalize(emp.role || emp.department)}
             </p>
 
-            <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-600">
+            {/* CONTACT INFO */}
+            <div className="flex flex-wrap gap-5 mt-3 text-sm text-gray-600">
               <span className="flex items-center gap-2">
                 <Mail size={16} />
                 {emp.email}
               </span>
+
               <span className="flex items-center gap-2">
                 <Phone size={16} />
                 {emp.phone}
+              </span>
+
+              <span className="flex items-center gap-2">
+                <MapPinned size={16} />
+                {emp.address}
               </span>
             </div>
           </div>
         </div>
 
-        <span className="px-4 py-2 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-          {capitalize(emp.status || "Active")}
-        </span>
+        {/* RIGHT STATUS + DEPARTMENT */}
+        <div className="flex gap-3">
+          <span
+            className={`px-4 py-2 rounded-full text-white text-sm font-medium
+    ${emp.status === 'inactive' ? 'bg-red-600' : 'bg-green-600'}
+  `}
+          >
+            {capitalize(emp.status || 'Active')}
+          </span>
+
+          <span className="px-4 py-2 rounded-full border border-gray-300 text-sm font-medium flex items-center gap-2">
+            <Briefcase size={14} />
+            {capitalize(emp.department)}
+          </span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-  <StatCard label="Employee ID" value={emp.employee_id} />
-  <StatCard label="Department" value={capitalize(emp.department)} />
-  <StatCard
-    label="Employee Type"
-    value={capitalize(emp.employment_type)}
-  />
-  <StatCard
-    label="Joined On"
-    value={emp.joining_date}
-  />
-   <StatCard
-    label="Gender"
-    value={capitalize(emp.gender)}
-  />
-</div>
+      {/* ================= STATS ================= */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <StatCard
+          icon={<BadgeCheck size={18} />}
+          label="Employee ID"
+          value={emp.employee_id}
+        />
 
+        <StatCard
+          icon={<Briefcase size={18} />}
+          label="Department"
+          value={capitalize(emp.department)}
+        />
+
+        <StatCard
+          icon={<User size={18} />}
+          label="Employee Type"
+          value={capitalize(emp.employment_type)}
+        />
+
+        <StatCard
+          icon={<Calendar size={18} />}
+          label="Joined On"
+          value={emp.joining_date}
+        />
+
+        <StatCard
+          icon={<User size={18} />}
+          label="Gender"
+          value={capitalize(emp.gender)}
+        />
+      </div>
     </div>
   );
 }
 
-function StatCard({ label, value }) {
+/* ================= STAT CARD ================= */
+function StatCard({ label, value, icon }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm p-4">
-      <p className="text-xs text-gray-400">{label}</p>
-      <p className="text-sm font-semibold text-gray-800 mt-1">
-        {value || "—"}
-      </p>
+    <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
+      <div>
+        <p className="text-xs text-gray-500 uppercase tracking-wide">{label}</p>
+        <p className="text-sm font-semibold text-gray-900 mt-1">
+          {value || '—'}
+        </p>
+      </div>
+
+      <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+        {icon}
+      </div>
     </div>
   );
 }
