@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 /* =========================
    REDUX IMPORTS
@@ -11,12 +11,12 @@ import {
   fetchEmployees,
   selectAllEmployees,
   selectAllManagers,
-} from '../../../Redux/Slices/employeeslice';
+} from "../../../Redux/Slices/employeeslice";
 
 import {
   addProject,
   getAddProjectStatus,
-} from '../../../Redux/Slices/projectSlice';
+} from "../../../Redux/Slices/projectSlice";
 
 /* =========================
    COMPONENT
@@ -43,18 +43,18 @@ export default function ProjectAdd() {
      FORM STATE
   ========================= */
   const [formData, setFormData] = useState({
-    project_name: '',
-    description: '',
-    client_name: '',
-    client_email: '',
-    client_contact: '',
-    start_date: '',
-    end_date: '',
-    priority: '',
-    project_type: '',
-    project_manager_id: '',
-    team_members: [], // employee_id[]
-    total_budget: '',
+    project_name: "",
+    description: "",
+    client_name: "",
+    client_email: "",
+    client_contact: "",
+    start_date: "",
+    end_date: "",
+    priority: "",
+    project_type: "",
+    project_manager_id: "",
+    team_members: [],
+    total_budget: "",
     project_logo: null,
   });
 
@@ -64,32 +64,19 @@ export default function ProjectAdd() {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
-    // 📞 CONTACT NUMBER (ONLY DIGITS, MAX 10)
-    if (name === 'client_contact') {
-      const digitsOnly = value.replace(/\D/g, '');
+    if (name === "client_contact") {
+      const digitsOnly = value.replace(/\D/g, "");
       if (digitsOnly.length > 10) return;
-
-      setFormData((prev) => ({
-        ...prev,
-        client_contact: digitsOnly,
-      }));
+      setFormData((prev) => ({ ...prev, client_contact: digitsOnly }));
       return;
     }
 
-    // 📁 FILE INPUT
     if (files) {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: files[0],
-      }));
+      setFormData((prev) => ({ ...prev, [name]: files[0] }));
       return;
     }
 
-    // ✅ DEFAULT
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   /* =========================
@@ -110,42 +97,28 @@ export default function ProjectAdd() {
   const handleSubmit = async () => {
     const data = new FormData();
 
-    data.append('project_name', formData.project_name);
-    data.append('description', formData.description);
-    data.append('client_name', formData.client_name);
-    data.append('client_email', formData.client_email);
-    data.append('client_contact', formData.client_contact);
-    data.append('start_date', formData.start_date);
-    data.append('end_date', formData.end_date);
-    data.append('priority', formData.priority);
-    data.append('project_type', formData.project_type);
-    data.append('project_manager_id', formData.project_manager_id);
-    data.append('total_budget', formData.total_budget);
-
-    if (formData.project_logo) {
-      data.append('project_logo', formData.project_logo);
-    }
-
-    // ✅ REQUIRED BY BACKEND
-    formData.team_members.forEach((empId) => {
-      data.append('team_member_ids', empId);
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== null && value !== "" && value !== undefined) {
+        if (key === "team_members") {
+          value.forEach((id) => data.append("team_member_ids", id));
+        } else {
+          data.append(key, value);
+        }
+      }
     });
 
     const result = await dispatch(addProject(data));
 
     if (addProject.fulfilled.match(result)) {
-      toast.success('Project added successfully');
-      navigate('/projects');
+      toast.success("Project added successfully");
+      navigate("/projects");
     }
   };
 
-  /* =========================
-     UI
-  ========================= */
   return (
-    <div className="min-h-screen bg-gray-200 px-6 py-6">
+    <div className="min-h-screen bg-gray-200 px-6">
       {/* HEADER */}
-      <div className="-mx-6 px-6 py-4 flex items-center bg-white justify-between mb-6 ">
+      <div className="-mx-6 px-6 py-4 flex items-center bg-white justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">
             Add New Project
@@ -157,20 +130,20 @@ export default function ProjectAdd() {
 
         <button
           onClick={handleSubmit}
-          disabled={addStatus === 'loading'}
+          disabled={addStatus === "loading"}
           className="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium
                      hover:bg-blue-700 disabled:opacity-60"
         >
-          {addStatus === 'loading' ? 'Saving...' : 'Save Project'}
+          {addStatus === "loading" ? "Saving..." : "Save Project"}
         </button>
       </div>
 
-      {/* FORM */}
-      <div className="">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 ">
+      {/* ✅ SINGLE WHITE CONTAINER */}
+      <div className="bg-white  shadow-sm p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* LEFT */}
-          <div className="space-y-0 ">
-            <Card title="Project Details">
+          <div className="space-y-6">
+            <Section title="Project Details">
               <Input label="Project Name" name="project_name" value={formData.project_name} onChange={handleChange} />
 
               <Select
@@ -179,13 +152,10 @@ export default function ProjectAdd() {
                 value={formData.project_type}
                 onChange={handleChange}
                 options={[
-                  { value: 'web', label: 'Web' },
-                  { value: 'app', label: 'Mobile App' },
-                  { value: 'webapp', label: 'Web App' },
-                  { value: 'software', label: 'Software' },
-              
-
-
+                  { value: "web", label: "Web" },
+                  { value: "app", label: "Mobile App" },
+                  { value: "webapp", label: "Web App" },
+                  { value: "software", label: "Software" },
                 ]}
               />
 
@@ -195,9 +165,9 @@ export default function ProjectAdd() {
                 value={formData.priority}
                 onChange={handleChange}
                 options={[
-                  { value: 'low', label: 'Low' },
-                  { value: 'medium', label: 'Medium' },
-                  { value: 'high', label: 'High' },
+                  { value: "low", label: "Low" },
+                  { value: "medium", label: "Medium" },
+                  { value: "high", label: "High" },
                 ]}
               />
 
@@ -206,19 +176,19 @@ export default function ProjectAdd() {
               <Input label="Client Contact Number" name="client_contact" value={formData.client_contact} onChange={handleChange} />
 
               <Textarea label="Project Description" name="description" value={formData.description} onChange={handleChange} />
-            </Card>
+            </Section>
 
-            <Card title="Timeline">
+            <Section title="Timeline">
               <div className="grid grid-cols-2 gap-4">
                 <Input type="date" label="Start Date" name="start_date" value={formData.start_date} onChange={handleChange} />
                 <Input type="date" label="End Date" name="end_date" value={formData.end_date} onChange={handleChange} />
               </div>
-            </Card>
+            </Section>
           </div>
 
           {/* RIGHT */}
-          <div className="space-y-0">
-            <Card title="Team & Responsibility">
+          <div className="space-y-6">
+            <Section title="Team & Responsibility">
               <Select
                 label="Project Manager"
                 name="project_manager_id"
@@ -230,7 +200,6 @@ export default function ProjectAdd() {
                 }))}
               />
 
-              {/* TEAM MEMBERS */}
               <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Team Members
@@ -243,17 +212,17 @@ export default function ProjectAdd() {
                 >
                   <span className="truncate">
                     {formData.team_members.length === 0
-                      ? 'Select team members'
+                      ? "Select team members"
                       : employees
                           .filter((e) => formData.team_members.includes(e.employee_id))
                           .map((e) => e.name)
-                          .join(', ')}
+                          .join(", ")}
                   </span>
                   <span className="text-gray-400">▾</span>
                 </button>
 
                 {isTeamOpen && (
-                  <div className="absolute z-20 mt-2 w-full max-h-56 overflow-auto rounded-lg border-2 border-gray-300 bg-white shadow-lg">
+                  <div className="absolute z-20 mt-2 w-full max-h-56 overflow-auto rounded-lg border bg-white shadow-lg">
                     {employees.map((emp) => (
                       <label
                         key={emp.employee_id}
@@ -273,9 +242,9 @@ export default function ProjectAdd() {
                   </div>
                 )}
               </div>
-            </Card>
+            </Section>
 
-            <Card title="Budget & Logo">
+            <Section title="Budget & Logo">
               <Input label="Total Budget" name="total_budget" value={formData.total_budget} onChange={handleChange} />
               <input
                 type="file"
@@ -283,7 +252,7 @@ export default function ProjectAdd() {
                 onChange={handleChange}
                 className="w-full border rounded-lg px-3 py-2 text-sm"
               />
-            </Card>
+            </Section>
           </div>
         </div>
       </div>
@@ -291,10 +260,11 @@ export default function ProjectAdd() {
   );
 }
 
-
-
-const Card = ({ title, children }) => (
-  <div className=" p-5 bg-white">
+/* =========================
+   UI HELPERS
+========================= */
+const Section = ({ title, children }) => (
+  <div className="border-b last:border-b-0 pb-6">
     <h3 className="text-sm font-semibold text-gray-800 mb-4">
       {title}
     </h3>
@@ -309,7 +279,7 @@ const Input = ({ label, ...props }) => (
     </label>
     <input
       {...props}
-      className="w-full border-2 border-gray-300  rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1  focus:ring-gray-500"
+      className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
     />
   </div>
 );
@@ -322,7 +292,7 @@ const Textarea = ({ label, ...props }) => (
     <textarea
       {...props}
       rows={3}
-      className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1  focus:ring-gray-500"
+      className="w-full border-2 border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-500"
     />
   </div>
 );

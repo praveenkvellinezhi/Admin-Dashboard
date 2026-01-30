@@ -1,6 +1,6 @@
 import React from "react";
-import logo2 from "../../assets/Logo/Logo3.png";
-import logo4 from "../../assets/Logo/logo4.png";
+import logo2 from "../../assets/Logo/logo3.png";
+import logo4 from "../../assets/Logo/logo.png";
 
 import { NavLink, useNavigate } from "react-router-dom";
 import {
@@ -49,19 +49,18 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       {/* LOGO */}
       <div className="px-4 py-4 h-20 flex items-center relative">
         <img
-          src={logo2}
-          className="w-12 mt-16 transition-all duration-300"
+          src={logo4}
+          className="w-48 mt-16 transition-all duration-300"
           alt="collapsed logo"
         />
 
         <div className="mt-16 flex items-center absolute opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
-          <img src={logo2} className="w-14" alt="logo2-hover" />
-          <img src={logo4} className="w-20" alt="logo4-hover" />
+          <img src={logo4} className="w-32" alt="logo4-hover" />
         </div>
       </div>
 
       {/* MENU */}
-      <div className="flex flex-col mt-6">
+      <div className="flex flex-col mt-10">
         {navbar.map((item) => (
           <NavLink
             key={item.name}

@@ -46,7 +46,7 @@ export default function JobRoleInformation({ formData, onChange }) {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="bg-white border border-gray-200  shadow-sm">
       <div className="flex items-center gap-2 px-4 py-2 border-b bg-gray-50 rounded-t-lg">
         <Briefcase size={16} className="text-gray-600" />
         <h3 className="text-sm font-semibold text-gray-700">
@@ -74,6 +74,8 @@ export default function JobRoleInformation({ formData, onChange }) {
             <option value="data_analytics">Data Analytics</option>
             <option value="devops">DevOps</option>
             <option value="cybersecurity">Cyber Security</option>
+            <option value="digital_marketing">Digital Marketing</option>
+
           </select>
         </div>
 

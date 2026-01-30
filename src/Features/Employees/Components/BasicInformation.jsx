@@ -59,6 +59,10 @@ export default function BasicInformation({ employee }) {
     label="Joined On"
     value={emp.joining_date}
   />
+   <StatCard
+    label="Gender"
+    value={capitalize(emp.gender)}
+  />
 </div>
 
     </div>

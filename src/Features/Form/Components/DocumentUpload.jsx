@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { UploadCloud, FileText } from "lucide-react";
 
+/* =========================
+   UPLOAD BOX
+========================= */
 function UploadBox({ label, name, file, onChange, disabled = false }) {
+  const [previewUrl, setPreviewUrl] = useState(null);
   const isImage = file && file.type?.startsWith("image/");
-  const previewUrl = file ? URL.createObjectURL(file) : null;
+
+  useEffect(() => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setPreviewUrl(null);
+  }, [file]);
 
   return (
-    <div className={`${disabled ? "opacity-50" : ""}`}>
+    <div className={disabled ? "opacity-50" : ""}>
       <p className="text-sm text-gray-700 mb-2">{label}</p>
 
       <label
@@ -59,20 +71,48 @@ function UploadBox({ label, name, file, onChange, disabled = false }) {
           className="hidden"
         />
       </label>
-
-      {disabled && (
-        <p className="text-xs text-red-500 mt-1">Not required for interns</p>
-      )}
     </div>
   );
 }
 
+/* =========================
+   ID PROOF TYPE SELECT
+========================= */
+function IdProofTypeSelect({ value, onChange }) {
+  return (
+    <div>
+      <label className="text-sm text-gray-700 mb-1 block">
+        ID Proof Type <span className="text-red-500">*</span>
+      </label>
 
-export default function DocumentsUpload({ onChange, formData }) {
-  const isIntern = formData.employment_type === "intern";
+      <select
+        name="id_proof_type"
+        value={value || ""}
+        onChange={onChange}
+        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white"
+      >
+        <option value="">Select ID Proof</option>
+        <option value="aadhaar">Aadhaar Card</option>
+        <option value="pan">PAN Card</option>
+        <option value="passport">Passport</option>
+        <option value="driving_license">Driving License</option>
+      </select>
+    </div>
+  );
+}
+
+/* =========================
+   DOCUMENTS UPLOAD
+========================= */
+export default function DocumentsUpload({
+  formData,
+  onChange,
+  onFileChange,
+}) {
+  const uploadDisabled = !formData.id_proof_type;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="bg-white border border-gray-200  shadow-sm">
       <div className="flex items-center gap-2 px-4 py-2 border-b bg-gray-50 rounded-t-lg">
         <FileText size={16} className="text-gray-600" />
         <h3 className="text-sm font-semibold text-gray-700">
@@ -81,31 +121,43 @@ export default function DocumentsUpload({ onChange, formData }) {
       </div>
 
       <div className="p-4 space-y-4">
+        {/* RESUME */}
         <UploadBox
           label="Resume"
           name="resume"
           file={formData.resume}
-          onChange={onChange}
-          disabled={isIntern}
+          onChange={onFileChange}
         />
 
+        {/* 🔥 ID TYPE + OFFER LETTER (SAME ROW) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <UploadBox
-            label="ID Proof"
-            name="id_proof_document"
-            file={formData.id_proof_document}
+          
+          <div>
+            <IdProofTypeSelect
+            value={formData.id_proof_type}
             onChange={onChange}
           />
+              <UploadBox
+          label="ID Proof Document"
+          name="id_proof_document"
+          file={formData.id_proof_document}
+          onChange={onFileChange}
+          disabled={uploadDisabled}
+        />
+            </div>
 
           <UploadBox
             label="Offer Letter"
             name="offer_letter"
             file={formData.offer_letter}
-            onChange={onChange}
-            disabled={isIntern}
+            onChange={onFileChange}
           />
         </div>
+
+        {/* 🔥 ID PROOF DOCUMENT (FULL WIDTH) */}
+    
       </div>
     </div>
   );
 }
+

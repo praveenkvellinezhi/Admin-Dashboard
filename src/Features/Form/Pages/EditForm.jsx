@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React,{ useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -16,7 +16,7 @@ import {
 } from "../../../Redux/Slices/employeeslice";
 
 export default function EditForm() {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -25,12 +25,16 @@ export default function EditForm() {
 
   const [formData, setFormData] = useState(null);
 
-
+  /* =========================
+     FETCH EMPLOYEE
+  ========================= */
   useEffect(() => {
     dispatch(fetchEmployeesById(id));
   }, [dispatch, id]);
 
-
+  /* =========================
+     SET INITIAL FORM DATA
+  ========================= */
   useEffect(() => {
     if (employeeData) {
       const emp = employeeData.employee ?? employeeData;
@@ -38,13 +42,16 @@ export default function EditForm() {
       setFormData({
         ...emp,
 
-        
+        // file fields (edit = optional)
         profile_image: null,
         resume: null,
         id_proof_document: null,
         offer_letter: null,
 
-        
+        // 🔥 IMPORTANT: keep id_proof_type
+        id_proof_type: emp.id_proof_type ?? "",
+
+        // defaults
         is_manager: emp.is_manager ?? false,
         reporting_manager: emp.reporting_manager ?? "",
         notes: emp.notes ?? "",
@@ -52,7 +59,9 @@ export default function EditForm() {
     }
   }, [employeeData]);
 
- 
+  /* =========================
+     INPUT CHANGE (TEXT / SELECT / CHECKBOX)
+  ========================= */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -62,6 +71,9 @@ export default function EditForm() {
     }));
   };
 
+  /* =========================
+     FILE CHANGE
+  ========================= */
   const handleFileChange = (e) => {
     const { name, files } = e.target;
 
@@ -71,7 +83,9 @@ export default function EditForm() {
     }));
   };
 
-
+  /* =========================
+     SUBMIT
+  ========================= */
   const handleSubmit = async () => {
     const data = new FormData();
 
@@ -93,15 +107,14 @@ export default function EditForm() {
     }
   };
 
-
   if (status === "loading" || !formData) {
     return <p className="text-center mt-10">Loading...</p>;
   }
 
- 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-6 space-y-6">
-            <div className="flex justify-between items-center">
+      {/* HEADER */}
+      <div className="flex justify-between items-center">
         <h1 className="text-xl font-semibold text-gray-900">
           Edit Employee
         </h1>
@@ -123,28 +136,34 @@ export default function EditForm() {
         </div>
       </div>
 
-            <EmployeeBasicDetails
+      {/* BASIC DETAILS */}
+      <EmployeeBasicDetails
         formData={formData}
         onChange={handleChange}
         onImageChange={handleFileChange}
       />
 
-            <JobRoleInformation
+      {/* JOB DETAILS */}
+      <JobRoleInformation
         formData={formData}
         onChange={handleChange}
       />
 
-            <SalaryEmploymentDetails
+      {/* SALARY DETAILS */}
+      <SalaryEmploymentDetails
         formData={formData}
         onChange={handleChange}
       />
 
-            <DocumentsUpload
+      {/* 🔥 DOCUMENTS (IMPORTANT FIX HERE) */}
+      <DocumentsUpload
         formData={formData}
-        onChange={handleFileChange}
+        onChange={handleChange}        // ✅ for id_proof_type select
+        onFileChange={handleFileChange} // ✅ for file inputs
       />
 
-            <StatusNotes
+      {/* STATUS & NOTES */}
+      <StatusNotes
         formData={formData}
         onChange={handleChange}
       />

@@ -4,7 +4,7 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
   const isIntern = formData.employment_type === "intern";
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+    <div className="bg-white border border-gray-200  shadow-sm">
             <div className="flex items-center justify-between px-4 py-2 border-b bg-gray-50 rounded-t-lg">
         <div className="flex items-center gap-2">
           <Wallet size={16} className="text-gray-600" />

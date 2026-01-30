@@ -143,10 +143,10 @@ export default function AddForm() {
 
     if (addEmployee.fulfilled.match(result)) {
       if (formData.employment_type === "intern") {
-        alert("Intern added successfully");
+        toast.success("Intern added successfully");
         dispatch(fetchInterns());
       } else {
-        alert("Employee added successfully");
+        toast.success("Employee added successfully");
         dispatch(fetchEmployees());
       }
 
@@ -203,7 +203,8 @@ export default function AddForm() {
 
       <DocumentsUpload
         formData={formData}
-        onChange={handleFileChange}
+        onChange={handleChange}
+        onFileChange={handleFileChange}
         backendErrors={backendErrors}
       />
 

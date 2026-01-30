@@ -93,7 +93,7 @@ export default function EmployeeBasicDetails({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+    <div className="bg-white  border border-gray-200 shadow-sm">
       {/* HEADER */}
       <div className="px-4 py-2 border-b bg-gray-50 rounded-t-xl">
         <h3 className="text-xs font-semibold text-gray-700">
@@ -112,7 +112,7 @@ export default function EmployeeBasicDetails({
                 "https://i.pravatar.cc/150?img=3"
               }
               alt="Employee"
-              className="w-20 h-20 rounded-full object-cover border"
+              className="w-28 h-28 rounded-full object-cover border"
             />
 
             <label className="flex items-center gap-1 text-[11px] text-white bg-red-500 px-3 py-1 rounded-full cursor-pointer">
@@ -181,6 +181,38 @@ export default function EmployeeBasicDetails({
               onBlur={handleBlur}
             />
 
+            {/* ✅ GENDER */}
+            <div>
+              <label className="text-[11px] text-gray-600 block mb-1">
+                Gender
+              </label>
+
+              <div className="flex items-center gap-4 text-xs">
+                {["male", "female", "other"].map((g) => (
+                  <label
+                    key={g}
+                    className="flex items-center gap-1 cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={g}
+                      checked={formData.gender === g}
+                      onChange={handleLocalChange}
+                      className="accent-red-500"
+                    />
+                    <span className="capitalize">{g}</span>
+                  </label>
+                ))}
+              </div>
+
+              {backendErrors?.gender && (
+                <p className="text-[11px] text-red-500 mt-0.5">
+                  {backendErrors.gender[0]}
+                </p>
+              )}
+            </div>
+
             {/* PASSWORD */}
             <div>
               <label className="text-[11px] text-gray-600 block">
@@ -244,9 +276,10 @@ function InputField({
         type={type}
         name={name}
         value={value}
+        placeholder={` ${name} `}
         onChange={onChange}
         onBlur={onBlur}
-        className={`w-full border rounded-md px-2 py-1.5 text-xs ${
+        className={`w-full border rounded-md px-2 py-2 text-xs ${
           error ? "border-red-500" : "border-gray-300"
         }`}
       />
