@@ -33,7 +33,7 @@ export default function DocumentsCard({ employee }) {
           />
         )}
 
-        {emp.resume_url && (
+        {emp.resume && (
           <DocumentRow
             label="Resume"
             url={emp.resume_url}
