@@ -10,6 +10,20 @@ import {
 
 export default function ProjectOverview({ project }) {
   if (!project) return null;
+  const statusClasses = {
+  pending: "bg-orange-100 text-orange-700",
+  ongoing: "bg-blue-100 text-blue-700",
+  completed: "bg-green-100 text-green-700",
+};
+
+<span
+  className={`px-3 py-1 text-xs rounded-full font-medium
+    ${statusClasses[project.status?.toLowerCase()] || "bg-gray-100 text-gray-700"}
+  `}
+>
+  {project.status}
+</span>
+
 
   const capitalize = (v) =>
     v ? v.charAt(0).toUpperCase() + v.slice(1) : "—";
@@ -28,9 +42,13 @@ export default function ProjectOverview({ project }) {
         </div>
 
         <div className="flex gap-2">
-          <span className="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">
-            Active
-          </span>
+          <span
+  className={`px-3 py-1 text-xs rounded-full font-medium
+    ${statusClasses[project.status?.toLowerCase()] || "bg-gray-100 text-gray-700"}
+  `}
+>
+  {project.status}
+</span>
           <span className="px-3 py-1 text-xs rounded-full bg-red-100 text-red-600">
             {capitalize(project.priority)} Priority
           </span>

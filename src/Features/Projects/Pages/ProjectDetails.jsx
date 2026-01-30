@@ -102,7 +102,8 @@ function ProjectDetails() {
         {/* RIGHT — METRICS (1/3 WIDTH) */}
         <div className="lg:col-span-1">
           <div className="sticky top-6">
-            <ProjectMetrics project={project} />
+            <ProjectMetrics project={project}
+            phases={phases} />
           </div>
         </div>
 

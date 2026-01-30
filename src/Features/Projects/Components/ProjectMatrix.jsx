@@ -6,14 +6,38 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-export default function ProjectMetrics({ project }) {
-  const total = project?.total_tasks || 48;
-  const completed = project?.completed_tasks || 32;
-  const pending = total - completed;
-  const progress = project?.progress || 66;
+export default function ProjectMetrics({ project, phases = [] }) {
 
-  const assigned = project?.budget_assigned || 150000;
-  const used = project?.budget_used || 98500;
+  /* =========================
+     FLATTEN TASKS FROM PHASES
+  ========================= */
+  const allTasks = phases.flatMap(
+    phase => phase.tasks || []
+  );
+
+  const totalTasks = allTasks.length;
+
+  const completed = allTasks.filter(
+    t => t.status === "completed"
+  ).length;
+
+  const pending = allTasks.filter(
+    t => t.status === "pending"
+  ).length;
+
+  const ongoing = allTasks.filter(
+    t => t.status === "ongoing"
+  ).length;
+
+  const progress = totalTasks
+    ? Math.round((completed / totalTasks) * 100)
+    : 0;
+
+  /* =========================
+     BUDGET
+  ========================= */
+  const assigned = Number(project?.total_budget || 0);
+  const used = Number(project?.spent_amount || 0);
   const remaining = assigned - used;
 
   return (
@@ -22,31 +46,13 @@ export default function ProjectMetrics({ project }) {
         Project Metrics
       </h3>
 
-      {/* METRIC CARDS */}
-      <div className="grid grid-cols-2 md:grid-cols-2 gap-4">
-        <MetricCard
-          icon={<ListChecks />}
-          label="Total Tasks"
-          value={total}
-        />
-        <MetricCard
-          icon={<CheckCircle />}
-          label="Completed"
-          value={completed}
-        />
-        <MetricCard
-          icon={<Clock />}
-          label="Pending"
-          value={pending}
-        />
-        <MetricCard
-          icon={<TrendingUp />}
-          label="Progress"
-          value={`${progress}%`}
-        />
+      <div className="grid grid-cols-2 gap-4">
+        <MetricCard icon={<ListChecks />} label="Total Tasks" value={totalTasks} />
+        <MetricCard icon={<CheckCircle />} label="Completed" value={completed} />
+        <MetricCard icon={<Clock />} label="Pending" value={pending} />
+        <MetricCard icon={<TrendingUp />} label="Progress" value={`${progress}%`} />
       </div>
 
-      {/* BUDGET */}
       <div className="space-y-3">
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Budget Overview</span>
@@ -55,7 +61,7 @@ export default function ProjectMetrics({ project }) {
 
         <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
           <div
-            className="h-full bg-black"
+            className="h-full bg-black rounded-full"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -70,7 +76,7 @@ export default function ProjectMetrics({ project }) {
   );
 }
 
-/* ---------- Reusable ---------- */
+/* ---------- UI ---------- */
 
 function MetricCard({ icon, label, value }) {
   return (
@@ -95,7 +101,7 @@ function BudgetRow({ label, value, used, remaining }) {
             : "text-gray-800"
         }`}
       >
-        ${value.toLocaleString()}
+        ₹{value.toLocaleString()}
       </span>
     </div>
   );

@@ -186,7 +186,15 @@ export default function ProjectAdd() {
                   { value: "high", label: "High" },
                 ]}
               />
+                <Select label="Project Status" name="status" value={formData.status} onChange={handleChange}
+                options={[
+                  { value: "pending", label: "Pending" },
+                  { value: "inprogress", label: "Ongoing" },
+                  { value: "completed", label: "Completed" },
+                ]}
+              />
             </div>
+
             <Textarea label="Description" name="description" value={formData.description} onChange={handleChange} />
           </Card>
 

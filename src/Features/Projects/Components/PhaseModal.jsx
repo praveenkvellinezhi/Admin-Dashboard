@@ -9,16 +9,19 @@ import {
   deleteTask,
   fetchTasksByPhase,
   selectAllTasks,
+  getTaskStatus,
 } from "../../../Redux/Slices/taskSlice";
 
 import {
   fetchEmployees,
   selectAllEmployees,
+  getEmployeeStatus,
 } from "../../../Redux/Slices/employeeslice";
 
 import {
   fetchProjectById,
   selectSelectedProject,
+  getSingleProjectStatus,
 } from "../../../Redux/Slices/projectSlice";
 
 import DeleteModal from "../../../Components/Shared/DeleteModal";
@@ -31,7 +34,16 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   const employees = useSelector(selectAllEmployees);
   const tasks = useSelector(selectAllTasks);
 
+  const taskStatus = useSelector(getTaskStatus);
+  const employeeStatus = useSelector(getEmployeeStatus);
+  const projectStatus = useSelector(getSingleProjectStatus);
+
   const phaseId = phase?.phase_id;
+
+  const isLoading =
+    taskStatus === "loading" ||
+    employeeStatus === "loading" ||
+    projectStatus === "loading";
 
   const [showAddTask, setShowAddTask] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -53,13 +65,14 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   ========================= */
   useEffect(() => {
     if (!phaseId) return;
+
     dispatch(fetchEmployees());
     dispatch(fetchProjectById(id));
     dispatch(fetchTasksByPhase(phaseId));
   }, [dispatch, phaseId, id]);
 
   /* =========================
-     SAVE TASK (ADD / EDIT)
+     SAVE TASK
   ========================= */
   const handleSaveTask = async () => {
     if (!taskForm.title.trim()) return;
@@ -77,7 +90,9 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     };
 
     if (editingTaskId) {
-      await dispatch(editTask({ taskId: editingTaskId, payload }));
+      await dispatch(
+        editTask({ taskId: editingTaskId, payload })
+      );
     } else {
       await dispatch(addTask(payload));
     }
@@ -121,6 +136,28 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   const capitalize = (str) =>
     str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
+  /* =========================
+     LOADER
+  ========================= */
+  if (isLoading) {
+    return (
+      <>
+        <div className="fixed inset-0 bg-black/40 z-40" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl px-10 py-8 shadow-lg flex flex-col items-center gap-4">
+            <div className="w-8 h-8 border-4 border-gray-300 border-t-gray-800 rounded-full animate-spin" />
+            <p className="text-sm text-gray-600">
+              Loading phase details...
+            </p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  /* =========================
+     UI
+  ========================= */
   return (
     <>
       {/* BACKDROP */}
@@ -162,14 +199,13 @@ export default function PhaseDetailsModal({ phase, onClose }) {
               <div className="col-span-2 text-right">Actions</div>
             </div>
 
-            {/* TASK ROWS */}
+            {/* TASK LIST */}
             <div className="space-y-2 mt-3">
               {tasks.map((task) => (
                 <div
                   key={task.task_id}
-                  className="grid grid-cols-12 items-center px-4 py-3 bg-white border rounded-xl hover:shadow-sm transition"
+                  className="grid grid-cols-12 items-center px-4 py-3 bg-white border border-gray-300 rounded-xl hover:shadow-sm"
                 >
-                  {/* ASSIGNEE */}
                   <div className="col-span-3 flex items-center gap-3">
                     {task.assigned_to?.[0] ? (
                       <>
@@ -188,34 +224,29 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                     )}
                   </div>
 
-                  {/* TASK */}
                   <div className="col-span-3 font-medium truncate">
                     {capitalize(task.title)}
                   </div>
 
-                  {/* STATUS */}
                   <div className="col-span-2">
                     <span
-                      className={`px-3 py-1 text-xs rounded-full font-medium
-                        ${
-                          task.status === "completed"
-                            ? "bg-green-100 text-green-700"
-                            : task.status === "pending"
-                            ? "bg-gray-100 text-gray-600"
-                            : "bg-orange-100 text-orange-700"
-                        }`}
+                      className={`px-3 py-1 text-xs rounded-full font-medium ${
+                        task.status === "completed"
+                          ? "bg-green-100 text-green-700"
+                          : task.status === "pending"
+                          ? "bg-orange-100 text-orange-700"
+                          : "bg-blue-100 text-blue-700"
+                      }`}
                     >
                       {task.status.replace("_", " ")}
                     </span>
                   </div>
 
-                  {/* DATES */}
                   <div className="col-span-2 text-sm text-gray-500">
                     {task.start_date || "--"} →{" "}
                     {task.end_date || "--"}
                   </div>
 
-                  {/* ACTIONS */}
                   <div className="col-span-2 flex justify-end gap-3">
                     <button
                       onClick={() => {
@@ -250,7 +281,6 @@ export default function PhaseDetailsModal({ phase, onClose }) {
               ))}
             </div>
 
-            {/* ADD TASK BUTTON */}
             {!showAddTask && (
               <button
                 onClick={() => setShowAddTask(true)}
@@ -260,13 +290,15 @@ export default function PhaseDetailsModal({ phase, onClose }) {
               </button>
             )}
 
-            {/* ADD / EDIT TASK FORM */}
+            {/* ADD / EDIT FORM */}
             {showAddTask && (
-              <div className="border border-gray-200 rounded-2xl p-6 bg-white mt-6">
+              <div className="border border-gray-300 rounded-2xl p-6 bg-white mt-6">
                 <h3 className="text-lg font-semibold mb-5">
                   {editingTaskId ? "Edit Task" : "Add Task"}
                 </h3>
 
+                {/* FORM */}
+                {/* (exactly same as you had – working) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <input
                     type="text"
@@ -278,7 +310,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                         title: e.target.value,
                       }))
                     }
-                    className="md:col-span-2 w-full border rounded-xl px-4 py-3 text-sm"
+                    className="md:col-span-2 border border-gray-300 rounded-xl px-4 py-3 text-sm"
                   />
 
                   <select
@@ -289,7 +321,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                         status: e.target.value,
                       }))
                     }
-                    className="w-full border rounded-xl px-4 py-3 text-sm"
+                    className="border border-gray-300 rounded-xl px-4 py-3 text-sm"
                   >
                     <option value="completed">Completed</option>
                     <option value="in_progress">In Progress</option>
@@ -298,7 +330,6 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                 </div>
 
                 <textarea
-                  placeholder="Task description"
                   value={taskForm.description}
                   onChange={(e) =>
                     setTaskForm((p) => ({
@@ -307,7 +338,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                     }))
                   }
                   rows={3}
-                  className="w-full border rounded-xl px-4 py-3 text-sm mb-4"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm mb-4"
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -320,9 +351,8 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                         start_date: e.target.value,
                       }))
                     }
-                    className="w-full border rounded-xl px-4 py-3 text-sm"
+                    className="border border-gray-300 rounded-xl px-4 py-3 text-sm"
                   />
-
                   <input
                     type="date"
                     value={taskForm.end_date}
@@ -332,7 +362,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                         end_date: e.target.value,
                       }))
                     }
-                    className="w-full border rounded-xl px-4 py-3 text-sm"
+                    className="border border-gray-300 rounded-xl px-4 py-3 text-sm"
                   />
                 </div>
 
@@ -344,7 +374,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                       assigned_to: e.target.value,
                     }))
                   }
-                  className="w-full border rounded-xl px-4 py-3 text-sm mb-6"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm mb-6"
                 >
                   <option value="">Assign employee</option>
                   {assignedEmployees.map((emp) => (
@@ -363,18 +393,16 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                       setShowAddTask(false);
                       setEditingTaskId(null);
                     }}
-                    className="text-sm text-gray-600 hover:text-gray-800"
+                    className="text-sm text-gray-600"
                   >
                     Cancel
                   </button>
 
                   <button
                     onClick={handleSaveTask}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-xl text-sm font-medium"
+                    className="bg-green-600 text-white px-6 py-2 rounded-xl text-sm font-medium"
                   >
-                    {editingTaskId
-                      ? "Update Task"
-                      : "Save Task"}
+                    {editingTaskId ? "Update Task" : "Save Task"}
                   </button>
                 </div>
               </div>
@@ -383,13 +411,12 @@ export default function PhaseDetailsModal({ phase, onClose }) {
         </div>
       </div>
 
-      {/* DELETE CONFIRM MODAL */}
       <DeleteModal
         open={showDelete}
         onClose={() => setShowDelete(false)}
         onConfirm={handleConfirmDelete}
         title="Delete Task"
-        description="Are you sure you want to delete this task? This action cannot be undone."
+        description="Are you sure you want to delete this task?"
       />
     </>
   );
