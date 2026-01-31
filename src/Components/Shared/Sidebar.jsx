@@ -1,4 +1,5 @@
 import React from "react";
+import logo2 from "../../assets/Logo/logo3.png";
 import logo4 from "../../assets/Logo/logo.png";
 
 import { NavLink, useNavigate } from "react-router-dom";
@@ -14,20 +15,20 @@ import {
 import { useDispatch } from "react-redux";
 import { logout } from "../../Redux/Slices/adminauthSlice";
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, setIsOpen }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const navbar = [
     { name: "Dashboard", path: "/", icon: <ChartLine size={22} /> },
-    { name: "Projects", path: "/projects", icon: <Folder size={22} /> },
-    { name: "Attendence", path: "/attendence", icon: <Calendar size={22} /> },
+    { name: "Projects", path: "/Projects", icon: <Folder size={22} /> },
+    { name: "Attendence", path: "/Attendence", icon: <Calendar size={22} /> },
     { name: "Employeee", path: "/employees", icon: <Users size={22} /> },
-    { name: "Interns", path: "/interns", icon: <UserPlus size={22} /> },
+    { name: "Interns", path: "/Interns", icon: <UserPlus size={22} /> },
   ];
 
   /* =========================
-     LOGOUT
+     LOGOUT HANDLER
   ========================= */
   const handleLogout = () => {
     dispatch(logout());
@@ -36,37 +37,41 @@ export default function Sidebar() {
 
   return (
     <div
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
       className="
-        group
-        fixed top-0 left-0 z-40 h-full
-        bg-[#ECECEC] shadow
+        h-full bg-[#ECECEC] shadow fixed top-0 left-0 z-40
         w-20 lg:hover:w-64
         transition-[width] duration-300
         overflow-hidden
       "
     >
       {/* LOGO */}
-      <div className="h-20 flex items-center justify-center px-4">
+      <div className="px-4 py-4 h-20 flex items-center relative">
         <img
           src={logo4}
-          alt="logo"
-          className="
-            w-12
-            lg:group-hover:w-36
-            transition-all duration-300
-          "
+          className="w-48 mt-16 transition-all duration-300"
+          alt="collapsed logo"
         />
+
+        <div className="mt-16 flex items-center absolute opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
+          <img
+            src={logo4}
+            className="w-32"
+            alt="logo4-hover"
+          />
+        </div>
       </div>
 
       {/* MENU */}
-      <div className="flex flex-col mt-6 px-2">
+      <div className="flex flex-col mt-10">
         {navbar.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
               `
-              flex items-center gap-4 px-4 py-3 my-1
+              flex items-center gap-4 px-5 py-3 my-1
               rounded-xl transition-all duration-300
               ${
                 isActive
@@ -81,11 +86,11 @@ export default function Sidebar() {
             </div>
 
             <span
-              className="
-                whitespace-nowrap font-semibold
-                opacity-0 lg:group-hover:opacity-100
+              className={`
                 transition-opacity duration-300
-              "
+                whitespace-nowrap font-semibold
+                ${isOpen ? "opacity-100" : "opacity-0"}
+              `}
             >
               {item.name}
             </span>
@@ -93,8 +98,8 @@ export default function Sidebar() {
         ))}
       </div>
 
-      {/* LOGOUT */}
-      <div className="absolute bottom-6 w-full px-2">
+      {/* LOGOUT (BOTTOM) */}
+      <div className="absolute bottom-6 w-full px-3">
         <button
           onClick={handleLogout}
           className="
@@ -108,11 +113,11 @@ export default function Sidebar() {
           </div>
 
           <span
-            className="
+            className={`
               whitespace-nowrap font-semibold
-              opacity-0 lg:group-hover:opacity-100
               transition-opacity duration-300
-            "
+              ${isOpen ? "opacity-100" : "opacity-0"}
+            `}
           >
             Logout
           </span>
