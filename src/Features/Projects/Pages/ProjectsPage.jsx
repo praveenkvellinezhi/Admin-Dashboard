@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import ProjectsHeader from "../Components/ProjectsHeader";
 import ProjectList from "../Components/ProjectList";
-import { useDispatch, useSelector } from "react-redux";
 
 import {
   fetchProjects,
   selectAllProjects,
   getProjectListStatus,
-  getProjectError
+  getProjectError,
 } from "../../../Redux/Slices/projectSlice";
+import Loader from "../../../Components/Shared/Loader";
 
 export default function ProjectsPage() {
   const dispatch = useDispatch();
@@ -20,15 +22,10 @@ export default function ProjectsPage() {
   const [search, setSearch] = useState("");
   const [role, setRole] = useState("All");
 
-  /* =========================
-     FETCH PROJECTS (ALWAYS)
-  ========================= */
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
 
- console.log(projects);
- 
   const filteredProjects = projects.filter((proj) => {
     const title = proj?.project_name?.toLowerCase() || "";
     const type = proj?.project_type?.toLowerCase() || "";
@@ -43,11 +40,7 @@ export default function ProjectsPage() {
      STATES
   ========================= */
   if (status === "loading") {
-    return (
-      <p className="text-center mt-10 text-lg">
-        Loading Projects...
-      </p>
-    );
+    return <Loader />;
   }
 
   if (status === "failed") {

@@ -8,6 +8,7 @@ import SalaryEmploymentDetails from "../Components/SalaryEmploymentDetails";
 import OngoingProjects from "../Components/OngoingProjects";
 import DocumentsCard from "../Components/DocumentsCard";
 import StatusNotes from "../Components/StatusNotes";
+import DetailsLoader from "../../../Components/Shared/DetailLoader";
 
 import {
   fetchEmployeesById,
@@ -33,9 +34,7 @@ export default function EmployeePageDetails() {
 
   if (status === "loading") {
     return (
-      <p className="text-center mt-10 text-gray-500">
-        Loading employee details...
-      </p>
+      <DetailsLoader />
     );
   }
 

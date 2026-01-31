@@ -18,6 +18,7 @@ import {
 } from "../../../Redux/Slices/projectSlice";
 
 import { selectAllPhases } from "../../../Redux/Slices/phaseSlice";
+import ProjectDetailsLoader from "../Components/DetailLoader";
 
 function ProjectDetails() {
   const dispatch = useDispatch();
@@ -59,21 +60,29 @@ function ProjectDetails() {
   /* =========================
      LOADING / EMPTY STATES
   ========================= */
-  if (status === "loading") {
-    return (
-      <p className="text-center mt-10 text-gray-500">
-        Loading project details...
-      </p>
-    );
-  }
+ /* =========================
+   LOADING / ERROR / EMPTY
+========================= */
+if (status === "loading" || status === "idle") {
+  return <ProjectDetailsLoader />;
+}
 
-  if (!project) {
-    return (
-      <p className="text-center mt-10 text-gray-500">
-        No project data found
-      </p>
-    );
-  }
+if (status === "failed") {
+  return (
+    <p className="text-center mt-10 text-red-500">
+      Failed to load project
+    </p>
+  );
+}
+
+if (status === "succeeded" && !project) {
+  return (
+    <p className="text-center mt-10 text-gray-500">
+      Project not found
+    </p>
+  );
+}
+
 
   /* =========================
      UI

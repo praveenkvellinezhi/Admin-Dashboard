@@ -13,6 +13,7 @@ import {
   selectSelectedEmployee,
   getSingleEmployeeStatus,
 } from "../../../Redux/Slices/employeeslice";
+import DetailsLoader from "../../../Components/Shared/DetailLoader";
 
 export default function InternPageDetails() {
   const { id } = useParams();
@@ -26,7 +27,7 @@ export default function InternPageDetails() {
   }, [dispatch, id]);
 
   if (status === "loading") {
-    return <p className="text-center mt-10">Loading...</p>;
+    return <DetailsLoader />;
   }
 
   if (status === "failed" || !employee) {

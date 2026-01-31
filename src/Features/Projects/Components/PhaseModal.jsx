@@ -11,7 +11,7 @@ import {
   selectAllTasks,
   getTaskStatus,
 } from "../../../Redux/Slices/taskSlice";
-
+import { deletePhase,editPhase } from "../../../Redux/Slices/phaseSlice";
 import {
   fetchEmployees,
   selectAllEmployees,
@@ -113,9 +113,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     setShowAddTask(false);
   };
 
-  /* =========================
-     DELETE TASK
-  ========================= */
+
   const handleConfirmDelete = async () => {
     await dispatch(deleteTask(deleteTaskId));
     await dispatch(fetchTasksByPhase(phaseId));
@@ -123,9 +121,12 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     setDeleteTaskId(null);
   };
 
-  /* =========================
-     HELPERS
-  ========================= */
+  const handleDelete = async ( ) => {
+    await dispatch(deletePhase(phaseId));
+     setShowDelete(false);
+  }
+
+ 
   const projectEmployees =
     project?.team_members?.map((m) => m.employee_id) || [];
 
@@ -136,9 +137,19 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   const capitalize = (str) =>
     str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
 
-  /* =========================
-     LOADER
-  ========================= */
+ const formatDateDDMMYY = (date) => {
+  if (!date) return "--";
+
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = String(d.getFullYear()).slice(-2);
+
+  return `${day}-${month}-${year}`;
+};
+
+
+
   if (isLoading) {
     return (
       <>
@@ -167,26 +178,42 @@ export default function PhaseDetailsModal({ phase, onClose }) {
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div
           onClick={(e) => e.stopPropagation()}
-          className="bg-white w-full max-w-6xl rounded-2xl shadow-lg overflow-hidden"
+          className="bg-white w-full max-w-7xl rounded-2xl shadow-lg overflow-hidden"
         >
           {/* HEADER */}
-          <div className="flex justify-between items-start px-6 py-5 border-b">
-            <div>
-              <h2 className="text-lg font-semibold capitalize">
-                {phase.phase_type}
-              </h2>
-              <p className="text-sm text-gray-500">
-                {capitalize(phase.description)}
-              </p>
-            </div>
+        <div className="flex justify-between items-start px-6 py-5 border-b">
+  <div>
+    <h2 className="text-lg font-semibold capitalize">
+      {phase.phase_type}
+    </h2>
+    <p className="text-sm text-gray-500">
+      {capitalize(phase.description)}
+    </p>
+  </div>
 
-            <button
-              onClick={onClose}
-              className="p-2 rounded hover:bg-gray-100"
-            >
-              <X size={18} />
-            </button>
-          </div>
+  <div className="flex items-center gap-1">
+    <button className="p-2 rounded hover:bg-gray-100" title="Edit">
+      <Pencil size={16} />
+    </button>
+
+    <button
+      onClick={handleDelete}
+      className="p-2 rounded hover:bg-red-50 text-red-600"
+      title="Delete"
+    >
+      <Trash2 size={16} />
+    </button>
+
+    <button
+      onClick={onClose}
+      className="p-2 rounded hover:bg-gray-100"
+      title="Close"
+    >
+      <X size={18} />
+    </button>
+  </div>
+  </div>
+
 
           {/* CONTENT */}
           <div className="px-6 py-4 max-h-[70vh] overflow-y-auto">
@@ -243,8 +270,8 @@ export default function PhaseDetailsModal({ phase, onClose }) {
                   </div>
 
                   <div className="col-span-2 text-sm text-gray-500">
-                    {task.start_date || "--"} →{" "}
-                    {task.end_date || "--"}
+                    {formatDateDDMMYY(task.start_date)} → {"  "}
+                    {formatDateDDMMYY(task.end_date)}
                   </div>
 
                   <div className="col-span-2 flex justify-end gap-3">

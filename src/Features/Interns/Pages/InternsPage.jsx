@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import InternsHeader from '../Components/InternsHeader'
 
-import EmployeeList from '../../Employees/Components/EmployeeList';
 import InternsList from '../Components/InternList';
 import { fetchInterns,getInternError,getInternStatus,selectAllInterns } from "../../../Redux/Slices/internSlice";
 import { useSelector,useDispatch } from "react-redux";
 import { useEffect } from "react";
+import Loader from '../../../Components/Shared/Loader';
 
 export default function InternsPage() {
     const [search,setSearch]=useState('');
@@ -24,7 +24,7 @@ export default function InternsPage() {
     }
   },[dispatch,status]);
    if (status === "loading") {
-    return <p className="text-center mt-10 text-lg">Loading...</p>;
+    return <Loader />;
   }
 
   if (status === "failed") {

@@ -6,6 +6,8 @@ import {
   Flag,
   Users,
   FileText,
+  Phone,
+  Mail
 } from "lucide-react";
 
 export default function ProjectOverview({ project }) {
@@ -78,6 +80,48 @@ export default function ProjectOverview({ project }) {
           value={project.end_date || "—"}
         />
       </div>
+      {/* CLIENT CONTACT */}
+<div className="bg-gray-100 border border-gray-200 rounded-2xl p-5">
+  <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-4">
+    <div className="p-2 bg-blue-100 rounded-lg">
+      <Mail size={16} className="text-blue-600" />
+    </div>
+    Client Contact
+  </div>
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {/* EMAIL */}
+    <div className="flex items-center justify-between bg-white border border-gray-200 rounded-xl p-4">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-blue-100 rounded-full">
+          <Mail size={16} className="text-blue-600" />
+        </div>
+        <div>
+          <p className="text-xs text-gray-500">Email Address</p>
+          <p className="text-sm font-semibold text-gray-800">
+            {project.client_email || "—"}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* PHONE */}
+    <div className="flex items-center justify-between bg-white border border-gray-200 rounded-xl p-4">
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-green-100 rounded-full">
+          <Phone size={16} className="text-green-600" />
+        </div>
+        <div>
+          <p className="text-xs text-gray-500">Phone Number</p>
+          <p className="text-sm font-semibold text-gray-800">
+            {project.client_contact || "—"}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
       {/* TEAM MEMBERS */}
       <div>
@@ -94,7 +138,7 @@ export default function ProjectOverview({ project }) {
                 src={m.profile_image_url || "https://i.pravatar.cc/100"}
                 alt={m.name}
                 title={m.name}
-                className="w-9 h-9 rounded-full border object-cover"
+                className="w-12 h-12 rounded-full border border-gray-300 object-cover"
               />
             ))}
           </div>

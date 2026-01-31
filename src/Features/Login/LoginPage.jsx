@@ -49,7 +49,7 @@ export default function Login() {
           className="
             absolute top-0 right-[-20%]
             h-full w-[70%]
-            bg-slate-700
+            bg-[#454B57]
             transform -skew-x-12
           "
         />

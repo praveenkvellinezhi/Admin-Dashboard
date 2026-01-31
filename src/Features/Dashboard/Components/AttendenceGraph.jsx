@@ -96,7 +96,7 @@ export default function AttendanceGraph({ month = "Month" }) {
       </div>
 
       {/* Chart */}
-      <div className="w-full h-[150px] sm:h-[230px] min-h-[150px]">
+      <div className="h-[300px] w-full] sm:h-[230px] min-h-[150px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}

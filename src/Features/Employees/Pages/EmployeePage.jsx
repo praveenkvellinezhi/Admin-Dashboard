@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import EmployeeHeader from "../Components/EmployeeHeader";
 import EmployeeList from "../Components/EmployeeList";
+import Loader from "../../../Components/Shared/Loader";
 
 import {
   fetchEmployees,
@@ -35,9 +36,7 @@ export default function EmployeePage() {
   ========================= */
   if (status === "loading") {
     return (
-      <p className="text-center mt-10 text-lg">
-        Loading...
-      </p>
+   <Loader />
     );
   }
 

@@ -52,3 +52,6 @@ const statsSlice = createSlice({
 });
 
 export default statsSlice.reducer;
+export const selectStats = (state) => state.stats.data;
+export const selectStatsStatus = (state) => state.stats.status;
+export const selectStatsError = (state) => state.stats.error;

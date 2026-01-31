@@ -1,16 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FaUser, FaUsers, FaFolder, FaTasks } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchStats } from "../../../Redux/Slices/statsSlice";
+import { useSelector } from "react-redux";
 
 export default function StatsSection() {
-  const dispatch = useDispatch();
-  const { data, status } = useSelector((state) => state.stats);
-
-  useEffect(() => {
-    dispatch(fetchStats());
-  }, [dispatch]);
+  const { data } = useSelector((state) => state.stats);
 
   const stats = [
     {
@@ -39,13 +33,9 @@ export default function StatsSection() {
       icon: <FaTasks />,
       value: `${data.attendance_percent}%`,
       gradient: "from-orange-400 to-pink-400",
-      path: "/Attendence",
+      path: "/attendance",
     },
   ];
-
-  if (status === "loading") {
-    return <p className="p-4 text-gray-500">Loading stats...</p>;
-  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-4 w-full">
@@ -60,7 +50,6 @@ export default function StatsSection() {
               transition hover:scale-105 hover:shadow-xl
             `}
           >
-            {/* Decorative circles */}
             <div className="absolute -top-10 -right-10 w-36 h-36 bg-white/30 rounded-full blur-2xl" />
             <div className="absolute bottom-0 right-0 w-28 h-28 bg-white/20 rounded-full blur-xl" />
 

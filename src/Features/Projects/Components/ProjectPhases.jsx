@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function ProjectPhases({ phases = [] }) {
   const [selectedPhase, setSelectedPhase] = useState(null);
-console.log("phases:", phases);
+
 
   if (!phases.length) {
     return (

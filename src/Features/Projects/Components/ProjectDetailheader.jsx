@@ -14,42 +14,47 @@ export default function ProjectDetailsHeader({
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold text-gray-900">Project Details</h1>
 
-        <div className="flex items-center gap-3">
-          {/* Back */}
+         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm border rounded-md bg-white hover:bg-gray-100"
+            onClick={() => navigate("/projects")}
+            className="flex items-center gap-2 px-4 py-2 border-2
+                       border-gray-500 text-gray-600 text-sm font-medium
+                       rounded-lg hover:bg-gray-900"
           >
-            <ArrowLeft size={14} />
+            <ArrowLeft size={16} />
             Back
           </button>
-
-          {/* Add Phase */}
+          
+          {/* ADD PHASE */}
           <button
             onClick={onAddPhase}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm
-                       bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="flex items-center gap-2 px-4 py-2
+                       bg-black text-white text-sm font-medium
+                       rounded-lg hover:bg-gray-900"
           >
-            <Plus size={14} />
+            <Plus size={16} />
             Add Phase
           </button>
 
-          {/* Edit */}
+          {/* EDIT */}
           <button
             onClick={onEdit}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm border rounded-md bg-white hover:bg-gray-100"
+            className="flex items-center gap-2 px-4 py-2
+                       text-sm font-medium border border-gray-300
+                       rounded-lg bg-white hover:bg-gray-50"
           >
-            <Pencil size={14} />
+            <Pencil size={16} />
             Edit
           </button>
 
-          {/* Delete */}
+          {/* DELETE */}
           <button
             onClick={onDelete}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm border border-red-200
-             text-red-600 rounded-md bg-white hover:bg-red-50"
+            className="flex items-center gap-2 px-4 py-2
+                       text-sm font-medium text-white
+                       bg-red-600 rounded-lg hover:bg-red-700"
           >
-            <Trash2 size={14} />
+            <Trash2 size={16} />
             Delete
           </button>
         </div>
