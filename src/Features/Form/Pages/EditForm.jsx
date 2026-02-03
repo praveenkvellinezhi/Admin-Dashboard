@@ -1,6 +1,7 @@
 import React,{ useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 
 import EmployeeBasicDetails from "../Components/BasicDetail";
 import JobRoleInformation from "../Components/Jobdetails";
@@ -13,6 +14,7 @@ import {
   editEmployee,
   selectSelectedEmployee,
   getSingleEmployeeStatus,
+  getEmployeeValidationErrors
 } from "../../../Redux/Slices/employeeslice";
 
 export default function EditForm() {
@@ -22,12 +24,34 @@ export default function EditForm() {
 
   const employeeData = useSelector(selectSelectedEmployee);
   const status = useSelector(getSingleEmployeeStatus);
+    const backendErrors = useSelector(getEmployeeValidationErrors);
+  
 
   const [formData, setFormData] = useState(null);
 
   /* =========================
      FETCH EMPLOYEE
   ========================= */
+    useEffect(() => {
+  if (!backendErrors) return;
+
+  // Case 1: string error
+  if (typeof backendErrors === "string") {
+    toast.error(backendErrors);
+    return;
+  }
+
+  // Case 2: object errors (field-wise)
+  if (typeof backendErrors === "object") {
+    Object.values(backendErrors).forEach((error) => {
+      if (Array.isArray(error)) {
+        error.forEach((msg) => toast.error(msg));
+      } else if (typeof error === "string") {
+        toast.error(error);
+      }
+    });
+  }
+}, [backendErrors]);
   useEffect(() => {
     dispatch(fetchEmployeesById(id));
   }, [dispatch, id]);
@@ -110,6 +134,8 @@ export default function EditForm() {
   if (status === "loading" || !formData) {
     return <p className="text-center mt-10">Loading...</p>;
   }
+
+
 
   return (
     <div className="min-h-screen bg-gray-100 px-6 py-6 space-y-6">

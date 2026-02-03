@@ -9,17 +9,47 @@ const initialState = {
     project_count: 0,
     attendance_percent: 0,
   },
-  status: "idle",
+
+  projectStatus: {
+    completed: 0,
+    ongoing: 0,
+    pending: 0,
+  },
+
+  status: "idle",                // summary status
+  projectStatusStatus: "idle",   // project status API
+
   error: null,
 };
 
+/* =========================
+   DASHBOARD SUMMARY
+========================= */
 export const fetchStats = createAsyncThunk(
   "stats/fetchStats",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${BASE_URL}/dashboard/summary/`
+      const res = await axios.get(
+        `${BASE_URL}/dashboard/summary/`
       );
       return res.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
+/* =========================
+   PROJECT STATUS
+========================= */
+export const fetchProjectStatus = createAsyncThunk(
+  "stats/fetchProjectStatus",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(
+        `${BASE_URL}/dashboard/project-status/`
+      );
+      return res.data.data; // ✅ only data
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -32,26 +62,46 @@ const statsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      /* ===== SUMMARY ===== */
       .addCase(fetchStats.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchStats.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.data = {
-          active_employees: action.payload.active_employees,
-          active_interns: action.payload.active_interns,
-          project_count: action.payload.project_count,
-          attendance_percent: action.payload.attendance_percent,
-        };
+        state.data = action.payload;
       })
       .addCase(fetchStats.rejected, (state, action) => {
         state.status = "failed";
+        state.error = action.payload;
+      })
+
+      /* ===== PROJECT STATUS ===== */
+      .addCase(fetchProjectStatus.pending, (state) => {
+        state.projectStatusStatus = "loading";
+      })
+      .addCase(fetchProjectStatus.fulfilled, (state, action) => {
+        state.projectStatusStatus = "succeeded";
+        state.projectStatus = action.payload;
+      })
+      .addCase(fetchProjectStatus.rejected, (state, action) => {
+        state.projectStatusStatus = "failed";
         state.error = action.payload;
       });
   },
 });
 
 export default statsSlice.reducer;
+
+/* =========================
+   SELECTORS
+========================= */
 export const selectStats = (state) => state.stats.data;
 export const selectStatsStatus = (state) => state.stats.status;
+
+export const selectProjectStatus = (state) =>
+  state.stats.projectStatus;
+
+export const selectProjectStatusStatus = (state) =>
+  state.stats.projectStatusStatus;
+
 export const selectStatsError = (state) => state.stats.error;

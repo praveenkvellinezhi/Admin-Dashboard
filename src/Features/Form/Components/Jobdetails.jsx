@@ -47,6 +47,7 @@ export default function JobRoleInformation({ formData, onChange }) {
       });
     }
   };
+  
 
   return (
     <div className="bg-white border border-gray-300 rounded-xl shadow-sm">
@@ -69,6 +70,7 @@ export default function JobRoleInformation({ formData, onChange }) {
             name="department"
             value={formData.department || ""}
             onChange={onChange}
+            required
             
             className={inputClass}
           >

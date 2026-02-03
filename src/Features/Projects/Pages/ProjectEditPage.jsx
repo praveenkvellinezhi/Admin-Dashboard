@@ -215,6 +215,13 @@ export default function ProjectEdit() {
           <Card icon={<Briefcase />} title="Project Details">
             <Input label="Project Name" name="project_name" value={formData.project_name} onChange={handleChange} />
             <Textarea label="Description" name="description" value={formData.description} onChange={handleChange} />
+                    <Select label="Project Status" name="status" value={formData.status} onChange={handleChange}
+                options={[
+                  { value: "pending", label: "Pending" },
+                  { value: "inprogress", label: "Ongoing" },
+                  { value: "completed", label: "Completed" },
+                ]}
+              />
           </Card>
 
           <Card icon={<Building2 />} title="Client">
@@ -344,3 +351,15 @@ const Textarea = ({ label, ...props }) => (
     <textarea {...props} rows={3} className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm" />
   </div>
 );
+const Select = ({ label, options, ...props }) => (
+  <div>
+    <label className="text-sm font-medium mb-1 block">{label}</label>
+    <select {...props} className="w-full border  border-gray-300  rounded-lg px-4 py-3 text-sm">
+      <option value="">Select</option>
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+    </select>
+  </div>
+);
+

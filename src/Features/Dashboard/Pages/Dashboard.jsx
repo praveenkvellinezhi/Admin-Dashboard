@@ -7,7 +7,13 @@ import AttendenceGraph from "../Components/AttendenceGraph";
 import ProjectStatus from "../Components/ProjectStatus";
 import DashboardLoader from "../Components/DashboardLoader";
 
-import { fetchStats, selectStatsStatus } from "../../../Redux/Slices/statsSlice";
+import {
+  fetchStats,
+  fetchProjectStatus,
+  selectStatsStatus,
+  selectProjectStatusStatus,
+} from "../../../Redux/Slices/statsSlice";
+
 import {
   fetchOngoingProjects,
   getOngoingProjectsStatus,
@@ -16,33 +22,50 @@ import {
 export default function Dashboard() {
   const dispatch = useDispatch();
 
+  /* =========================
+     REDUX STATUSES
+  ========================= */
   const statsStatus = useSelector(selectStatsStatus);
+  const projectStatusStatus = useSelector(selectProjectStatusStatus);
   const projectsStatus = useSelector(getOngoingProjectsStatus);
 
-  // ✅ FETCH DATA ONCE (PAGE RESPONSIBILITY)
+  /* =========================
+     FETCH DATA (PAGE RESPONSIBILITY)
+  ========================= */
   useEffect(() => {
     dispatch(fetchStats());
+    dispatch(fetchProjectStatus());
     dispatch(fetchOngoingProjects());
   }, [dispatch]);
 
-  // ✅ GLOBAL LOADER (NO `idle`)
+  /* =========================
+     GLOBAL LOADER
+  ========================= */
   const isDashboardLoading =
-    statsStatus === "loading" || projectsStatus === "loading";
+    statsStatus === "loading" ||
+    projectStatusStatus === "loading" ||
+    projectsStatus === "loading";
 
   if (isDashboardLoading) {
     return <DashboardLoader />;
   }
 
+  /* =========================
+     DASHBOARD UI
+  ========================= */
   return (
     <div className="w-full p-3 sm:p-4 lg:p-6 space-y-6">
+      {/* STAT CARDS */}
       <StatCard />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
+        {/* ONGOING PROJECTS */}
         <OngoingProjects />
 
+        {/* RIGHT SIDE */}
         <div className="flex flex-col gap-4 lg:gap-6 w-full">
           <AttendenceGraph month="Month" />
-          <ProjectStatus completed={80} />
+          <ProjectStatus />
         </div>
       </div>
     </div>

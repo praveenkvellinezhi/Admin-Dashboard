@@ -93,7 +93,7 @@ if (status === "succeeded" && !project) {
     {/* HEADER */}
     <ProjectDetailsHeader
       onEdit={() =>
-        navigate(`/projects/edit/${project.id}`)
+        navigate(`/projects/edit/${project.project_id}`)
       }
       onDelete={() => setShowDeleteModal(true)}
       onAddPhase={() => setShowPhaseModal(true)}

@@ -50,16 +50,22 @@ export default function EmployeePage() {
 
 
   const filteredEmployees = employees.filter((emp) => {
-    const searchText = search.toLowerCase();
+  const searchText = search.toLowerCase();
 
-    const name = emp.name?.toLowerCase() || "";
-    const roleValue = emp.role || "";
+  const name = emp.name?.toLowerCase() || "";
+  const email = emp.email?.toLowerCase() || "";
+  const roleValue = emp.role?.toLowerCase() || "";
 
-    return (
-      (role === "All" || roleValue === role) &&
-      name.includes(searchText)
-    );
-  });
+  const matchesSearch =
+    name.includes(searchText) || email.includes(searchText);
+
+  const matchesRole =
+    role === "All" ||
+    roleValue.includes(role.toLowerCase());
+
+  return matchesSearch && matchesRole;
+});
+
 
   
   return (

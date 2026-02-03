@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import toast from "react-hot-toast";
 
 import { fetchInterns } from "../../../Redux/Slices/internSlice";
@@ -27,6 +27,27 @@ export default function AddForm() {
   /* =========================
      FORM STATE
   ========================= */
+  useEffect(() => {
+  if (!backendErrors) return;
+
+  // Case 1: string error
+  if (typeof backendErrors === "string") {
+    toast.error(backendErrors);
+    return;
+  }
+
+  // Case 2: object errors (field-wise)
+  if (typeof backendErrors === "object") {
+    Object.values(backendErrors).forEach((error) => {
+      if (Array.isArray(error)) {
+        error.forEach((msg) => toast.error(msg));
+      } else if (typeof error === "string") {
+        toast.error(error);
+      }
+    });
+  }
+}, [backendErrors]);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -105,6 +126,11 @@ export default function AddForm() {
      VALIDATION
   ========================= */
   const validateBeforeSubmit = () => {
+    if (!formData.department) {
+  toast.error("Department is required");
+  return;
+}
+
     if (
       formData.employment_type === "staff" &&
       !formData.salary

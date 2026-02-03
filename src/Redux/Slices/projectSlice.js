@@ -15,6 +15,7 @@ const initialState = {
   editStatus: "idle",
   deleteStatus: "idle",
 
+  validationErrors: null, // 🔥 backend validation errors
   error: null,
 };
 
@@ -28,21 +29,23 @@ export const fetchProjects = createAsyncThunk(
       const res = await axios.get(`${BASE_URL}/project/projects/list/`);
       return res.data.data;
     } catch (err) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.response?.data || err.message);
     }
-  },
+  }
 );
 
 export const fetchProjectById = createAsyncThunk(
   "projects/fetchById",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${BASE_URL}/project/projects/full/${id}/`);
+      const res = await axios.get(
+        `${BASE_URL}/project/projects/full/${id}/`
+      );
       return res.data.data;
     } catch (err) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.response?.data || err.message);
     }
-  },
+  }
 );
 
 export const addProject = createAsyncThunk(
@@ -51,13 +54,13 @@ export const addProject = createAsyncThunk(
     try {
       const res = await axios.post(
         `${BASE_URL}/project/projects/create/`,
-        formData,
+        formData
       );
       return res.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
-  },
+  }
 );
 
 export const editProject = createAsyncThunk(
@@ -66,25 +69,27 @@ export const editProject = createAsyncThunk(
     try {
       const res = await axios.patch(
         `${BASE_URL}/project/projects/edit/${projectId}/`,
-        formData,
+        formData
       );
       return res.data.data;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
-  },
+  }
 );
 
 export const deleteProject = createAsyncThunk(
   "projects/delete",
   async (projectId, { rejectWithValue }) => {
     try {
-      await axios.delete(`${BASE_URL}/project/projects/delete/${projectId}/`);
+      await axios.delete(
+        `${BASE_URL}/project/projects/delete/${projectId}/`
+      );
       return projectId;
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
     }
-  },
+  }
 );
 
 /* =========================
@@ -96,64 +101,119 @@ const projectSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchProjects.pending, (s) => {
-        s.listStatus = "loading";
+      /* ---------- FETCH PROJECTS ---------- */
+      .addCase(fetchProjects.pending, (state) => {
+        state.listStatus = "loading";
       })
-      .addCase(fetchProjects.fulfilled, (s, a) => {
-        s.listStatus = "succeeded";
-        s.projects = a.payload;
+      .addCase(fetchProjects.fulfilled, (state, action) => {
+        state.listStatus = "succeeded";
+        state.projects = action.payload;
+      })
+      .addCase(fetchProjects.rejected, (state, action) => {
+        state.listStatus = "failed";
+        state.error = action.payload;
+      })
+
+      /* ---------- FETCH SINGLE PROJECT ---------- */
+      .addCase(fetchProjectById.pending, (state) => {
+        state.singleStatus = "loading";
       })
       .addCase(fetchProjectById.fulfilled, (state, action) => {
         state.singleStatus = "succeeded";
         state.selectedProject = action.payload.project;
       })
-
-      .addCase(addProject.fulfilled, (s, a) => {
-        s.projects.unshift(a.payload);
+      .addCase(fetchProjectById.rejected, (state, action) => {
+        state.singleStatus = "failed";
+        state.error = action.payload;
       })
-      .addCase(editProject.fulfilled, (s, a) => {
-        const i = s.projects.findIndex((p) => p.id === a.payload.id);
-        if (i !== -1) s.projects[i] = a.payload;
-        if (s.selectedProject?.id === a.payload.id) {
-          s.selectedProject = a.payload;
+
+      /* ---------- ADD PROJECT ---------- */
+      .addCase(addProject.pending, (state) => {
+        state.addStatus = "loading";
+        state.validationErrors = null;
+      })
+      .addCase(addProject.fulfilled, (state, action) => {
+        state.addStatus = "succeeded";
+        state.projects.unshift(action.payload);
+      })
+      .addCase(addProject.rejected, (state, action) => {
+        state.addStatus = "failed";
+        state.validationErrors = action.payload;
+      })
+
+      /* ---------- EDIT PROJECT ---------- */
+      .addCase(editProject.pending, (state) => {
+        state.editStatus = "loading";
+        state.validationErrors = null;
+      })
+      .addCase(editProject.fulfilled, (state, action) => {
+        state.editStatus = "succeeded";
+
+        const index = state.projects.findIndex(
+          (p) => p.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.projects[index] = action.payload;
+        }
+
+        if (state.selectedProject?.id === action.payload.id) {
+          state.selectedProject = action.payload;
         }
       })
+      .addCase(editProject.rejected, (state, action) => {
+        state.editStatus = "failed";
+        state.validationErrors = action.payload;
+      })
+
+      /* ---------- DELETE PROJECT ---------- */
+      .addCase(deleteProject.pending, (state) => {
+        state.deleteStatus = "loading";
+      })
       .addCase(deleteProject.fulfilled, (state, action) => {
+        state.deleteStatus = "succeeded";
         state.projects = state.projects.filter(
-          (p) => p.project_id !== action.payload,
+          (p) => p.project_id !== action.payload
         );
 
         if (state.selectedProject?.project_id === action.payload) {
           state.selectedProject = null;
         }
+      })
+      .addCase(deleteProject.rejected, (state, action) => {
+        state.deleteStatus = "failed";
+        state.error = action.payload;
       });
   },
 });
 
 export default projectSlice.reducer;
+
 /* =========================
    SELECTORS
 ========================= */
+export const selectAllProjects = (state) =>
+  state.projects.projects;
 
-// All projects list
-export const selectAllProjects = (state) => state.projects.projects;
+export const selectSelectedProject = (state) =>
+  state.projects.selectedProject;
 
-// Selected single project (details page)
-export const selectSelectedProject = (state) => state.projects.selectedProject;
+export const getProjectListStatus = (state) =>
+  state.projects.listStatus;
 
-// Project list status
-export const getProjectListStatus = (state) => state.projects.listStatus;
+export const getSingleProjectStatus = (state) =>
+  state.projects.singleStatus;
 
-// Single project fetch status
-export const getSingleProjectStatus = (state) => state.projects.singleStatus;
+export const getAddProjectStatus = (state) =>
+  state.projects.addStatus;
 
-// Add project status
-export const getAddProjectStatus = (state) => state.projects.addStatus;
+export const getEditProjectStatus = (state) =>
+  state.projects.editStatus;
 
-// Edit project status
-export const getEditProjectStatus = (state) => state.projects.editStatus;
+export const getDeleteProjectStatus = (state) =>
+  state.projects.deleteStatus;
 
-// Delete project status
-export const getDeleteProjectStatus = (state) => state.projects.deleteStatus;
+export const getProjectValidationErrors = (state) =>
+  state.projects.validationErrors;
 
-export const getProjectError = (state) => state.projects.error;
+export const getProjectError = (state) =>
+  state.projects.error;
