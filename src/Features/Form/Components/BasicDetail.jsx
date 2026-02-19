@@ -17,9 +17,7 @@ export default function EmployeeBasicDetails({
   const [showPassword, setShowPassword] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  /* =========================
-     IMAGE PREVIEW
-  ========================= */
+
   useEffect(() => {
     if (formData.profile_image) {
       const url = URL.createObjectURL(formData.profile_image);
@@ -30,9 +28,7 @@ export default function EmployeeBasicDetails({
     }
   }, [formData.profile_image]);
 
-  /* =========================
-     VALIDATORS
-  ========================= */
+
   const validateEmail = (email) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
 
@@ -40,9 +36,7 @@ export default function EmployeeBasicDetails({
   const validatePassword = (password) => /^\d{6}$/.test(password);
   const validateDOB = (dob) => dob && new Date(dob) < new Date();
 
-  /* =========================
-     BLUR VALIDATION
-  ========================= */
+
   const handleBlur = (e) => {
     const { name, value } = e.target;
 
@@ -61,9 +55,6 @@ export default function EmployeeBasicDetails({
     }));
   };
 
-  /* =========================
-     CHANGE HANDLER
-  ========================= */
   const handleLocalChange = (e) => {
     const { name, value } = e.target;
 
@@ -92,7 +83,6 @@ export default function EmployeeBasicDetails({
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
-      {/* HEADER */}
       <div className="flex items-center gap-3 px-5 py-4 border-b rounded-t-xl">
         <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
           <User size={16} className="text-gray-600" />
@@ -102,7 +92,6 @@ export default function EmployeeBasicDetails({
         </h3>
       </div>
 
-      {/* BODY */}
       <div className="p-6">
         <div className="grid grid-cols-12 gap-8">
           {/* PROFILE IMAGE */}
@@ -269,9 +258,7 @@ export default function EmployeeBasicDetails({
   );
 }
 
-/* =========================
-   INPUT FIELD (REQUIRED BY DEFAULT)
-========================= */
+
 function InputField({ label, full, required = true, error, ...props }) {
   return (
     <div className={full ? "md:col-span-2" : ""}>

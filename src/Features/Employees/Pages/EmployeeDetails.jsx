@@ -25,9 +25,7 @@ export default function EmployeePageDetails() {
   const employee = useSelector(selectSelectedEmployee);
   const status = useSelector(getSingleEmployeeStatus);
 
-  /* =========================
-     FETCH EMPLOYEE
-  ========================= */
+// fetch employee 
   useEffect(() => {
     dispatch(fetchEmployeesById(id));
   }, [dispatch, id]);
@@ -49,9 +47,7 @@ export default function EmployeePageDetails() {
   const emp = employee.employee ?? employee;
   const isIntern = emp.employment_type === "intern";
 
-  /* =========================
-     DELETE
-  ========================= */
+
   const handleDelete = async () => {
     const ok = window.confirm(
       `Are you sure you want to delete ${emp.name}?`
@@ -65,7 +61,6 @@ export default function EmployeePageDetails() {
   return (
     <div className="min-h-screen bg-gray-50">
       
-      {/* ✅ FULL WIDTH HEADER */}
       <EmployeeDetailsHeader
         employee={employee}
         onEdit={() =>
@@ -78,7 +73,6 @@ export default function EmployeePageDetails() {
         onDelete={handleDelete}
       />
 
-      {/* ✅ CENTERED CONTENT */}
       <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         <BasicInformation employee={employee} />
 

@@ -52,10 +52,8 @@ export default function AttendanceGraph({ month = "Month" }) {
   return (
     <div className="w-full bg-[#FFFDEB] rounded-3xl shadow-lg p-4 sm:p-6 h-[260px] sm:h-[380px]">
 
-      {/* Header */}
       <div className="flex justify-between items-center mb-4">
 
-        {/* Title */}
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
             <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
@@ -66,7 +64,6 @@ export default function AttendanceGraph({ month = "Month" }) {
           </h3>
         </div>
 
-        {/* Dropdown */}
         <div className="relative">
           <button
             className="flex items-center gap-2 border px-3 py-1 rounded-full bg-white shadow-sm text-sm sm:text-base"
@@ -129,7 +126,6 @@ export default function AttendanceGraph({ month = "Month" }) {
         </ResponsiveContainer>
       </div>
 
-      {/* Footer */}
       <div className="flex justify-between text-[9px] sm:text-xs text-gray-400 mt-3">
         <span>
           {selectedMonth === "Month"

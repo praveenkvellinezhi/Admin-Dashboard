@@ -1,5 +1,5 @@
-import React from "react";
-import { Search, CalendarDays } from "lucide-react";
+import React from 'react';
+import { Search, CalendarDays } from 'lucide-react';
 
 export default function AttendanceHeader({
   activeTab,
@@ -17,11 +17,7 @@ export default function AttendanceHeader({
         justify-between gap-6
       "
     >
-      
-      {/* LEFT SIDE */}
       <div className="flex flex-col gap-4 w-full">
-
-        {/* Heading */}
         <h1
           className="
             text-[32px] sm:text-[30px] lg:text-[40px]
@@ -33,10 +29,7 @@ export default function AttendanceHeader({
           Attendance
         </h1>
 
-        {/* Search + Date */}
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full">
-
-          {/* Search */}
           <div
             className="
               flex items-center 
@@ -53,7 +46,6 @@ export default function AttendanceHeader({
             />
           </div>
 
-          {/* Date */}
           <div
             className="
               flex items-center 
@@ -68,11 +60,9 @@ export default function AttendanceHeader({
             />
             <CalendarDays className="w-4 h-4 text-gray-500 ml-2 sm:ml-3" />
           </div>
-
         </div>
       </div>
 
-      {/* RIGHT SIDE — Toggle Buttons */}
       <div
         className="
           flex w-full lg:w-auto 
@@ -81,14 +71,14 @@ export default function AttendanceHeader({
         "
       >
         <button
-          onClick={() => setActiveTab("employees")}
+          onClick={() => setActiveTab('employees')}
           className={`
             flex-1 sm:flex-none 
             px-4 py-2 rounded transition-all duration-200
             ${
-              activeTab === "employees"
-                ? "bg-black text-white shadow-md"
-                : "text-gray-600"
+              activeTab === 'employees'
+                ? 'bg-black text-white shadow-md'
+                : 'text-gray-600'
             }
           `}
         >
@@ -96,14 +86,14 @@ export default function AttendanceHeader({
         </button>
 
         <button
-          onClick={() => setActiveTab("interns")}
+          onClick={() => setActiveTab('interns')}
           className={`
             flex-1 sm:flex-none 
             px-4 py-2 rounded transition-all duration-200
             ${
-              activeTab === "interns"
-                ? "bg-black text-white shadow-md"
-                : "text-gray-600"
+              activeTab === 'interns'
+                ? 'bg-black text-white shadow-md'
+                : 'text-gray-600'
             }
           `}
         >

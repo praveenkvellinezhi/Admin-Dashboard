@@ -1,3 +1,4 @@
+import React from "react";
 export default function ProfileCard({ employee }) {
   return (
     <div className="bg-white border rounded-lg shadow-sm p-6 text-center">

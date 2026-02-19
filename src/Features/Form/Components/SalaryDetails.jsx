@@ -6,7 +6,6 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
 
   return (
     <div className="bg-white border border-gray-300 rounded-xl shadow-sm">
-      {/* ================= HEADER ================= */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-300 rounded-t-xl">
         <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
           <Wallet size={16} className="text-gray-600" />
@@ -16,9 +15,7 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
         </h3>
       </div>
 
-      {/* ================= BODY ================= */}
       <div className="p-6 space-y-6">
-        {/* EMPLOYEE TYPE */}
         <Field label="Employee Type *">
           <select
             name="employment_type"
@@ -32,7 +29,6 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
           </select>
         </Field>
 
-        {/* SALARY DETAILS (ONLY IF NOT INTERN) */}
         {!isIntern && (
           <>
             <Field label="Salary Type">
@@ -81,9 +77,7 @@ export default function SalaryEmploymentDetails({ formData, onChange }) {
   );
 }
 
-/* =========================
-   FIELD WRAPPER
-========================= */
+
 function Field({ label, children }) {
   return (
     <div>
@@ -95,9 +89,7 @@ function Field({ label, children }) {
   );
 }
 
-/* =========================
-   INPUT STYLE (VISIBLE BORDERS)
-========================= */
+
 const inputClass =
   "w-full rounded-xl border border-gray-400 bg-white px-4 py-3 text-sm " +
   "focus:outline-none focus:border-black focus:ring-2 focus:ring-black/10";

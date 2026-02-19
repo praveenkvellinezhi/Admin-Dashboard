@@ -51,7 +51,6 @@ export default function JobRoleInformation({ formData, onChange }) {
 
   return (
     <div className="bg-white border border-gray-300 rounded-xl shadow-sm">
-      {/* ================= HEADER ================= */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-300 rounded-t-xl">
         <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
           <Briefcase size={16} className="text-gray-600" />

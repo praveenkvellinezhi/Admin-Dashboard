@@ -57,7 +57,6 @@ export default function ProjectOverview({ project }) {
         </div>
       </div>
 
-      {/* INFO GRID */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <InfoCard
           icon={<Briefcase size={16} />}
@@ -80,7 +79,6 @@ export default function ProjectOverview({ project }) {
           value={project.end_date || "—"}
         />
       </div>
-      {/* CLIENT CONTACT */}
 <div className="bg-gray-100 border border-gray-200 rounded-2xl p-5">
   <div className="flex items-center gap-2 text-sm font-medium text-gray-800 mb-4">
     <div className="p-2 bg-blue-100 rounded-lg">
@@ -90,7 +88,6 @@ export default function ProjectOverview({ project }) {
   </div>
 
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    {/* EMAIL */}
     <div className="flex items-center justify-between bg-white border border-gray-200 rounded-xl p-4">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-blue-100 rounded-full">
@@ -105,7 +102,6 @@ export default function ProjectOverview({ project }) {
       </div>
     </div>
 
-    {/* PHONE */}
     <div className="flex items-center justify-between bg-white border border-gray-200 rounded-xl p-4">
       <div className="flex items-center gap-3">
         <div className="p-2 bg-green-100 rounded-full">
@@ -123,7 +119,6 @@ export default function ProjectOverview({ project }) {
 </div>
 
 
-      {/* TEAM MEMBERS */}
       <div>
         <div className="flex items-center gap-2 text-sm text-gray-700 mb-2">
           <Users size={16} />
@@ -147,7 +142,6 @@ export default function ProjectOverview({ project }) {
         )}
       </div>
 
-      {/* DESCRIPTION */}
       <div>
         <div className="flex items-center gap-2 text-sm text-gray-700 mb-1">
           <FileText size={16} />
@@ -161,7 +155,6 @@ export default function ProjectOverview({ project }) {
   );
 }
 
-/* ---------- Small reusable card ---------- */
 function InfoCard({ icon, label, value }) {
   return (
     <div className="flex items-start gap-3 border bg-gray-100 border-gray-200 rounded-xl p-4">

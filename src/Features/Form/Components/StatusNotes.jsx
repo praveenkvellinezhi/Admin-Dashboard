@@ -4,7 +4,6 @@ import { ClipboardList } from "lucide-react";
 export default function StatusNotes({ formData, onChange }) {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl shadow-sm">
-      {/* HEADER */}
       <div className="flex items-center gap-3 px-6 py-4 border-b bg-gray-50 rounded-t-2xl">
         <div className="p-2 bg-gray-200 rounded-lg">
           <ClipboardList size={18} className="text-gray-700" />
@@ -14,9 +13,7 @@ export default function StatusNotes({ formData, onChange }) {
         </h3>
       </div>
 
-      {/* CONTENT */}
       <div className="p-6 space-y-6">
-        {/* EMPLOYEE STATUS */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
           <label className="text-sm font-medium text-gray-700 md:col-span-1">
             Employee Status

@@ -54,9 +54,6 @@ export default function OngoingProjects({ projects = {} }) {
   );
 }
 
-/* =========================
-   PROJECT ROW
-========================= */
 const ProjectRow = ({ label, count = 0, icon, color }) => {
   const colorMap = {
     green: "bg-green-100 text-green-600",

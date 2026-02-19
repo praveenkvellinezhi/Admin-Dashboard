@@ -8,9 +8,7 @@ import {
 
 export default function ProjectMetrics({ project, phases = [] }) {
 
-  /* =========================
-     FLATTEN TASKS FROM PHASES
-  ========================= */
+
   const allTasks = phases.flatMap(
     phase => phase.tasks || []
   );
@@ -33,9 +31,6 @@ export default function ProjectMetrics({ project, phases = [] }) {
     ? Math.round((completed / totalTasks) * 100)
     : 0;
 
-  /* =========================
-     BUDGET
-  ========================= */
   const assigned = Number(project?.total_budget || 0);
   const used = Number(project?.spent_amount || 0);
   const remaining = assigned - used;
@@ -76,7 +71,6 @@ export default function ProjectMetrics({ project, phases = [] }) {
   );
 }
 
-/* ---------- UI ---------- */
 
 function MetricCard({ icon, label, value }) {
   return (

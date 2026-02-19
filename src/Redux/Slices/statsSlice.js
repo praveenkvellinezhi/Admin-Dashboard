@@ -16,15 +16,13 @@ const initialState = {
     pending: 0,
   },
 
-  status: "idle",                // summary status
-  projectStatusStatus: "idle",   // project status API
+  status: "idle",                
+  projectStatusStatus: "idle", 
 
   error: null,
 };
 
-/* =========================
-   DASHBOARD SUMMARY
-========================= */
+
 export const fetchStats = createAsyncThunk(
   "stats/fetchStats",
   async (_, { rejectWithValue }) => {
@@ -39,9 +37,7 @@ export const fetchStats = createAsyncThunk(
   }
 );
 
-/* =========================
-   PROJECT STATUS
-========================= */
+
 export const fetchProjectStatus = createAsyncThunk(
   "stats/fetchProjectStatus",
   async (_, { rejectWithValue }) => {
@@ -49,7 +45,7 @@ export const fetchProjectStatus = createAsyncThunk(
       const res = await axios.get(
         `${BASE_URL}/dashboard/project-status/`
       );
-      return res.data.data; // ✅ only data
+      return res.data.data; 
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
@@ -62,7 +58,6 @@ const statsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      /* ===== SUMMARY ===== */
       .addCase(fetchStats.pending, (state) => {
         state.status = "loading";
       })
@@ -75,7 +70,6 @@ const statsSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* ===== PROJECT STATUS ===== */
       .addCase(fetchProjectStatus.pending, (state) => {
         state.projectStatusStatus = "loading";
       })
@@ -92,9 +86,6 @@ const statsSlice = createSlice({
 
 export default statsSlice.reducer;
 
-/* =========================
-   SELECTORS
-========================= */
 export const selectStats = (state) => state.stats.data;
 export const selectStatsStatus = (state) => state.stats.status;
 

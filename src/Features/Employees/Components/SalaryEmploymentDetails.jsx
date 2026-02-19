@@ -7,12 +7,10 @@ export default function SalaryEmploymentDetails({ employee }) {
     return value.charAt(0).toUpperCase() + value.slice(1);
   };
 
-  // ✅ SAFE FALLBACK (UNCHANGED)
   const emp = employee?.employee ?? {};
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-      {/* HEADER */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center">
@@ -49,9 +47,7 @@ export default function SalaryEmploymentDetails({ employee }) {
   );
 }
 
-/* =========================
-   REUSABLE ROW
-========================= */
+
 function InfoRow({ icon, label, value }) {
   return (
     <div className="flex items-center justify-between px-6 py-4">

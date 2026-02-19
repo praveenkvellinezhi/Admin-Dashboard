@@ -18,7 +18,6 @@ export default function ProjectStatus() {
         Project Status
       </h3>
 
-      {/* TOP CIRCLES */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <StatusCard
           label="Completed"
@@ -37,7 +36,6 @@ export default function ProjectStatus() {
         />
       </div>
 
-      {/* OVERALL PROGRESS */}
       <div className="mt-6">
         <div className="flex justify-between text-sm text-gray-600 mb-2">
           <span>Overall Progress</span>
@@ -59,7 +57,6 @@ export default function ProjectStatus() {
           />
         </div>
 
-        {/* LEGEND */}
         <div className="flex justify-center gap-6 mt-4 text-sm text-gray-600">
           <Legend color="bg-green-500" label="Completed" />
           <Legend color="bg-yellow-400" label="Ongoing" />
@@ -70,9 +67,6 @@ export default function ProjectStatus() {
   );
 }
 
-/* =========================
-   SUB COMPONENTS
-========================= */
 
 function StatusCard({ value, label, color }) {
   return (

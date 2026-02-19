@@ -10,9 +10,7 @@ function Skeleton({ className = "", style = {} }) {
   );
 }
 
-/* =========================
-   STAT CARD SKELETON
-========================= */
+
 function StatCardSkeleton() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -33,9 +31,7 @@ function StatCardSkeleton() {
   );
 }
 
-/* =========================
-   PROJECT CARD SKELETON
-========================= */
+
 function ProjectCardSkeleton() {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3 shadow-sm">
@@ -52,9 +48,7 @@ function ProjectCardSkeleton() {
   );
 }
 
-/* =========================
-   ONGOING PROJECTS SKELETON
-========================= */
+
 function OngoingProjectsSkeleton() {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 space-y-4 shadow-sm">
@@ -72,9 +66,7 @@ function OngoingProjectsSkeleton() {
   );
 }
 
-/* =========================
-   GRAPH SKELETON
-========================= */
+
 function GraphSkeleton() {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 space-y-4 shadow-sm">
@@ -101,9 +93,7 @@ function GraphSkeleton() {
   );
 }
 
-/* =========================
-   PROJECT STATUS SKELETON
-========================= */
+
 function ProjectStatusSkeleton() {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5 space-y-4 shadow-sm">
@@ -128,14 +118,11 @@ function ProjectStatusSkeleton() {
   );
 }
 
-/* =========================
-   DASHBOARD LOADER
-========================= */
+
 export default function DashboardLoader() {
   return (
     <div className="w-full p-3 sm:p-4 lg:p-6 space-y-6 animate-fade-in">
 
-      {/* Loading Indicator */}
       <div className="flex items-center gap-3 mb-2">
         <div className="relative flex h-3 w-3">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75" />
@@ -146,10 +133,8 @@ export default function DashboardLoader() {
         </span>
       </div>
 
-      {/* Stats Skeleton */}
       <StatCardSkeleton />
 
-      {/* Main Grid Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
         <OngoingProjectsSkeleton />
 

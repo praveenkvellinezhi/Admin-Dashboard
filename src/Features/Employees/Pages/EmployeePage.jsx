@@ -22,18 +22,14 @@ export default function EmployeePage() {
   const status = useSelector(getEmployeeStatus);
   const error = useSelector(getEmployeeError);
 
-  /* =========================
-     FETCH EMPLOYEES
-  ========================= */
+
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchEmployees());
     }
   }, [status, dispatch]);
 
-  /* =========================
-     LOADING & ERROR
-  ========================= */
+
   if (status === "loading") {
     return (
    <Loader />

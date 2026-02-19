@@ -18,7 +18,6 @@ export default function ProjectList({ projects }) {
 
   return (
     <>
-      {/* 🔄 View Toggle */}
       <div className="flex justify-end gap-2 mb-4">
         <button
           onClick={() => setView("grid")}
@@ -43,7 +42,6 @@ export default function ProjectList({ projects }) {
         </button>
       </div>
 
-      {/* Projects */}
       <div
         className={
           view === "grid"
@@ -60,7 +58,6 @@ export default function ProjectList({ projects }) {
               view === "list" ? "flex gap-6 items-center" : ""
             }`}
           >
-            {/* Logo */}
             <img
               src={project.project_logo_url}
               alt={project.project_name}
@@ -69,7 +66,6 @@ export default function ProjectList({ projects }) {
               }`}
             />
 
-            {/* Content */}
             <div className={view === "list" ? "flex-1" : "text-center"}>
               <h2 className="text-lg font-semibold text-gray-800">
                 {project.project_name}
@@ -83,7 +79,6 @@ export default function ProjectList({ projects }) {
                 {project.techStack || ""}
               </p>
 
-              {/* Meta */}
               <div
                 className={`mt-3 text-sm text-gray-600 ${
                   view === "grid"
@@ -102,12 +97,11 @@ export default function ProjectList({ projects }) {
                   </div>
                 </div>
 
-                {/* Members */}
                 <div className="flex items-center gap-2 mt-3">
                   <div className="flex -space-x-3">
                     {project.team_members?.map((member) => (
                       <img
-                        key={member.employee_id} // ✅ FIXED
+                        key={member.employee_id} 
                         src={member.profile_image_url}
                         alt={member.name}
                         title={member.name}
@@ -126,7 +120,6 @@ export default function ProjectList({ projects }) {
         ))}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-8">
           <button
@@ -141,7 +134,7 @@ export default function ProjectList({ projects }) {
             const page = i + 1;
             return (
               <button
-                key={page} // ✅ OK (static pagination)
+                key={page} 
                 onClick={() => setCurrentPage(page)}
                 className={`px-3 py-1 text-sm border rounded ${
                   currentPage === page

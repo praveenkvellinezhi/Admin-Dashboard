@@ -19,9 +19,7 @@ export default function Login() {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  /* =========================
-     INPUT HANDLER
-  ========================= */
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -30,9 +28,6 @@ export default function Login() {
     }));
   };
 
-  /* =========================
-     SUBMIT
-  ========================= */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const result = await dispatch(adminLogin(formData));
@@ -43,7 +38,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-white flex items-center justify-center">
-      {/* BACKGROUND */}
       <div className="absolute inset-0">
         <div
           className="
@@ -55,7 +49,6 @@ export default function Login() {
         />
       </div>
 
-      {/* CARD */}
       <div
         className="
           relative z-10
@@ -66,12 +59,10 @@ export default function Login() {
           grid grid-cols-2
         "
       >
-        {/* LEFT */}
         <div className="flex flex-col items-center justify-center bg-transparent">
           <img src={logo} alt="logo" className="h-36 mb-4" />
         </div>
 
-        {/* RIGHT */}
         <div className="relative flex items-center">
           <form
             onSubmit={handleSubmit}
@@ -81,7 +72,6 @@ export default function Login() {
               Sign in to your account
             </h3>
 
-            {/* EMAIL */}
             <div>
               <label className="block text-xs text-white mb-1">
                 Your email
@@ -102,7 +92,6 @@ export default function Login() {
               />
             </div>
 
-            {/* PASSWORD WITH EYE ICON */}
             <div className="relative">
               <label className="block text-xs text-slate-300 mb-1">
                 Password
@@ -123,7 +112,6 @@ export default function Login() {
                 required
               />
 
-              {/* 👁️ TOGGLE */}
               <button
                 type="button"
                 onClick={() => setShowPassword((p) => !p)}
@@ -134,7 +122,6 @@ export default function Login() {
               </button>
             </div>
 
-            {/* SUBMIT */}
             <button
               type="submit"
               disabled={status === "loading"}
@@ -147,7 +134,6 @@ export default function Login() {
               {status === "loading" ? "Signing in..." : "Sign In"}
             </button>
 
-            {/* ERROR */}
             {error && (
               <p className="text-red-300 text-xs mt-2">
                 {error?.message || "Login failed"}

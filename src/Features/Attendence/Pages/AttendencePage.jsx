@@ -25,7 +25,6 @@ export default function AttendancePage() {
         space-y-4 sm:space-y-6
       "
     >
-      {/* Responsive Header */}
       <AttendanceHeader
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -33,7 +32,7 @@ export default function AttendancePage() {
         setDate={setDate}
       />
 
-      {/* Responsive Table */}
+ 
       <AttendanceList rows={filteredData} />
     </div>
   );

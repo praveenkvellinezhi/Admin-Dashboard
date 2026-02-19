@@ -73,20 +73,16 @@ export default function EditPhaseModal({ phaseId, onClose }) {
 
   if (!phase) return null;
 
-  /* =========================
-     UI
-  ========================= */
+
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
       <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-6">
 
-        {/* HEADER */}
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Edit Phase</h3>
           <button onClick={onClose}>✕</button>
         </div>
 
-        {/* PHASE TITLE (READ ONLY) */}
         <div className="mb-4">
           <label className="text-xs text-gray-500">Phase Title</label>
           <input
@@ -96,7 +92,6 @@ export default function EditPhaseModal({ phaseId, onClose }) {
           />
         </div>
 
-        {/* DESCRIPTION */}
         <div className="mb-4">
           <label className="text-xs text-gray-500">Description</label>
           <textarea
@@ -108,7 +103,6 @@ export default function EditPhaseModal({ phaseId, onClose }) {
           />
         </div>
 
-        {/* DATES */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs text-gray-500">Start Date</label>
@@ -133,7 +127,6 @@ export default function EditPhaseModal({ phaseId, onClose }) {
           </div>
         </div>
 
-        {/* ACTIONS */}
         <div className="flex justify-between mt-6">
           <button
             onClick={handleDelete}

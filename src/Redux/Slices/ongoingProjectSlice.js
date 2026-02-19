@@ -17,7 +17,7 @@ export const fetchOngoingProjects = createAsyncThunk(
       const res = await axios.get(
         `${BASE_URL}/dashboard/ongoing-projects/`
       );
-      return res.data.data; // IMPORTANT
+      return res.data.data; 
     } catch (error) {
       return rejectWithValue(
         error.response?.data || error.message
@@ -46,9 +46,7 @@ const ongoingProjectsSlice = createSlice({
   },
 });
 
-/* =========================
-   SELECTORS
-========================= */
+
 export const selectOngoingProjects = (state) =>
   state.ongoingProjects.projects;
 

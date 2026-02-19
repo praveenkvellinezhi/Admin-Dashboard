@@ -41,7 +41,6 @@ export default function PhaseCard({ phase, onClick }) {
         flex flex-col
       "
     >
-      {/* HEADER */}
       <div className="flex justify-between items-start mb-2">
         <h3 className="text-base font-semibold text-gray-900 capitalize">
           {phase?.phase_type || "Phase"}
@@ -52,12 +51,10 @@ export default function PhaseCard({ phase, onClick }) {
         </span>
       </div>
 
-      {/* DESCRIPTION */}
       <p className="text-sm text-gray-600 mb-4">
         {capitalizeFirst(phase?.description || "No description")}
       </p>
 
-      {/* DATE RANGE */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
         <Calendar size={14} />
         <span>{phase?.start_date || "--"}</span>
@@ -65,7 +62,6 @@ export default function PhaseCard({ phase, onClick }) {
         <span>{phase?.end_date || "--"}</span>
       </div>
 
-      {/* TASK LIST */}
       <div className="space-y-2 mb-5">
         {tasks.length === 0 ? (
           <p className="text-sm text-gray-400">No tasks added</p>
@@ -91,9 +87,7 @@ export default function PhaseCard({ phase, onClick }) {
         )}
       </div>
 
-      {/* FOOTER */}
       <div className="mt-auto">
-        {/* AVATARS */}
         <div className="flex -space-x-2 mb-4">
           {employees.length === 0 ? (
             <span className="text-sm text-gray-400">
@@ -114,7 +108,6 @@ export default function PhaseCard({ phase, onClick }) {
           )}
         </div>
 
-        {/* PROGRESS */}
         <div className="flex justify-between text-sm mb-2">
           <span className="text-gray-600">Progress</span>
           <span className="font-medium text-gray-900">

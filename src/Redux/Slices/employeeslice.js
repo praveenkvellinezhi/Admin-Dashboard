@@ -98,7 +98,7 @@ export const editEmployee = createAsyncThunk(
   async ({ employeeId, formData }, { rejectWithValue }) => {
     try {
       const res = await axios.patch(
-        `${BASE_URL}//employee/emp-edit/${employeeId}/`,
+        `${BASE_URL}/employee/emp-edit/${employeeId}/`,
         formData
       );
       return res.data;

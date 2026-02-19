@@ -2,9 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BASE_URL } from "../Baseurl";
 
-/* =========================
-   INITIAL STATE
-========================= */
+
 const initialState = {
   projects: [],
   selectedProject: null,
@@ -15,13 +13,10 @@ const initialState = {
   editStatus: "idle",
   deleteStatus: "idle",
 
-  validationErrors: null, // 🔥 backend validation errors
+  validationErrors: null, 
   error: null,
 };
 
-/* =========================
-   THUNKS
-========================= */
 export const fetchProjects = createAsyncThunk(
   "projects/fetchAll",
   async (_, { rejectWithValue }) => {
@@ -92,16 +87,13 @@ export const deleteProject = createAsyncThunk(
   }
 );
 
-/* =========================
-   SLICE
-========================= */
+
 const projectSlice = createSlice({
   name: "projects",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      /* ---------- FETCH PROJECTS ---------- */
       .addCase(fetchProjects.pending, (state) => {
         state.listStatus = "loading";
       })
@@ -114,7 +106,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* ---------- FETCH SINGLE PROJECT ---------- */
       .addCase(fetchProjectById.pending, (state) => {
         state.singleStatus = "loading";
       })
@@ -127,7 +118,6 @@ const projectSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* ---------- ADD PROJECT ---------- */
       .addCase(addProject.pending, (state) => {
         state.addStatus = "loading";
         state.validationErrors = null;
@@ -141,7 +131,6 @@ const projectSlice = createSlice({
         state.validationErrors = action.payload;
       })
 
-      /* ---------- EDIT PROJECT ---------- */
       .addCase(editProject.pending, (state) => {
         state.editStatus = "loading";
         state.validationErrors = null;
@@ -165,7 +154,6 @@ const projectSlice = createSlice({
         state.validationErrors = action.payload;
       })
 
-      /* ---------- DELETE PROJECT ---------- */
       .addCase(deleteProject.pending, (state) => {
         state.deleteStatus = "loading";
       })
@@ -188,9 +176,7 @@ const projectSlice = createSlice({
 
 export default projectSlice.reducer;
 
-/* =========================
-   SELECTORS
-========================= */
+
 export const selectAllProjects = (state) =>
   state.projects.projects;
 

@@ -3,9 +3,7 @@ import axios from "axios";
 import { BASE_URL } from "../Baseurl";
 import { fetchProjectById } from "./projectSlice";
 
-/* =========================
-   INITIAL STATE
-========================= */
+
 const initialState = {
   phases: [],
 
@@ -17,9 +15,6 @@ const initialState = {
   error: null,
 };
 
-/* =========================
-   ADD PHASE
-========================= */
 export const addPhase = createAsyncThunk(
   "phases/add",
   async (payload, { rejectWithValue }) => {
@@ -35,9 +30,7 @@ export const addPhase = createAsyncThunk(
   }
 );
 
-/* =========================
-   EDIT PHASE
-========================= */
+
 export const editPhase = createAsyncThunk(
   "phases/edit",
   async ({ phaseId, payload }, { rejectWithValue }) => {
@@ -54,9 +47,7 @@ export const editPhase = createAsyncThunk(
   }
 );
 
-/* =========================
-   DELETE PHASE
-========================= */
+
 export const deletePhase = createAsyncThunk(
   "phases/delete",
   async (phaseId, { rejectWithValue }) => {
@@ -71,9 +62,7 @@ export const deletePhase = createAsyncThunk(
   }
 );
 
-/* =========================
-   SLICE
-========================= */
+
 const phaseSlice = createSlice({
   name: "phases",
   initialState,
@@ -90,9 +79,7 @@ const phaseSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      /* =========================
-         PROJECT → PHASES SOURCE
-      ========================= */
+
       .addCase(fetchProjectById.pending, (state) => {
         state.status = "loading";
       })
@@ -105,9 +92,6 @@ const phaseSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* =========================
-         ADD PHASE
-      ========================= */
       .addCase(addPhase.pending, (state) => {
         state.addStatus = "loading";
       })
@@ -123,9 +107,7 @@ const phaseSlice = createSlice({
         state.error = action.payload;
       })
 
-      /* =========================
-         EDIT PHASE
-      ========================= */
+
       .addCase(editPhase.fulfilled, (state, action) => {
         state.editStatus = "succeeded";
 
@@ -141,9 +123,7 @@ const phaseSlice = createSlice({
         }
       })
 
-      /* =========================
-         DELETE PHASE
-      ========================= */
+
       .addCase(deletePhase.fulfilled, (state, action) => {
         state.deleteStatus = "succeeded";
         state.phases = state.phases.filter(
@@ -155,10 +135,6 @@ const phaseSlice = createSlice({
 
 export const { clearPhases } = phaseSlice.actions;
 export default phaseSlice.reducer;
-
-/* =========================
-   SELECTORS
-========================= */
 export const selectAllPhases = (state) => state.phases.phases;
 export const getPhaseStatus = (state) => state.phases.status;
 export const getPhaseAddStatus = (state) => state.phases.addStatus;

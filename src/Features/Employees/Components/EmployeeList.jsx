@@ -163,11 +163,7 @@ export default function EmployeeList({ employees }) {
   </div>
 )}
 
-
-
-
-
-            {totalPages > 1 && (
+ {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-8">
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}

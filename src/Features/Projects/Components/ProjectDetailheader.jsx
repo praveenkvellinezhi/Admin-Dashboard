@@ -25,7 +25,6 @@ export default function ProjectDetailsHeader({
             Back
           </button>
           
-          {/* ADD PHASE */}
           <button
             onClick={onAddPhase}
             className="flex items-center gap-2 px-4 py-2
@@ -36,7 +35,6 @@ export default function ProjectDetailsHeader({
             Add Phase
           </button>
 
-          {/* EDIT */}
           <button
             onClick={onEdit}
             className="flex items-center gap-2 px-4 py-2

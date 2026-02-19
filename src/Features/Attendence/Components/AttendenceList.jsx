@@ -1,80 +1,89 @@
-import React from "react";
+import React from 'react';
+import {
+  ChevronDown,
+  Calendar,
+  LogIn,
+  LogOut,
+  Clock,
+  User,
+} from 'lucide-react';
 
 export default function AttendanceList({ rows }) {
   return (
-    <div className="mt-6 bg-white rounded-2xl shadow-md overflow-hidden">
-      <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[1050px] border-collapse">
+    <div className=" px-4 py-8">
+      <div className="space-y-4">
+        {rows.map((item) => {
+          const isLeave = !item.checkIn;
 
-                    <thead>
-            <tr className="bg-gray-100 text-gray-600 text-sm">
-              <th className="p-3 text-left font-semibold">ID</th>
-              <th className="p-3 text-left font-semibold">Name</th>
-              <th className="p-3 text-left font-semibold">Date</th>
-              <th className="p-3 text-left font-semibold">Check In</th>
-              <th className="p-3 text-left font-semibold">Check Out</th>
-              <th className="p-3 text-left font-semibold">Add Overtime</th>
-              <th className="p-3 text-left font-semibold">Reason</th>
-            </tr>
-          </thead>
+          return (
+            <div
+              key={item.id}
+              className={`rounded-2xl border p-6 flex items-center justify-between transition
+                ${
+                  isLeave
+                    ? 'bg-red-50 border-red-200'
+                    : 'bg-emerald-50 border-emerald-200'
+                }`}
+            >
+              <div className="flex-1">
+                {/* Name + ID */}
+                <div className="flex items-center gap-3 mb-1">
+                  <User className="w-4 h-4 text-gray-500" />
+                  <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                  <span className="text-xs bg-gray-200 px-2 py-0.5 rounded text-gray-600">
+                    {item.id}
+                  </span>
+                </div>
 
-                    <tbody>
-            {rows.map((item) => {
-              const isLeave = !item.checkIn;
+                {/* Role */}
+                <p className="text-sm text-gray-600 mb-2">
+                  {item.role || item.internRole || '—'}
+                </p>
 
-              return (
-                <tr
-                  key={item.id}
-                  className={`
-                    border-b text-sm
-                    ${isLeave ? "bg-red-100" : "bg-white"}
-                    hover:bg-gray-50 transition
-                  `}
-                >
-                                    <td className="p-3 font-medium">{item.id}</td>
+                {/* DATE + TIME INFO */}
+                <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                  <span>{item.date}</span>
 
-                                    <td className="p-3">
-                    <div className="font-semibold text-gray-900">
-                      {item.name}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {item.role || item.internRole || "—"}
-                    </div>
-                  </td>
+                  {!isLeave && (
+                    <>
+                      <span>•</span>
+                      <div className="flex items-center gap-1 text-emerald-600">
+                        <LogIn className="w-4 h-4" />
+                        {item.checkIn}
+                      </div>
 
-                                    <td className="p-3">
-                    {item.date || "—"}
-                  </td>
+                      <span>•</span>
+                      <div className="flex items-center gap-1 text-blue-600">
+                        <LogOut className="w-4 h-4" />
+                        {item.checkOut}
+                      </div>
 
-                                    <td className="p-3">
-                    {item.checkIn || "—"}
-                  </td>
+                      <span>•</span>
+                      <div className="flex items-center gap-1 text-orange-600">
+                        <Clock className="w-4 h-4" />
+                        {item.overtime || '0 hrs'}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
 
-                                    <td className="p-3">
-                    {item.checkOut || "—"}
-                  </td>
+              <div className="flex items-center gap-3">
+                {isLeave ? (
+                  <span className="bg-red-500 text-white text-sm px-4 py-1 rounded-full">
+                    On Leave
+                  </span>
+                ) : (
+                  <span className="bg-emerald-500 text-white text-sm px-4 py-1 rounded-full">
+                    Present
+                  </span>
+                )}
 
-                                    <td className="p-3 font-medium">
-                    {item.overtime || "0 hrs"}
-                  </td>
-
-                                    <td className="p-3">
-                    {isLeave ? (
-                      <span className="px-3 py-1 text-xs font-medium rounded-full bg-red-500 text-white">
-                        On leave
-                      </span>
-                    ) : (
-                      <span className="text-gray-500">
-                        {item.reason || "—"}
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-
-        </table>
+                <ChevronDown className="w-4 h-4 text-gray-500" />
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

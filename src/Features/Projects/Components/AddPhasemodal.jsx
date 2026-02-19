@@ -46,17 +46,13 @@ export default function AddPhaseModal({ onClose }) {
     employee_ids: [],
   });
 
-  /* =========================
-     FETCH REQUIRED DATA
-  ========================= */
+
   useEffect(() => {
     dispatch(fetchEmployees());
     dispatch(fetchProjectById(id));
   }, [dispatch, id]);
 
-  /* =========================
-     HANDLERS
-  ========================= */
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
@@ -72,9 +68,7 @@ export default function AddPhaseModal({ onClose }) {
     }));
   };
 
-  /* =========================
-     SUBMIT
-  ========================= */
+// submit
   const handleSubmit = async () => {
     if (!formData.phase_type) {
       setLocalError('Phase type is required');
@@ -110,9 +104,7 @@ export default function AddPhaseModal({ onClose }) {
     }
   };
 
-  /* =========================
-     EMPLOYEE SOURCE
-  ========================= */
+
   const employeeSource = projectTeam.length > 0 ? projectTeam : employees;
 
   const assignedEmployees = employeeSource.filter((emp) =>
@@ -122,7 +114,6 @@ export default function AddPhaseModal({ onClose }) {
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
       <div className="bg-white w-full max-w-lg rounded-xl shadow-lg max-h-[90vh] overflow-y-auto">
-        {/* HEADER */}
 
         <div className="flex justify-between items-start px-6 py-5 ">
           <div className="flex items-start gap-3">
@@ -147,7 +138,6 @@ export default function AddPhaseModal({ onClose }) {
           </button>
         </div>
 
-        {/* BODY */}
         <div className="p-6 space-y-5">
           {(localError || error?.non_field_errors) && (
             <p className="text-xs text-red-600">
@@ -155,7 +145,6 @@ export default function AddPhaseModal({ onClose }) {
             </p>
           )}
 
-          {/* PHASE TYPE */}
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1 block">
               Phase Type
@@ -189,7 +178,6 @@ export default function AddPhaseModal({ onClose }) {
             </select>
           </div>
 
-          {/* DESCRIPTION */}
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1 block">
               Description
@@ -204,7 +192,6 @@ export default function AddPhaseModal({ onClose }) {
             />
           </div>
 
-          {/* DATES */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-700 mb-1 block">
@@ -233,7 +220,6 @@ export default function AddPhaseModal({ onClose }) {
             </div>
           </div>
 
-          {/* ASSIGN MEMBERS */}
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1 block">
               Assign Team Members
@@ -275,7 +261,6 @@ export default function AddPhaseModal({ onClose }) {
             </div>
           </div>
 
-          {/* CHIPS */}
           {assignedEmployees.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {assignedEmployees.map((emp) => (
@@ -294,7 +279,6 @@ export default function AddPhaseModal({ onClose }) {
           )}
         </div>
 
-        {/* FOOTER */}
     
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-300">
           <button

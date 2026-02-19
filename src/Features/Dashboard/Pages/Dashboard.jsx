@@ -22,25 +22,17 @@ import {
 export default function Dashboard() {
   const dispatch = useDispatch();
 
-  /* =========================
-     REDUX STATUSES
-  ========================= */
   const statsStatus = useSelector(selectStatsStatus);
   const projectStatusStatus = useSelector(selectProjectStatusStatus);
   const projectsStatus = useSelector(getOngoingProjectsStatus);
 
-  /* =========================
-     FETCH DATA (PAGE RESPONSIBILITY)
-  ========================= */
   useEffect(() => {
     dispatch(fetchStats());
     dispatch(fetchProjectStatus());
     dispatch(fetchOngoingProjects());
   }, [dispatch]);
 
-  /* =========================
-     GLOBAL LOADER
-  ========================= */
+// loader
   const isDashboardLoading =
     statsStatus === "loading" ||
     projectStatusStatus === "loading" ||
@@ -50,19 +42,13 @@ export default function Dashboard() {
     return <DashboardLoader />;
   }
 
-  /* =========================
-     DASHBOARD UI
-  ========================= */
   return (
     <div className="w-full p-3 sm:p-4 lg:p-6 space-y-6">
-      {/* STAT CARDS */}
       <StatCard />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 lg:gap-6">
-        {/* ONGOING PROJECTS */}
         <OngoingProjects />
 
-        {/* RIGHT SIDE */}
         <div className="flex flex-col gap-4 lg:gap-6 w-full">
           <AttendenceGraph month="Month" />
           <ProjectStatus />

@@ -11,15 +11,12 @@ export default function DeleteProjectModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* BACKDROP */}
       <div
         onClick={onClose}
         className="absolute inset-0 bg-black/40"
       />
 
-      {/* MODAL */}
       <div className="relative bg-white w-full max-w-md rounded-xl shadow-xl p-6 z-10">
-        {/* CLOSE */}
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
@@ -27,12 +24,10 @@ export default function DeleteProjectModal({
           <X size={18} />
         </button>
 
-        {/* ICON */}
         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-600 mb-4">
           <Trash2 size={22} />
         </div>
 
-        {/* CONTENT */}
         <h3 className="text-lg font-semibold text-gray-900 text-center">
           Delete Project
         </h3>
@@ -42,7 +37,6 @@ export default function DeleteProjectModal({
           This action cannot be undone.
         </p>
 
-        {/* ACTIONS */}
         <div className="flex justify-end gap-3 mt-6">
           <button
             onClick={onClose}

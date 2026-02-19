@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 
 export default function DocumentsCard({ employee }) {
-  // ✅ SAFE FALLBACK (UNCHANGED)
   const emp = employee?.employee ?? {};
 
   return (
@@ -23,7 +22,6 @@ export default function DocumentsCard({ employee }) {
         </h3>
       </div>
 
-      {/* CONTENT */}
       <div className="divide-y divide-gray-200">
         {!emp.id_proof_document_url &&
           !emp.offer_letter_url &&
@@ -58,13 +56,10 @@ export default function DocumentsCard({ employee }) {
   );
 }
 
-/* =========================
-   DOCUMENT ROW
-========================= */
+
 function DocumentRow({ label, url }) {
   return (
     <div className="flex items-center justify-between px-6 py-4">
-      {/* LEFT */}
       <div className="flex items-center gap-4">
         <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
           <File size={18} className="text-blue-600" />
@@ -75,7 +70,6 @@ function DocumentRow({ label, url }) {
         </span>
       </div>
 
-      {/* ACTIONS */}
       <div className="flex items-center gap-6 text-sm">
         <a
           href={url}

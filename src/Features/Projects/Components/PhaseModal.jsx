@@ -60,9 +60,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     assigned_to: "",
   });
 
-  /* =========================
-     FETCH DATA
-  ========================= */
+
   useEffect(() => {
     if (!phaseId) return;
 
@@ -71,9 +69,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     dispatch(fetchTasksByPhase(phaseId));
   }, [dispatch, phaseId, id]);
 
-  /* =========================
-     SAVE TASK
-  ========================= */
+
   const handleSaveTask = async () => {
     if (!taskForm.title.trim()) return;
 
@@ -166,21 +162,16 @@ export default function PhaseDetailsModal({ phase, onClose }) {
     );
   }
 
-  /* =========================
-     UI
-  ========================= */
+
   return (
     <>
-      {/* BACKDROP */}
       <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
 
-      {/* MODAL */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div
           onClick={(e) => e.stopPropagation()}
           className="bg-white w-full max-w-7xl rounded-2xl shadow-lg overflow-hidden"
         >
-          {/* HEADER */}
         <div className="flex justify-between items-start px-6 py-5 border-b">
   <div>
     <h2 className="text-lg font-semibold capitalize">
@@ -215,9 +206,7 @@ export default function PhaseDetailsModal({ phase, onClose }) {
   </div>
 
 
-          {/* CONTENT */}
           <div className="px-6 py-4 max-h-[70vh] overflow-y-auto">
-            {/* TABLE HEADER */}
             <div className="grid grid-cols-12 text-sm text-gray-500 border-b pb-3">
               <div className="col-span-3">Assignee</div>
               <div className="col-span-3">Task</div>
@@ -226,7 +215,6 @@ export default function PhaseDetailsModal({ phase, onClose }) {
               <div className="col-span-2 text-right">Actions</div>
             </div>
 
-            {/* TASK LIST */}
             <div className="space-y-2 mt-3">
               {tasks.map((task) => (
                 <div
@@ -317,15 +305,12 @@ export default function PhaseDetailsModal({ phase, onClose }) {
               </button>
             )}
 
-            {/* ADD / EDIT FORM */}
             {showAddTask && (
               <div className="border border-gray-300 rounded-2xl p-6 bg-white mt-6">
                 <h3 className="text-lg font-semibold mb-5">
                   {editingTaskId ? "Edit Task" : "Add Task"}
                 </h3>
 
-                {/* FORM */}
-                {/* (exactly same as you had – working) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <input
                     type="text"

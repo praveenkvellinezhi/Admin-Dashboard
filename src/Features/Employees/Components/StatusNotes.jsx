@@ -15,7 +15,6 @@ export default function StatusNotes({ employee }) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-      {/* HEADER */}
       <div className="flex items-center gap-3 px-6 py-4 border-b">
         <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center">
           <Activity size={18} className="text-blue-600" />
@@ -25,9 +24,7 @@ export default function StatusNotes({ employee }) {
         </h3>
       </div>
 
-      {/* CONTENT */}
       <div className="px-6 py-6 space-y-6">
-        {/* EMPLOYMENT STATUS */}
         <div>
           <p className="text-xs uppercase tracking-wide text-gray-500 mb-3">
             Employment Status
@@ -44,9 +41,7 @@ export default function StatusNotes({ employee }) {
   );
 }
 
-/* =========================
-   STATUS BADGE (UNCHANGED LOGIC)
-========================= */
+
 function StatusBadge({ status }) {
   const isActive = status === "active";
 
@@ -65,9 +60,7 @@ function StatusBadge({ status }) {
   );
 }
 
-/* =========================
-   STATUS ICON
-========================= */
+
 function StatusIcon({ status }) {
   const isActive = status === "active";
 

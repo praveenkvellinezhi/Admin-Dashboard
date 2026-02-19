@@ -18,9 +18,7 @@ export default function BasicInformation({ employee }) {
 
   return (
     <div className="space-y-6 mt-6">
-      {/* ================= TOP PROFILE CARD ================= */}
       <div className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-        {/* LEFT */}
         <div className="flex items-center gap-5">
           <div className="relative">
             <img
@@ -65,7 +63,6 @@ export default function BasicInformation({ employee }) {
           </div>
         </div>
 
-        {/* RIGHT STATUS + DEPARTMENT */}
         <div className="flex gap-3">
           <span
             className={`px-4 py-2 rounded-full text-white text-sm font-medium
@@ -118,7 +115,6 @@ export default function BasicInformation({ employee }) {
   );
 }
 
-/* ================= STAT CARD ================= */
 function StatCard({ label, value, icon }) {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex items-center justify-between">
